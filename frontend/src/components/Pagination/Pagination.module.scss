@@ -1,0 +1,19 @@
+.pagination {
+  display: flex;
+  gap: 0.8vw;
+}
+
+.pageButton {
+  cursor: pointer;
+  color: gray;
+
+  &:hover {
+    border: 0.1vw solid white;
+    color: white;
+    transition: color 0.3s;
+  }
+}
+
+.active {
+  color: white;
+}

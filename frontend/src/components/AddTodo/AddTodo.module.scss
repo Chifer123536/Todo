@@ -1,0 +1,47 @@
+.formContainer {
+  position: relative;
+}
+
+form {
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 30vw;
+  height: 5vh;
+  color: #dedede;
+  background-color: #1b1a4130;
+  border: #464646 0.1vw solid;
+  padding: 0 1vw;
+  transition: border 0.25s ease, color 0.25s ease;
+
+  &:hover {
+    border: #878787 0.1vw solid;
+    color: white;
+  }
+}
+
+.addTodoButton {
+  display: flex;
+  height: 5vh;
+  background-color: #1b1a41;
+  border: #464646 0.1vw solid;
+  border-radius: 0;
+  padding: 0 1vw;
+  justify-content: center;
+  align-items: center;
+}
+
+.overflowMessage {
+  display: flex;
+  position: absolute;
+  color: red;
+  top: -5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+  justify-content: center;
+  font-size: 2vh;
+  width: 30vw;
+}

@@ -1,0 +1,14 @@
+.todo_container {
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.todo_list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1vh;
+  align-items: center;
+}

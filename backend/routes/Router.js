@@ -8,9 +8,9 @@ import {
   deleteTodo,
 } from "../controllers/todoController.js";
 
-router.get("/contacts", getTodos);
-router.post("contacts", createTodo);
-router.put("contacts/:id", updateTodo);
-router.delete("contacts/:id", deleteTodo);
+router.get("/todos", getTodos);
+router.post("/todos", createTodo);
+router.put("/todos/:id", updateTodo);
+router.delete("/todos/:id", deleteTodo);
 
 export default router;

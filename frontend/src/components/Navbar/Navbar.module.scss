@@ -1,0 +1,54 @@
+@import "../ThemeToggle/ThemeToggle.module.scss";
+
+.navbar {
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 0.4vh 0.6vh rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+
+  &.dark-mode {
+    background-color: #1b1a41;
+    box-shadow: 0 0.4vh 0.6vh #1b1a41;
+  }
+}
+
+.container {
+  @media (min-width: 64vw) {
+    padding: 0 1.5vw;
+  }
+
+  @media (min-width: 102vw) {
+    padding: 0 2vw;
+  }
+}
+
+.navbarContent {
+  display: flex;
+  height: 8vh;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  left: 0;
+
+  .logo {
+    height: 4vh;
+    width: 4vh;
+    margin-right: 1vw;
+    rotate: -15deg;
+  }
+
+  .title {
+    font-size: 2.5vh;
+    font-weight: 600;
+    color: #2d3748;
+
+    &.dark-mode {
+      color: #ffffff;
+    }
+  }
+}
