@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import contactsReducer from "./Slices/contactsSlice";
+import todoSlice from "./Slices/todoSlice";
+import themeSlice from "./Slices/themeSlice";
 
 const store = configureStore({
   reducer: {
-    contacts: contactsReducer,
+    todos: todoSlice,
+    theme: themeSlice,
   },
 });
 
