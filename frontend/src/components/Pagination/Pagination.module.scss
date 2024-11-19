@@ -1,11 +1,22 @@
 .pagination {
   display: flex;
-  gap: 0.8vw;
+  position: relative;
+  gap: 0.3vw;
+  justify-content: center;
 }
 
 .pageButton {
-  cursor: pointer;
   color: gray;
+
+  width: clamp(10px, 5vw, 50px);
+  height: clamp(10px, 5vw, 50px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  font-size: clamp(15px, 2vw, 1.1rem);
 
   &:hover {
     border: 0.1vw solid white;

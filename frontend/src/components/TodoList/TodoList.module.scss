@@ -1,8 +1,10 @@
 .todo_container {
-  height: 70vh;
   display: flex;
+  position: absolute;
+  height: auto;
   flex-direction: column;
   justify-content: space-between;
+  top: 30%;
 }
 
 .todo_list {
@@ -11,4 +13,8 @@
   flex-direction: column;
   gap: 1vh;
   align-items: center;
+}
+
+button {
+  padding: 1.2vw;
 }

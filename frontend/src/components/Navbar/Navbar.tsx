@@ -25,7 +25,7 @@ const Navbar: React.FC = () => {
               Todo List
             </h1>
           </div>
-          <div className={styles.themeToggle}>
+          <div className={styles.themeToggleContainer}>
             <ThemeToggle />
           </div>
           {/* <div className={styles.authContainer}>
