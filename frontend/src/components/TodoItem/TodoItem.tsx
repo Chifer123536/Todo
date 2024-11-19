@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
+import styles from "./TodoItem.module.scss";
 import {
   changeStatus,
   deleteTodo,
@@ -50,11 +51,18 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
 
   return (
     <motion.div
+      className={styles.todo_item}
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.4 }}
     >
+      <input
+        type="checkbox"
+        className={styles.custom_checkbox}
+        checked={todo.completed}
+        disabled={loading}
+        onChange={() => handleChange()}
+      />
       {isEdit ? (
         <input
           type="text"
@@ -64,21 +72,10 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
           disabled={loading}
         />
       ) : (
-        <h3>{todo.title}</h3>
+        <h3 className={styles.todo_title} onClick={handleEdit}>
+          {todo.title}
+        </h3>
       )}
-      <p>{todo.completed ? "Completed" : "Not Completed"}</p>
-      {isEdit ? (
-        <button onClick={handleEditSave} disabled={loading}>
-          Save
-        </button>
-      ) : (
-        <button onClick={handleEdit} disabled={loading}>
-          Edit
-        </button>
-      )}
-      <button onClick={handleChange} disabled={loading}>
-        Change Status
-      </button>
       <button onClick={handleDelete} disabled={loading}>
         Delete
       </button>

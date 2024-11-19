@@ -10,7 +10,7 @@ function App() {
   return (
     <div className={darkMode ? "dark" : ""}>
       <Navbar />
-      <div className="flex flex-col justify-center items-center h-screen w-screen pt-16 space-y-4 bg-white dark:bg-dark-theme text-black dark:text-white">
+      <div className="flex flex-col justify-center items-center h-screen w-screen pt-[8vh] space-y-4 bg-white dark:bg-dark-theme text-black dark:text-white overflow-auto">
         <AddTodo />
         <TodoList />
       </div>

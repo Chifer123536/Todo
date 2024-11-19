@@ -1,5 +1,7 @@
 .formContainer {
-  position: relative;
+  display: flex;
+  position: absolute;
+  top: 16%;
 }
 
 form {
@@ -15,6 +17,7 @@ form {
   border: #464646 0.1vw solid;
   padding: 0 1vw;
   transition: border 0.25s ease, color 0.25s ease;
+  font-size: clamp(1vw, 1vw, 4vw);
 
   &:hover {
     border: #878787 0.1vw solid;

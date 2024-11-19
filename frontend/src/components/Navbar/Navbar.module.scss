@@ -1,12 +1,11 @@
 @import "../ThemeToggle/ThemeToggle.module.scss";
 
 .navbar {
+  height: 8vh;
   width: 100%;
   background-color: #ffffff;
   box-shadow: 0 0.4vh 0.6vh rgba(0, 0, 0, 0.1);
   position: fixed;
-  top: 0;
-  left: 0;
   z-index: 50;
 
   &.dark-mode {
@@ -28,6 +27,10 @@
 .navbarContent {
   display: flex;
   height: 8vh;
+}
+
+.main-content {
+  padding-top: 8vh;
 }
 
 .logoContainer {
