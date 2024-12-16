@@ -3,10 +3,11 @@
   justify-content: center;
   position: relative;
   font-size: 3vh;
+  border: 1px solid transparent;
 
-  color: rgb(255, 255, 255);
+  color: var(--text-color);
   &:hover {
-    border: 1px solid rgb(255, 255, 255);
+    border: 1px solid var(--button-hover-border-color);
   }
 }
 .themeToggleContainer {

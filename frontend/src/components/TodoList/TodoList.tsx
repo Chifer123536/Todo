@@ -60,10 +60,10 @@ const TodoList: React.FC = () => {
   }
 
   return (
-    <div className={styles.todo_container}>
-      <div className={styles.todo_list}>
+    <div className={styles.page}>
+      <div className={styles.todoContainer}>
         {!loading && todosLength === 0 ? (
-          <div>No tasks available</div>
+          <div className={styles.noTasks}>No tasks available</div>
         ) : (
           currentTodos.map((todo) => (
             <TodoItem key={todo._id} todo={todo} loading={loading} />

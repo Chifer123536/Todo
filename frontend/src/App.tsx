@@ -1,16 +1,28 @@
-import AddTodo from "./components/AddTodo/AddTodo";
-import TodoList from "./components/TodoList/TodoList";
-import Navbar from "./components/Navbar/Navbar";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./Redux/store";
+import Navbar from "./components/Navbar/Navbar";
+import AddTodo from "./components/AddTodo/AddTodo";
+import TodoList from "./components/TodoList/TodoList";
+import "./styles/index.scss";
 
 function App() {
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-theme");
+      document.body.classList.remove("light-theme");
+    } else {
+      document.body.classList.add("light-theme");
+      document.body.classList.remove("dark-theme");
+    }
+  }, [darkMode]);
+
   return (
-    <div className={darkMode ? "dark" : ""}>
+    <div>
       <Navbar />
-      <div className="flex flex-col justify-center items-center h-screen w-screen pt-[8vh] space-y-4 bg-white dark:bg-dark-theme text-black dark:text-white overflow-auto">
+      <div className="layout">
         <AddTodo />
         <TodoList />
       </div>

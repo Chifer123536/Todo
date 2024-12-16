@@ -28,10 +28,6 @@ const Navbar: React.FC = () => {
           <div className={styles.themeToggleContainer}>
             <ThemeToggle />
           </div>
-          {/* <div className={styles.authContainer}>
-              <Login />
-              <Register >
-            </div> */}
         </div>
       </div>
     </nav>

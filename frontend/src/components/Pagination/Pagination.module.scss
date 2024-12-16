@@ -1,30 +1,32 @@
 .pagination {
   display: flex;
-  position: relative;
-  gap: 0.3vw;
   justify-content: center;
+  position: relative;
+
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 4vh;
+  gap: 0.3vw;
 }
 
 .pageButton {
-  color: gray;
-
-  width: clamp(10px, 5vw, 50px);
-  height: clamp(10px, 5vw, 50px);
-
   display: flex;
   align-items: center;
   justify-content: center;
+
+  color: var(--pagination-color);
+
+  width: clamp(10px, 5vw, 50px);
+  height: clamp(10px, 5vw, 50px);
+  font-size: clamp(15px, 2vw, 1.1rem);
   padding: 0;
 
-  font-size: clamp(15px, 2vw, 1.1rem);
-
   &:hover {
-    border: 0.1vw solid white;
-    color: white;
+    color: var(--button-hover-color);
     transition: color 0.3s;
   }
 }
 
 .active {
-  color: white;
+  color: var(--button-hover-color);
 }
