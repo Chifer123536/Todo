@@ -1,0 +1,43 @@
+:root {
+  --background-color: rgb(17, 18, 24);
+  --background-modal-input-color: rgb(22, 24, 31);
+
+  --text-color: white;
+  --text-placeholder-color: gray;
+  --text-limit-color: gray;
+
+  --navbar-background: #1b1a41;
+
+  --button-background: rgb(22, 23, 25);
+  --button-hover-color: white;
+  --button-hover-border-color: white;
+
+  --pagination-color: gray;
+
+  --todo_item-background: #c2a1ff0c;
+  --todo_item-completed-color: gray;
+
+  --input-color: #1b1a4130;
+  --input-text-color: gray;
+  --input-border-color: #464646;
+
+  --input-hover-color: white;
+  --input-border-hover-color: #878787;
+
+  --addTodoButton-background: #1b1a41;
+
+  --overflowMessage-color: red;
+
+  --title-color: white;
+
+  --custom_checkbox-color: white;
+  --custom_checkbox-background: #a7a7a7;
+  --custom_checkbox-border: black;
+  --custom_checkbox-checked-background: #8b71ff;
+  --custom_checkbox-outline-color: #8b71ff88;
+
+  --delete_button-color: rgb(108, 44, 255);
+  --delete_button-background: rgba(169, 122, 255, 0.1);
+
+  --noTasks: white;
+}

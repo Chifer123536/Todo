@@ -3,15 +3,10 @@
 .navbar {
   height: 8vh;
   width: 100%;
-  background-color: #ffffff;
-  box-shadow: 0 0.4vh 0.6vh rgba(0, 0, 0, 0.1);
+  background-color: var(--navbar-background);
+  box-shadow: 0 0.4vh 0.6vh #1b1a41;
   position: fixed;
   z-index: 50;
-
-  &.dark-mode {
-    background-color: #1b1a41;
-    box-shadow: 0 0.4vh 0.6vh #1b1a41;
-  }
 }
 
 .container {
@@ -48,10 +43,6 @@
   .title {
     font-size: 2.5vh;
     font-weight: 600;
-    color: #2d3748;
-
-    &.dark-mode {
-      color: #ffffff;
-    }
+    color: var(--title-color);
   }
 }

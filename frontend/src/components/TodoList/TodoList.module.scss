@@ -1,20 +1,17 @@
-.todo_container {
+.page {
   display: flex;
-  position: absolute;
-  height: auto;
   flex-direction: column;
-  justify-content: space-between;
-  top: 30%;
+  min-height: 75vh;
 }
 
-.todo_list {
+.todoContainer {
+  flex-grow: 1;
   display: flex;
-  flex: 1;
   flex-direction: column;
-  gap: 1vh;
-  align-items: center;
+  gap: 10px;
+  padding: 20px;
 }
 
-button {
-  padding: 1.2vw;
+.noTasks {
+  color: var(--noTasks);
 }
