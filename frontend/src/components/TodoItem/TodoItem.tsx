@@ -1,15 +1,9 @@
 import { motion } from "framer-motion";
-import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { ITodo } from "../../Redux/Slices/todoSlice";
 import styles from "./TodoItem.module.scss";
 import ModalCard from "../ModalCard/ModalCard";
-import {
-  changeStatus,
-  deleteTodo,
-  editTodo,
-  ITodo,
-} from "../../Redux/Slices/todoSlice";
-import { AppDispatch } from "../../Redux/store";
+import useItemActions from "../../hooks/useItemActions";
+import useHotkey from "../../hooks/useHotkey";
 
 interface ITodoItemProps {
   todo: ITodo;
@@ -17,54 +11,17 @@ interface ITodoItemProps {
 }
 
 const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
-  const dispatch: AppDispatch = useDispatch();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(todo.title);
-  const [showLimitHint, setShowLimitHint] = useState(false);
-  const limit: number = 999;
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setIsModalOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
-  const handleEditSave = () => {
-    if (todo._id) {
-      if (editedTitle.trim() === "") {
-        dispatch(deleteTodo(todo._id));
-      } else {
-        dispatch(editTodo({ ...todo, title: editedTitle }));
-      }
-      setIsModalOpen(false);
-    }
-  };
-
-  const handleDelete = () => {
-    if (todo._id) {
-      dispatch(deleteTodo(todo._id));
-    }
-  };
-
-  const handleChange = () => {
-    if (todo._id) {
-      dispatch(changeStatus(todo));
-    }
-  };
-
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    setEditedTitle(value);
-    setShowLimitHint(value.length === limit);
-  };
+  const {
+    handleEditSave,
+    handleDelete,
+    handleChange,
+    handleTextareaChange,
+    isModalOpen,
+    setIsModalOpen,
+    editedTitle,
+    showLimitHint,
+  } = useItemActions(todo);
+  useHotkey(setIsModalOpen);
 
   return (
     <>
@@ -106,7 +63,7 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
             value={editedTitle}
             onChange={handleTextareaChange}
             disabled={loading}
-            maxLength={limit}
+            maxLength={999}
             className={styles.textarea}
           />
           <div
@@ -114,7 +71,7 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
               showLimitHint ? styles.visible : ""
             }`}
           >
-            Max length: {limit}
+            Max length: 999
           </div>
         </div>
         <div className={styles.modal_button_container}>
