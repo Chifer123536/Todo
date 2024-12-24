@@ -1,72 +1,28 @@
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../Redux/store";
-import { FormEvent, useState, useEffect } from "react";
-import { addTodo } from "../../Redux/Slices/todoSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Redux/store";
+import { useState } from "react";
 import ModalCard from "../ModalCard/ModalCard";
 import styles from "./AddTodo.module.scss";
+import useHotkey from "../../hooks/useHotkey";
+import useAddActions from "../../hooks/useAddActions";
 
 const AddTodo: React.FC = () => {
-  const dispatch: AppDispatch = useDispatch();
   const { todosLength } = useSelector((state: RootState) => state.todos);
-  const [title, setTitle] = useState("");
-  const [overflowMessage, setOverflowMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showLimitHint, setShowLimitHint] = useState(false);
+
   const limit: number = 999;
   const todosPerPage = 5;
   const maxPages = 10;
   const maxTodos = todosPerPage * maxPages;
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setIsModalOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
-  const handleInputChange = (value: string) => {
-    setTitle(value);
-    setShowLimitHint(value.length >= limit);
-  };
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    if (title.length > limit) {
-      setOverflowMessage(`Max length: ${limit}`);
-      setTimeout(() => {
-        setOverflowMessage("");
-      }, 5000);
-      return;
-    }
-
-    if (todosLength >= maxTodos) {
-      setOverflowMessage("The task limit has been reached.");
-      setTimeout(() => {
-        setOverflowMessage("");
-      }, 5000);
-      return;
-    }
-
-    if (!title.trim()) {
-      setOverflowMessage("Your task is empty.");
-      setTimeout(() => {
-        setOverflowMessage("");
-      }, 5000);
-      return;
-    }
-
-    dispatch(addTodo({ title, completed: false }));
-    setIsModalOpen(false);
-    setTitle("");
-  };
+  useHotkey(setIsModalOpen);
+  const {
+    title,
+    overflowMessage,
+    showLimitHint,
+    handleInputChange,
+    handleSubmit,
+  } = useAddActions(limit, maxTodos, todosLength, setIsModalOpen);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);

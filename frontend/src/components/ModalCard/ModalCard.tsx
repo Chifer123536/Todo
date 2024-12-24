@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import styles from "./ModalCard.module.scss";
 
 interface ModalProps {
@@ -10,24 +10,29 @@ interface ModalProps {
 const ModalCard: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
       if (
         modalRef.current &&
         !modalRef.current.contains(event.target as Node)
       ) {
         onClose();
       }
-    };
+    },
+    [onClose]
+  );
 
+  useEffect(() => {
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClickOutside]);
 
   if (!isOpen) return null;
 
