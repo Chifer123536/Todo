@@ -70,10 +70,10 @@
   color: var(--text-limit-color);
   opacity: 0;
   transition: opacity 0.3s ease;
-}
 
-.limit_hint.visible {
-  opacity: 1;
+  &.visible {
+    opacity: 1;
+  }
 }
 
 .close_button {

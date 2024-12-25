@@ -15,7 +15,7 @@ const useHotkey = (
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [setIsModalOpen]);
 };
 
 export default useHotkey;

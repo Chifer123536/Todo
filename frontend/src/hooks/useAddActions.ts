@@ -13,9 +13,15 @@ const useAddActions = (
   const [title, setTitle] = useState("");
   const [overflowMessage, setOverflowMessage] = useState("");
   const [showLimitHint, setShowLimitHint] = useState(false);
-  const [loading, setLoading] = useState(false); // Состояние загрузки
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (value: string) => {
+    const excess = value.length - limit;
+    if (excess > 0) {
+      setOverflowMessage(`-${excess}`);
+    } else {
+      setOverflowMessage("");
+    }
     setTitle(value);
     setShowLimitHint(value.length >= limit);
   };
@@ -23,10 +29,16 @@ const useAddActions = (
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (loading) return; // Блокируем добавление задач во время загрузки
+    if (loading) return;
 
     if (title.length > limit) {
-      setOverflowMessage(`Max length: ${limit}`);
+      setOverflowMessage(`-${title.length - limit} `);
+
+      return;
+    }
+
+    if (!title.trim()) {
+      setOverflowMessage("Your task is empty.");
       setTimeout(() => {
         setOverflowMessage("");
       }, 5000);
@@ -41,27 +53,19 @@ const useAddActions = (
       return;
     }
 
-    if (!title.trim()) {
-      setOverflowMessage("Your task is empty.");
-      setTimeout(() => {
-        setOverflowMessage("");
-      }, 5000);
-      return;
-    }
-
     try {
-      setLoading(true); // Включаем индикатор загрузки
+      setLoading(true);
       await dispatch(addTodo({ title, completed: false })).unwrap();
       setIsModalOpen(false);
       setTitle("");
     } catch (error) {
-      console.error("Error while adding a task:", error);
-      setOverflowMessage("Failed to add the task. Try again.");
+      console.error("Error adding todo", error);
+      setOverflowMessage("Error adding todo, try again");
       setTimeout(() => {
         setOverflowMessage("");
       }, 5000);
     } finally {
-      setLoading(false); // Выключаем индикатор загрузки
+      setLoading(false);
     }
   };
 
@@ -69,7 +73,7 @@ const useAddActions = (
     title,
     overflowMessage,
     showLimitHint,
-    loading, // Экспортируем состояние загрузки для управления кнопками
+    loading,
     handleInputChange,
     handleSubmit,
   };
