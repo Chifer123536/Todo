@@ -69,7 +69,6 @@ const AddTodo: React.FC = () => {
             onChange={(e) => handleInputChange(e.target.value)}
             placeholder="Enter new task..."
             className={styles.textarea}
-            maxLength={limit}
           />
           <div
             className={`${styles.limit_hint} ${
