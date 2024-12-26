@@ -63,7 +63,6 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
             value={editedTitle}
             onChange={handleTextareaChange}
             disabled={loading}
-            maxLength={999}
             className={styles.textarea}
           />
           <div
