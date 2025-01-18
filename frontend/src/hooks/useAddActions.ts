@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../Redux/store";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useCallback } from "react";
 import { addTodo } from "../Redux/Slices/todoSlice";
 
 const useAddActions = (
@@ -14,6 +14,17 @@ const useAddActions = (
   const [overflowMessage, setOverflowMessage] = useState("");
   const [showLimitHint, setShowLimitHint] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [messageTimeout, setMessageTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+
+  const clearMessageTimeout = useCallback(() => {
+    if (messageTimeout) {
+      clearTimeout(messageTimeout);
+      setMessageTimeout(null);
+    }
+  }, [messageTimeout]);
 
   const handleInputChange = (value: string) => {
     const excess = value.length - limit;
@@ -33,23 +44,28 @@ const useAddActions = (
 
     if (title.length > limit) {
       setOverflowMessage(`-${title.length - limit} `);
-
       return;
     }
 
     if (!title.trim()) {
       setOverflowMessage("Your task is empty.");
-      setTimeout(() => {
-        setOverflowMessage("");
-      }, 5000);
+      clearMessageTimeout();
+      setMessageTimeout(
+        setTimeout(() => {
+          setOverflowMessage("");
+        }, 1000)
+      );
       return;
     }
 
     if (todosLength >= maxTodos) {
       setOverflowMessage("The task limit has been reached.");
-      setTimeout(() => {
-        setOverflowMessage("");
-      }, 5000);
+      clearMessageTimeout();
+      setMessageTimeout(
+        setTimeout(() => {
+          setOverflowMessage("");
+        }, 1000)
+      );
       return;
     }
 
@@ -61,9 +77,12 @@ const useAddActions = (
     } catch (error) {
       console.error("Error adding todo", error);
       setOverflowMessage("Error adding todo, try again");
-      setTimeout(() => {
-        setOverflowMessage("");
-      }, 5000);
+      clearMessageTimeout();
+      setMessageTimeout(
+        setTimeout(() => {
+          setOverflowMessage("");
+        }, 1000)
+      );
     } finally {
       setLoading(false);
     }
