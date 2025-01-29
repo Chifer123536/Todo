@@ -5,6 +5,7 @@ import ModalCard from "../ModalCard/ModalCard";
 import styles from "./AddTodo.module.scss";
 import useHotkey from "../../hooks/useHotkey";
 import useAddActions from "../../hooks/useAddActions";
+import useOverflowMessage from "../../hooks/useOverflowMessage";
 
 const AddTodo: React.FC = () => {
   const { todosLength } = useSelector((state: RootState) => state.todos);
@@ -16,13 +17,9 @@ const AddTodo: React.FC = () => {
   const maxTodos = todosPerPage * maxPages;
 
   useHotkey(setIsModalOpen);
-  const {
-    title,
-    overflowMessage,
-    showLimitHint,
-    handleInputChange,
-    handleSubmit,
-  } = useAddActions(limit, maxTodos, todosLength, setIsModalOpen);
+  const { overflowMessage, showMessage } = useOverflowMessage(1000);
+  const { title, showLimitHint, handleInputChange, handleSubmit } =
+    useAddActions(limit, maxTodos, todosLength, setIsModalOpen, showMessage);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
