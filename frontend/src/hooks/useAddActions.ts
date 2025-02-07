@@ -24,8 +24,8 @@ const useAddActions = (
     setShowLimitHint(value.length >= limit);
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: FormEvent) => {
+    e?.preventDefault();
 
     if (loading) return;
 
