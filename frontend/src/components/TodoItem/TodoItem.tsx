@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ITodo } from "../../Redux/Slices/todoSlice";
 import styles from "./TodoItem.module.scss";
 import ModalCard from "../ModalCard/ModalCard";
+import ModalContent from "../ModalCard/ModalContent";
 import useItemActions from "../../hooks/useItemActions";
 import useHotkey from "../../hooks/useHotkey";
 
@@ -55,40 +56,19 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
         </button>
       </motion.div>
 
-      {/* Модальное окно */}
       <ModalCard isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className={styles.textarea_container}>
-          <textarea
-            placeholder={todo.title}
-            value={editedTitle}
-            onChange={handleTextareaChange}
-            disabled={loading}
-            className={styles.textarea}
-          />
-          <div
-            className={`${styles.limit_hint} ${
-              showLimitHint ? styles.visible : ""
-            }`}
-          >
-            Max length: 999
-          </div>
-        </div>
-        <div className={styles.modal_button_container}>
-          <button
-            onClick={handleDelete}
-            disabled={loading}
-            className={styles.modal_delete_button}
-          >
-            Delete
-          </button>
-          <button
-            onClick={handleEditSave}
-            disabled={loading}
-            className={styles.modal_save_button}
-          >
-            Save
-          </button>
-        </div>
+        <ModalContent
+          value={editedTitle}
+          onChange={handleTextareaChange}
+          onSave={handleEditSave}
+          onCancel={handleDelete}
+          limit={999}
+          showLimitHint={showLimitHint}
+          isLoading={loading}
+          placeholder="Edit task..."
+          cancelText="Delete"
+          accepText="Save"
+        />
       </ModalCard>
     </>
   );

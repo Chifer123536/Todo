@@ -11,7 +11,7 @@ import useOverflowMessage from "./useOverflowMessage";
 
 const useItemActions = (todo: ITodo) => {
   const dispatch: AppDispatch = useDispatch();
-  const { overflowMessage, showMessage } = useOverflowMessage(1000); // Подключаем хук
+  const { overflowMessage, showMessage } = useOverflowMessage(1000);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
   const [showLimitHint, setShowLimitHint] = useState(false);
@@ -20,14 +20,12 @@ const useItemActions = (todo: ITodo) => {
   const handleEditSave = () => {
     if (todo._id) {
       if (editedTitle.trim() === "") {
-        showMessage("Task cannot be empty."); // Ошибка для пустого ввода
+        showMessage("Task cannot be empty.");
         return;
       }
 
       if (editedTitle.length > limit) {
-        showMessage(
-          `Exceeded limit by ${editedTitle.length - limit} characters.`
-        );
+        showMessage(`Exceeded limit by ${editedTitle.length - limit}`);
         return;
       }
 
@@ -48,10 +46,8 @@ const useItemActions = (todo: ITodo) => {
     }
   };
 
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
+  const handleTextareaChange = (value: string) => {
     setEditedTitle(value);
-
     if (value.length > limit) {
       setShowLimitHint(true);
       showMessage(`Exceeded limit by ${value.length - limit} characters.`);
@@ -61,7 +57,7 @@ const useItemActions = (todo: ITodo) => {
   };
 
   return {
-    overflowMessage, // Возвращаем состояние ошибки
+    overflowMessage,
     handleEditSave,
     handleDelete,
     handleChange,

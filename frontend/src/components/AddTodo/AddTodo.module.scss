@@ -67,8 +67,9 @@ form {
     top: -15vh;
   }
 
-  animation: fadeColor 0.25s ease-out forwards;
-
+  & {
+    animation: fadeColor 0.25s ease-out forwards;
+  }
   @keyframes fadeColor {
     0% {
       color: #ffeff0;

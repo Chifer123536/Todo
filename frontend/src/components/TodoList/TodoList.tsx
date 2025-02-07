@@ -22,7 +22,6 @@ const TodoList: React.FC = () => {
     dispatch(getTodos());
   }, [dispatch]);
 
-  // Логика обновления текущей страницы
   useEffect(() => {
     const lastPage = Math.ceil(todosLength / todosPerPage);
 
