@@ -6,6 +6,7 @@ import styles from "./AddTodo.module.scss";
 import useHotkey from "../../hooks/useHotkey";
 import useAddActions from "../../hooks/useAddActions";
 import useOverflowMessage from "../../hooks/useOverflowMessage";
+import ModalContent from "../ModalCard/ModalContent";
 
 const AddTodo: React.FC = () => {
   const { todosLength } = useSelector((state: RootState) => state.todos);
@@ -21,13 +22,8 @@ const AddTodo: React.FC = () => {
   const { title, showLimitHint, handleInputChange, handleSubmit } =
     useAddActions(limit, maxTodos, todosLength, setIsModalOpen, showMessage);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   return (
     <div className={styles.formContainer}>
@@ -60,32 +56,18 @@ const AddTodo: React.FC = () => {
       </form>
 
       <ModalCard isOpen={isModalOpen} onClose={handleCloseModal}>
-        <div className={styles.textarea_container}>
-          <textarea
-            value={title}
-            onChange={(e) => handleInputChange(e.target.value)}
-            placeholder="Enter new task..."
-            className={styles.textarea}
-          />
-          <div
-            className={`${styles.limit_hint} ${
-              showLimitHint ? styles.visible : ""
-            }`}
-          >
-            Max length: {limit}
-          </div>
-        </div>
-        <div className="modal_button_container">
-          <button
-            onClick={handleCloseModal}
-            className={styles.modal_delete_button}
-          >
-            Cancel
-          </button>
-          <button onClick={handleSubmit} className={styles.modal_save_button}>
-            Create
-          </button>
-        </div>
+        <ModalContent
+          value={title}
+          onChange={handleInputChange}
+          onSave={handleSubmit}
+          onCancel={handleCloseModal}
+          limit={limit}
+          showLimitHint={showLimitHint}
+          isLoading={false}
+          placeholder="Enter new task..."
+          cancelText="Cancel"
+          accepText="Create"
+        />
       </ModalCard>
     </div>
   );
