@@ -1,5 +1,7 @@
 import React from "react";
 import styles from "./../TodoItem/TodoItem.module.scss";
+import useOverflowMessage from "../../hooks/useOverflowMessage";
+import useAddActions from "../../hooks/useAddActions";
 
 interface ModalContentProps {
   value: string;
@@ -26,9 +28,20 @@ const ModalContent: React.FC<ModalContentProps> = ({
   cancelText,
   accepText,
 }) => {
+  const { overflowMessage } = useOverflowMessage(1000);
+
   return (
     <>
       <div className={styles.textarea_container}>
+        {overflowMessage && (
+          <div
+            className={`${styles.overflowMessage} ${
+              isModalOpen ? styles.modalVisible : ""
+            }`}
+          >
+            {overflowMessage}
+          </div>
+        )}
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
