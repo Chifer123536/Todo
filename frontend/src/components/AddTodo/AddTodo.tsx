@@ -19,7 +19,7 @@ const AddTodo: React.FC = () => {
 
   useHotkey(setIsModalOpen);
   const { overflowMessage, showMessage } = useOverflowMessage(1000);
-  const { title, showLimitHint, handleInputChange, handleSubmit } =
+  const { title, showLimitHint, handleInputChange, handleSubmit, isAdding } =
     useAddActions(limit, maxTodos, todosLength, setIsModalOpen, showMessage);
 
   const handleOpenModal = () => setIsModalOpen(true);
@@ -49,9 +49,10 @@ const AddTodo: React.FC = () => {
         <button
           type="button"
           className={styles.addTodoButton}
+          disabled={isAdding}
           onClick={handleOpenModal}
         >
-          Add
+          {isAdding ? "Adding..." : "Add"}
         </button>
       </form>
 

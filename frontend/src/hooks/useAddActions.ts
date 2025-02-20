@@ -13,7 +13,7 @@ const useAddActions = (
   const dispatch: AppDispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [showLimitHint, setShowLimitHint] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   const handleInputChange = (value: string) => {
     const excess = value.length - limit;
@@ -27,7 +27,7 @@ const useAddActions = (
   const handleSubmit = async (e?: FormEvent) => {
     e?.preventDefault();
 
-    if (loading) return;
+    if (isAdding) return;
 
     if (title.length > limit) {
       showMessage(`Limit exceeded -${title.length - limit} `);
@@ -45,7 +45,7 @@ const useAddActions = (
     }
 
     try {
-      setLoading(true);
+      setIsAdding(true);
       await dispatch(addTodo({ title, completed: false })).unwrap();
       setIsModalOpen(false);
       setTitle("");
@@ -53,14 +53,14 @@ const useAddActions = (
       console.error("Error adding todo", error);
       showMessage("Error adding todo, please try again.");
     } finally {
-      setLoading(false);
+      setIsAdding(false);
     }
   };
 
   return {
     title,
     showLimitHint,
-    loading,
+    isAdding,
     handleInputChange,
     handleSubmit,
   };

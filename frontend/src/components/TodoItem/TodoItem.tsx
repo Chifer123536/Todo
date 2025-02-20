@@ -8,10 +8,9 @@ import useHotkey from "../../hooks/useHotkey";
 
 interface ITodoItemProps {
   todo: ITodo;
-  loading: boolean;
 }
 
-const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
+const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
   const {
     handleEditSave,
     handleDelete,
@@ -21,7 +20,10 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
     setIsModalOpen,
     editedTitle,
     showLimitHint,
+    isEditing,
+    isDeleting,
   } = useItemActions(todo);
+
   useHotkey(setIsModalOpen);
 
   return (
@@ -36,22 +38,20 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
           type="checkbox"
           className={styles.custom_checkbox}
           checked={todo.completed}
-          disabled={loading}
+          disabled={isEditing || isDeleting}
           onChange={handleChange}
         />
         <h3
           className={`${styles.todo_title} ${
             todo.completed ? styles.completed : ""
           }`}
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            if (!isEditing || !isDeleting) setIsModalOpen(true);
+          }}
         >
-          {todo.title}
+          {isDeleting ? "Deleting..." : isEditing ? "Editing..." : todo.title}
         </h3>
-        <button
-          onClick={handleDelete}
-          disabled={loading}
-          className={styles.delete_button}
-        >
+        <button onClick={handleDelete} className={styles.delete_button}>
           Delete
         </button>
       </motion.div>
@@ -64,7 +64,7 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo, loading }) => {
           onCancel={handleDelete}
           limit={999}
           showLimitHint={showLimitHint}
-          isLoading={loading}
+          isLoading={isEditing || isDeleting}
           placeholder="Edit task..."
           cancelText="Delete"
           accepText="Save"
