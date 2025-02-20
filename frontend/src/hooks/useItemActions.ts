@@ -15,9 +15,11 @@ const useItemActions = (todo: ITodo) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
   const [showLimitHint, setShowLimitHint] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeliting] = useState(false);
   const limit = 999;
 
-  const handleEditSave = () => {
+  const handleEditSave = async () => {
     if (todo._id) {
       if (editedTitle.trim() === "") {
         showMessage("Task cannot be empty.");
@@ -29,14 +31,30 @@ const useItemActions = (todo: ITodo) => {
         return;
       }
 
-      dispatch(editTodo({ ...todo, title: editedTitle }));
-      setIsModalOpen(false);
+      try {
+        setIsEditing(true);
+        await dispatch(editTodo({ ...todo, title: editedTitle })).unwrap();
+        setIsModalOpen(false);
+      } catch (error) {
+        console.error("Error editing todo", error);
+        showMessage("Error editing todo, please try again.");
+      } finally {
+        setIsEditing(false);
+      }
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (todo._id) {
-      dispatch(deleteTodo(todo._id));
+      try {
+        setIsDeliting(true);
+        await dispatch(deleteTodo(todo._id)).unwrap();
+      } catch (error) {
+        console.error("Error deleting todo", error);
+        showMessage("Error deleting todo, please try again.");
+      } finally {
+        setIsDeliting(false);
+      }
     }
   };
 
@@ -66,6 +84,8 @@ const useItemActions = (todo: ITodo) => {
     setIsModalOpen,
     editedTitle,
     showLimitHint,
+    isEditing,
+    isDeleting,
   };
 };
 
