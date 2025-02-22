@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../Redux/store";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, MutableRefObject } from "react";
 import { addTodo } from "../Redux/Slices/todoSlice";
 
 const useAddActions = (
@@ -8,7 +8,8 @@ const useAddActions = (
   maxTodos: number,
   todosLength: number,
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  showMessage: (message: string) => void
+  showMessage: (message: string) => void,
+  inputRef: MutableRefObject<HTMLInputElement | null>
 ) => {
   const dispatch: AppDispatch = useDispatch();
   const [title, setTitle] = useState("");
@@ -18,7 +19,7 @@ const useAddActions = (
   const handleInputChange = (value: string) => {
     const excess = value.length - limit;
     if (excess > 0) {
-      showMessage(`Limit exceeded -${excess} `);
+      showMessage(`Limit exceeded -${excess}`);
     }
     setTitle(value);
     setShowLimitHint(value.length >= limit);
@@ -30,7 +31,7 @@ const useAddActions = (
     if (isAdding) return;
 
     if (title.length > limit) {
-      showMessage(`Limit exceeded -${title.length - limit} `);
+      showMessage(`Limit exceeded -${title.length - limit}`);
       return;
     }
 
@@ -47,8 +48,12 @@ const useAddActions = (
     try {
       setIsAdding(true);
       await dispatch(addTodo({ title, completed: false })).unwrap();
-      setIsModalOpen(false);
-      setTitle("");
+      setTitle(""); // Очищаем инпут перед фокусировкой
+
+      // Автофокус на инпут
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
     } catch (error) {
       console.error("Error adding todo", error);
       showMessage("Error adding todo, please try again.");

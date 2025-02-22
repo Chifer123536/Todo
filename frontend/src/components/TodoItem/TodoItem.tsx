@@ -26,6 +26,18 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
 
   useHotkey(setIsModalOpen);
 
+  const getAnimatedText = (text: string) => {
+    return text.split("").map((char, index) => (
+      <span
+        key={index}
+        className={styles.animatedLetter}
+        style={{ animationDelay: `${index * 0.1}s` }}
+      >
+        {char}
+      </span>
+    ));
+  };
+
   return (
     <>
       <motion.div
@@ -41,16 +53,15 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
           disabled={isEditing || isDeleting}
           onChange={handleChange}
         />
-        <h3
-          className={`${styles.todo_title} ${
-            todo.completed ? styles.completed : ""
-          }`}
-          onClick={() => {
-            if (!isEditing || !isDeleting) setIsModalOpen(true);
-          }}
-        >
-          {isDeleting ? "Deleting..." : isEditing ? "Editing..." : todo.title}
+
+        <h3 className={styles.todo_title} onClick={() => setIsModalOpen(true)}>
+          {isDeleting
+            ? getAnimatedText("Deleting...")
+            : isEditing
+            ? getAnimatedText("Editing...")
+            : todo.title}
         </h3>
+
         <button onClick={handleDelete} className={styles.delete_button}>
           Delete
         </button>
