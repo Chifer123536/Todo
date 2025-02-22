@@ -33,8 +33,8 @@ const useItemActions = (todo: ITodo) => {
 
       try {
         setIsEditing(true);
-        await dispatch(editTodo({ ...todo, title: editedTitle })).unwrap();
         setIsModalOpen(false);
+        await dispatch(editTodo({ ...todo, title: editedTitle })).unwrap();
       } catch (error) {
         console.error("Error editing todo", error);
         showMessage("Error editing todo, please try again.");

@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/store";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ModalCard from "../ModalCard/ModalCard";
 import styles from "./AddTodo.module.scss";
 import useHotkey from "../../hooks/useHotkey";
@@ -11,6 +11,7 @@ import ModalContent from "../ModalCard/ModalContent";
 const AddTodo: React.FC = () => {
   const { todosLength } = useSelector((state: RootState) => state.todos);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const limit: number = 999;
   const todosPerPage = 5;
@@ -20,10 +21,22 @@ const AddTodo: React.FC = () => {
   useHotkey(setIsModalOpen);
   const { overflowMessage, showMessage } = useOverflowMessage(1000);
   const { title, showLimitHint, handleInputChange, handleSubmit, isAdding } =
-    useAddActions(limit, maxTodos, todosLength, setIsModalOpen, showMessage);
+    useAddActions(
+      limit,
+      maxTodos,
+      todosLength,
+      setIsModalOpen,
+      showMessage,
+      inputRef
+    );
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit(e);
+  };
 
   return (
     <div className={styles.formContainer}>
@@ -37,14 +50,16 @@ const AddTodo: React.FC = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleFormSubmit}>
         <input
+          ref={inputRef}
           type="text"
           value={title}
+          disabled={isAdding}
           placeholder="Enter new task..."
           onChange={(e) => handleInputChange(e.target.value)}
           className={styles.input}
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
+          onKeyDown={(e) => e.key === "Enter" && handleFormSubmit(e)}
         />
         <button
           type="button"
@@ -52,7 +67,7 @@ const AddTodo: React.FC = () => {
           disabled={isAdding}
           onClick={handleOpenModal}
         >
-          {isAdding ? "Adding..." : "Add"}
+          {isAdding ? "Add..." : "Add"}
         </button>
       </form>
 
@@ -64,7 +79,7 @@ const AddTodo: React.FC = () => {
           onCancel={handleCloseModal}
           limit={limit}
           showLimitHint={showLimitHint}
-          isLoading={false}
+          isLoading={isAdding}
           placeholder="Enter new task..."
           cancelText="Cancel"
           accepText="Create"
