@@ -7,6 +7,7 @@ import useHotkey from "../../hooks/useHotkey";
 import useAddActions from "../../hooks/useAddActions";
 import useOverflowMessage from "../../hooks/useOverflowMessage";
 import ModalContent from "../ModalCard/ModalContent";
+import { getAnimatedText } from "../../utils/getAnimatedText";
 
 const AddTodo: React.FC = () => {
   const { todosLength } = useSelector((state: RootState) => state.todos);
@@ -67,7 +68,7 @@ const AddTodo: React.FC = () => {
           disabled={isAdding}
           onClick={handleOpenModal}
         >
-          {isAdding ? "Add..." : "Add"}
+          {isAdding ? getAnimatedText("Add...") : "Add"}
         </button>
       </form>
 
