@@ -1,0 +1,14 @@
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
+.animatedLetter {
+  display: inline-block;
+  animation: bounce 1s infinite ease-in-out;
+}
