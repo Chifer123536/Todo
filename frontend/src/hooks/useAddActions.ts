@@ -46,9 +46,10 @@ const useAddActions = (
     }
 
     try {
+      setIsModalOpen(false);
       setIsAdding(true);
       await dispatch(addTodo({ title, completed: false })).unwrap();
-      setTitle(""); // Очищаем инпут перед фокусировкой
+      setTitle("");
 
       // Автофокус на инпут
       setTimeout(() => {

@@ -5,6 +5,7 @@ import ModalCard from "../ModalCard/ModalCard";
 import ModalContent from "../ModalCard/ModalContent";
 import useItemActions from "../../hooks/useItemActions";
 import useHotkey from "../../hooks/useHotkey";
+import { getAnimatedText } from "../../utils/getAnimatedText";
 
 interface ITodoItemProps {
   todo: ITodo;
@@ -25,18 +26,6 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
   } = useItemActions(todo);
 
   useHotkey(setIsModalOpen);
-
-  const getAnimatedText = (text: string) => {
-    return text.split("").map((char, index) => (
-      <span
-        key={index}
-        className={styles.animatedLetter}
-        style={{ animationDelay: `${index * 0.1}s` }}
-      >
-        {char}
-      </span>
-    ));
-  };
 
   return (
     <>
