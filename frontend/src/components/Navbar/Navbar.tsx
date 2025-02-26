@@ -12,19 +12,18 @@ const Navbar: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.navbarContent}>
           <div className={styles.logoContainer}>
-            <img
-              src={darkMode ? "/lightLogo.png" : "/darkLogo.png"}
-              className={styles.logo}
-              alt="logo"
-            />
-            <h1
-              className={`${styles.title} ${
-                darkMode ? styles["dark-mode"] : ""
-              }`}
-            >
-              Todo List
-            </h1>
+            <div className={styles.logoWrapper}>
+              <div className={`${styles.hoverArea} ${styles.left}`}></div>
+              <div className={`${styles.hoverArea} ${styles.right}`}></div>
+              <img
+                src={darkMode ? "/lightLogo.png" : "/darkLogo.png"}
+                className={styles.logo}
+                alt="logo"
+              />
+            </div>
+            <h1 className={styles.title}>Todo List</h1>
           </div>
+
           <div className={styles.themeToggleContainer}>
             <ThemeToggle />
           </div>
