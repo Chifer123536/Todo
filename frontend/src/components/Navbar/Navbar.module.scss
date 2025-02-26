@@ -29,20 +29,51 @@
 }
 
 .logoContainer {
+  position: relative;
   display: flex;
   align-items: center;
-  left: 0;
+
+  .logoWrapper {
+    position: relative;
+    display: inline-block;
+  }
 
   .logo {
     height: 4vh;
     width: 4vh;
     margin-right: 1vw;
     rotate: -15deg;
+    transition: transform 1.5s ease-in-out;
   }
 
-  .title {
-    font-size: 2.5vh;
-    font-weight: 600;
-    color: var(--title-color);
+  .hoverArea {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    background: transparent;
+    z-index: 2;
   }
+
+  .left {
+    left: 0;
+  }
+
+  .right {
+    right: 0;
+  }
+
+  .left:hover ~ .logo {
+    transform: rotate(-360deg);
+  }
+
+  .right:hover ~ .logo {
+    transform: rotate(360deg);
+  }
+}
+
+.title {
+  font-size: 2.5vh;
+  font-weight: 600;
+  color: var(--title-color);
 }
