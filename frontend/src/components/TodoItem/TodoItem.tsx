@@ -43,7 +43,12 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
           onChange={handleChange}
         />
 
-        <h3 className={styles.todo_title} onClick={() => setIsModalOpen(true)}>
+        <h3
+          className={`${styles.todo_title} ${
+            todo.completed ? styles.completed : ""
+          }`}
+          onClick={() => setIsModalOpen(true)}
+        >
           {isDeleting
             ? getAnimatedText("Deleting...")
             : isEditing
