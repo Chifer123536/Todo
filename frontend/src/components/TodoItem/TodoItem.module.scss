@@ -54,7 +54,8 @@
     cursor: pointer;
     color: var(--text-color);
 
-    &.completed {
+    &.completed,
+    &.completed span {
       text-decoration: line-through;
       color: var(--todo_item-completed-color);
     }
