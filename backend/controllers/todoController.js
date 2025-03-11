@@ -7,7 +7,7 @@ export const getTodos = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: "Failed to fetch todos",
-      error: err.message, // Более подробная информация об ошибке
+      error: err.message,
     });
   }
 };
@@ -20,7 +20,7 @@ export const createTodo = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: "Failed to create todo",
-      error: err.message, // Более подробная информация об ошибке
+      error: err.message,
     });
   }
 };
@@ -30,7 +30,7 @@ export const updateTodo = async (req, res) => {
     const updatedTodo = await todoModel.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true } // Вернуть обновленный документ и выполнить валидацию
+      { new: true, runValidators: true }
     );
     if (!updatedTodo) {
       return res.status(404).json({ message: "Todo not found" });
@@ -50,7 +50,7 @@ export const deleteTodo = async (req, res) => {
     if (!deletedTodo) {
       return res.status(404).json({ message: "Todo not found" });
     }
-    res.status(204).end(); // Нет тела в ответе при статусе 204
+    res.status(204).end();
   } catch (err) {
     res.status(500).json({
       message: "Failed to delete todo",
