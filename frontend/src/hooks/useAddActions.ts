@@ -49,16 +49,15 @@ const useAddActions = (
       setIsModalOpen(false);
       setIsAdding(true);
       await dispatch(addTodo({ title, completed: false })).unwrap();
-      setTitle("");
-
-      // Автофокус на инпут
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 0);
     } catch (error) {
       console.error("Error adding todo", error);
       showMessage("Error adding todo, please try again.");
     } finally {
+      // Автофокус на инпут
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+      setTitle("");
       setIsAdding(false);
     }
   };

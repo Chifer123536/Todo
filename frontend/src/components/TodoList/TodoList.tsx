@@ -6,6 +6,7 @@ import TodoItem from "../TodoItem/TodoItem";
 import Pagination from "../Pagination/Pagination";
 import styles from "./TodoList.module.scss";
 import Loader from "../Loader/Loader";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 const TodoList: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -60,7 +61,7 @@ const TodoList: React.FC = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <ErrorMessage />;
   }
 
   return (
