@@ -9,6 +9,7 @@ import { getAnimatedText } from "../../utils/getAnimatedText";
 
 interface ITodoItemProps {
   todo: ITodo;
+  loading: boolean;
 }
 
 const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
