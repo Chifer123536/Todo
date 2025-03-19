@@ -12,6 +12,7 @@ const ErrorMessage: React.FC = () => {
         src={`${darkMode ? "/darkError.png" : "/lightError.png"}`}
         className={styles.errorIcon}
         alt="errorImage"
+        onClick={() => window.location.reload()}
       />
     </div>
   );
