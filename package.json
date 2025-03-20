@@ -9,6 +9,6 @@
   "scripts": {
     "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
     "start:frontend": "cd frontend && yarn dev",
-    "start:backend": "cd backend && yarn dev"
+    "start:backend": "cd backend && yarn start:dev"
   }
 }
