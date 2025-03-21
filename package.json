@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^9.1.2"
   },
   "scripts": {
     "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
