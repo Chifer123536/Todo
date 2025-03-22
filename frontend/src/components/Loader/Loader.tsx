@@ -4,10 +4,12 @@ import { RootState } from "../../Redux/store";
 import styles from "./Loader.module.scss";
 
 const Loader: React.FC = () => {
-  const loading = useSelector((state: RootState) => state.todos.loading);
+  const initialLoading = useSelector(
+    (state: RootState) => state.todos.initialLoading
+  );
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
-  if (!loading) return null;
+  if (!initialLoading) return null;
 
   return (
     <div className={styles.loader_container}>

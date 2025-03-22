@@ -10,6 +10,7 @@ export interface ITodo {
 interface IinitialState {
   todos: ITodo[];
   loading: boolean;
+  initialLoading: boolean;
   error: string | null;
   todosLength: number;
 }
@@ -17,6 +18,7 @@ interface IinitialState {
 const initialState: IinitialState = {
   todos: [],
   loading: false,
+  initialLoading: true,
   error: null,
   todosLength: 0,
 };
@@ -72,11 +74,13 @@ const todoSlice = createSlice({
     });
     builder.addCase(getTodos.fulfilled, (state, action) => {
       state.loading = false;
+      state.initialLoading = false;
       state.todos = action.payload;
       state.todosLength = action.payload.length;
     });
     builder.addCase(getTodos.rejected, (state, action) => {
       state.loading = false;
+      state.initialLoading = false;
       state.error = action.error.message || "Failed to get todos";
     });
 
@@ -113,7 +117,7 @@ const todoSlice = createSlice({
     // deleteTodo
     builder.addCase(deleteTodo.fulfilled, (state, action) => {
       state.todos = state.todos.filter((todo) => todo._id !== action.payload);
-      state.todosLength = Math.max(0, state.todosLength - 1); // Уменьшаем количество туду, минимально 0
+      state.todosLength = Math.max(0, state.todosLength - 1);
     });
     builder.addCase(deleteTodo.rejected, (state, action) => {
       state.error = action.error.message || "Failed to delete todo";
@@ -125,12 +129,9 @@ const todoSlice = createSlice({
     });
     builder.addCase(changeStatus.fulfilled, (state, action) => {
       state.loading = false;
-      state.todos = state.todos.map((todo) => {
-        if (todo._id === action.payload._id) {
-          return action.payload;
-        }
-        return todo;
-      });
+      state.todos = state.todos.map((todo) =>
+        todo._id === action.payload._id ? action.payload : todo
+      );
     });
 
     builder.addCase(changeStatus.rejected, (state, action) => {
