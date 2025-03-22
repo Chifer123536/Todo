@@ -1,6 +1,6 @@
+import { memo, useState, useRef, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/store";
-import { useState, useRef } from "react";
 import ModalCard from "../ModalCard/ModalCard";
 import styles from "./AddTodo.module.scss";
 import useHotkey from "../../hooks/useHotkey";
@@ -9,8 +9,10 @@ import useOverflowMessage from "../../hooks/useOverflowMessage";
 import ModalContent from "../ModalCard/ModalContent";
 import { getAnimatedText } from "../../utils/getAnimatedText";
 
-const AddTodo: React.FC = () => {
-  const { todosLength } = useSelector((state: RootState) => state.todos);
+const AddTodo: React.FC = memo(() => {
+  const todosLength = useSelector(
+    (state: RootState) => state.todos.todosLength
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -31,13 +33,16 @@ const AddTodo: React.FC = () => {
       inputRef
     );
 
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
+  const handleOpenModal = useCallback(() => setIsModalOpen(true), []);
+  const handleCloseModal = useCallback(() => setIsModalOpen(false), []);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSubmit(e);
-  };
+  const handleFormSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      handleSubmit(e);
+    },
+    [handleSubmit]
+  );
 
   return (
     <div className={styles.formContainer}>
@@ -88,6 +93,6 @@ const AddTodo: React.FC = () => {
       </ModalCard>
     </div>
   );
-};
+});
 
 export default AddTodo;

@@ -5,7 +5,6 @@ import { getTodos } from "../../Redux/Slices/todoSlice";
 import TodoItem from "../TodoItem/TodoItem";
 import Pagination from "../Pagination/Pagination";
 import styles from "./TodoList.module.scss";
-import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 const TodoList: React.FC = () => {
@@ -55,10 +54,6 @@ const TodoList: React.FC = () => {
     const end = currentPage * todosPerPage;
     return todos.slice(start, end);
   }, [todos, currentPage]);
-
-  if (loading) {
-    return <Loader />;
-  }
 
   if (error) {
     return <ErrorMessage />;

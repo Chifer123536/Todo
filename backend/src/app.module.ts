@@ -5,7 +5,7 @@ import { TodosModule } from "./todos/todos.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot(), // Подключаем .env
+    ConfigModule.forRoot(), // импорт.env
     DatabaseModule,
     TodosModule,
   ],

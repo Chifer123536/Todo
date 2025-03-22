@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ITodo } from "../../Redux/Slices/todoSlice";
 import styles from "./TodoItem.module.scss";
@@ -12,7 +13,7 @@ interface ITodoItemProps {
   loading: boolean;
 }
 
-const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
+const TodoItem: React.FC<ITodoItemProps> = memo(({ todo }) => {
   const {
     handleEditSave,
     handleDelete,
@@ -27,6 +28,9 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
   } = useItemActions(todo);
 
   useHotkey(setIsModalOpen);
+
+  const openModal = useCallback(() => setIsModalOpen(true), [setIsModalOpen]);
+  const closeModal = useCallback(() => setIsModalOpen(false), [setIsModalOpen]);
 
   return (
     <>
@@ -48,7 +52,7 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
           className={`${styles.todo_title} ${
             todo.completed ? styles.completed : ""
           }`}
-          onClick={() => setIsModalOpen(true)}
+          onClick={openModal}
         >
           {isDeleting
             ? getAnimatedText("Deleting...")
@@ -62,7 +66,7 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
         </button>
       </motion.div>
 
-      <ModalCard isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <ModalCard isOpen={isModalOpen} onClose={closeModal}>
         <ModalContent
           value={editedTitle}
           onChange={handleTextareaChange}
@@ -78,6 +82,6 @@ const TodoItem: React.FC<ITodoItemProps> = ({ todo }) => {
       </ModalCard>
     </>
   );
-};
+});
 
 export default TodoItem;
