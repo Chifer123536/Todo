@@ -1,0 +1,4 @@
+{
+  "parser": "babel-ts",
+  "plugins": ["@babel/plugin-syntax-decorators"]
+}

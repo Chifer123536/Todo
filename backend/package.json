@@ -43,6 +43,8 @@
     "rxjs": "^7.1.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.25.9",
+    "@babel/preset-typescript": "^7.27.0",
     "@nestjs/cli": "^11.0.5",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/cookie-parser": "^1.4.8",

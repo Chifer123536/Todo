@@ -1,21 +1,23 @@
 import {
-  ValidationArguments,
-  ValidatorConstraint,
-  ValidatorConstraintInterface
+	IsEmail,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+	MinLength
 } from 'class-validator'
 
-import { RegisterDto } from '@/auth/dto/register.dto'
+export class LoginDto {
+	@IsString({ message: 'Email must be a string.' })
+	@IsEmail({}, { message: 'Invalid email format.' })
+	@IsNotEmpty({ message: 'Email is required.' })
+	email: string
 
-@ValidatorConstraint({ name: 'IsPasswordsMatching', async: false })
-export class IsPasswordsMatchingConstraint
-  implements ValidatorConstraintInterface
-{
-  public validate(passwordRepeat: string, args: ValidationArguments) {
-    const obj = args.object as RegisterDto
-    return obj.password === passwordRepeat
-  }
+	@IsString({ message: 'Password must be a string.' })
+	@IsNotEmpty({ message: 'Password cannot be empty.' })
+	@MinLength(6, { message: 'Password must be at least 6 characters long.' })
+	password: string
 
-  public defaultMessage(validationArguments?: ValidationArguments) {
-    return 'Passwords do not match'
-  }
+	@IsOptional()
+	@IsString()
+	code: string
 }

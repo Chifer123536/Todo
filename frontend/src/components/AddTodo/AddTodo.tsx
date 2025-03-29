@@ -11,7 +11,7 @@ import { getAnimatedText } from "../../utils/getAnimatedText";
 
 const AddTodo: React.FC = memo(() => {
   const todosLength = useSelector(
-    (state: RootState) => state.todos.todosLength
+    (state: RootState) => state.todos.todosLength,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,7 +30,7 @@ const AddTodo: React.FC = memo(() => {
       todosLength,
       setIsModalOpen,
       showMessage,
-      inputRef
+      inputRef,
     );
 
   const handleOpenModal = useCallback(() => setIsModalOpen(true), []);
@@ -41,7 +41,7 @@ const AddTodo: React.FC = memo(() => {
       e.preventDefault();
       handleSubmit(e);
     },
-    [handleSubmit]
+    [handleSubmit],
   );
 
   return (
