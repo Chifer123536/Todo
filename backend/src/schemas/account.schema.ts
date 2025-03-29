@@ -19,7 +19,8 @@ export class Account extends Document {
   expiresAt!: number;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: "User" })
-  userId!: string;
+  userId!: MongooseSchema.Types.ObjectId;
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);
+export type AccountDocument = Account & Document;
