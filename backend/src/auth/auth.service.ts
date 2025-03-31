@@ -8,17 +8,26 @@ import {
 import { RegisterDto } from "./dto/register.dto";
 import { UserService } from "@/user/user.service";
 import { AuthMethod } from "@/shared/enums";
-import { User } from "@/schemas/user.schema";
+import { User, UserDocument } from "@/schemas/user.schema";
+import { Account, AccountDocument } from "@/schemas/account.schema";
+
 import { Request, Response } from "express";
 import { LoginDto } from "./dto/login.dto";
 import { verify } from "argon2";
 import { ConfigService } from "@nestjs/config";
+import { ProviderService } from "./provider/provider.service";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 
 @Injectable()
 export class AuthService {
   public constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Account.name)
+    private readonly accountModel: Model<AccountDocument>,
     private readonly userService: UserService,
-    private readonly ConfigService: ConfigService
+    private readonly ConfigService: ConfigService,
+    private readonly providerService: ProviderService
   ) {}
 
   public async register(req: Request, dto: RegisterDto) {
@@ -51,6 +60,53 @@ export class AuthService {
 
     if (!isValidPassword) {
       throw new UnauthorizedException("Invalid credentials");
+    }
+
+    return this.saveSession(req, user);
+  }
+
+  public async extractProfileFromCode(
+    req: Request,
+    provider: string,
+    code: string
+  ) {
+    const providerInstance = this.providerService.findByService(provider);
+    const profile = await providerInstance.findUserByCode(code);
+    console.log(profile);
+
+    const account = await this.accountModel.findOne({
+      id: profile.id,
+      provider: profile.provider,
+    });
+
+    let user = account?.userId
+      ? await this.userModel.findById(account.userId)
+      : null;
+
+    if (user) {
+      return this.saveSession(req, user);
+    }
+
+    user = await this.userService.create(
+      profile.email,
+      "",
+      profile.name,
+      profile.picture,
+      AuthMethod[profile.provider.toUpperCase()],
+      true
+    );
+
+    if (!account) {
+      await this.accountModel.create({
+        data: {
+          userId: user.id,
+          type: "oauth",
+          provider: profile.provider,
+          accessToken: profile.access_token,
+          refreshToken: profile.refresh_token,
+          expiresAt: profile.expires_at,
+        },
+      });
     }
 
     return this.saveSession(req, user);
