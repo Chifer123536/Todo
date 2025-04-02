@@ -18,6 +18,7 @@ import { ConfigService } from "@nestjs/config";
 import { ProviderService } from "./provider/provider.service";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { EmailConfirmationService } from "./email-confirmation/email-confirmation.service";
 
 @Injectable()
 export class AuthService {
@@ -27,7 +28,8 @@ export class AuthService {
     private readonly accountModel: Model<AccountDocument>,
     private readonly userService: UserService,
     private readonly ConfigService: ConfigService,
-    private readonly providerService: ProviderService
+    private readonly providerService: ProviderService,
+    private readonly emailConfirmationService: EmailConfirmationService
   ) {}
 
   public async register(req: Request, dto: RegisterDto) {
@@ -46,7 +48,11 @@ export class AuthService {
       false
     );
 
-    return this.saveSession(req, newUser);
+    await this.emailConfirmationService.sendVerificationToken(newUser.email);
+
+    return {
+      message: "User registered successfully. Please, confirm your email.",
+    };
   }
 
   public async login(req: Request, dto: LoginDto) {
@@ -60,6 +66,13 @@ export class AuthService {
 
     if (!isValidPassword) {
       throw new UnauthorizedException("Invalid credentials");
+    }
+
+    if (!user.isVerified) {
+      await this.emailConfirmationService.sendVerificationToken(user.email);
+      throw new UnauthorizedException(
+        "User is not verified. Please, confirm your email."
+      );
     }
 
     return this.saveSession(req, user);
@@ -124,7 +137,7 @@ export class AuthService {
     });
   }
 
-  private async saveSession(req: Request, user: User) {
+  public async saveSession(req: Request, user: User) {
     return new Promise((resolve, reject) => {
       req.session.userId = user.id;
 

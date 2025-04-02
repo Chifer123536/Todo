@@ -18,3 +18,4 @@ export class Token extends Document {
 }
 
 export const TokenSchema = SchemaFactory.createForClass(Token);
+export type TokenDocument = Token & Document;

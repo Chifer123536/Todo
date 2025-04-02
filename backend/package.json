@@ -37,7 +37,8 @@
     "node-gyp": "^11.1.0",
     "nodemailer": "^6.4.6",
     "prettier": "^2.0.0",
-    "react": "^18.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "redis-cli": "^2.1.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.1.0"
@@ -50,6 +51,7 @@
     "@types/cookie-parser": "^1.4.8",
     "@types/express-session": "^1.18.1",
     "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.4"
   }

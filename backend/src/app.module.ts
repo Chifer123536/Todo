@@ -6,6 +6,8 @@ import { TodosModule } from "./todos/todos.module";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { ProviderModule } from "./auth/provider/provider.module";
+import { MailModule } from "./libs/mail/mail.module";
+import { EmailConfirmationModule } from "./auth/email-confirmation/email-confirmation.module";
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { ProviderModule } from "./auth/provider/provider.module";
     AuthModule,
     UserModule,
     ProviderModule,
+    MailModule,
+    EmailConfirmationModule,
   ],
 })
 export class AppModule {}
