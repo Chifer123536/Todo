@@ -9,6 +9,7 @@ import { ProviderModule } from "./auth/provider/provider.module";
 import { MailModule } from "./libs/mail/mail.module";
 import { EmailConfirmationModule } from "./auth/email-confirmation/email-confirmation.module";
 import { PasswordRecoveryModule } from "./password-recovery/password-recovery.module";
+import { TwoFactorAuthModule } from "./auth/two-factor-auth/two-factor-auth.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PasswordRecoveryModule } from "./password-recovery/password-recovery.mo
     MailModule,
     EmailConfirmationModule,
     PasswordRecoveryModule,
+    TwoFactorAuthModule,
   ],
 })
 export class AppModule {}

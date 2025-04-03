@@ -18,6 +18,7 @@ import { ProviderService } from "./provider/provider.service";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { EmailConfirmationService } from "./email-confirmation/email-confirmation.service";
+import { TwoFactorAuthService } from "./two-factor-auth/two-factor-auth.service";
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,8 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly configService: ConfigService,
     private readonly providerService: ProviderService,
-    private readonly emailConfirmationService: EmailConfirmationService
+    private readonly emailConfirmationService: EmailConfirmationService,
+    private readonly twoFactorAuthService: TwoFactorAuthService
   ) {}
 
   public async register(req: Request, dto: RegisterDto) {
@@ -71,6 +73,21 @@ export class AuthService {
       await this.emailConfirmationService.sendVerificationToken(user.email);
       throw new UnauthorizedException(
         "User is not verified. Please, confirm your email."
+      );
+    }
+
+    if (user.isTwoFactorEnabled) {
+      if (!dto.code) {
+        await this.twoFactorAuthService.sendTwoFactorToken(user.email);
+
+        return {
+          message: "Look at your email for the code on two-factor auth.",
+        };
+      }
+
+      await this.twoFactorAuthService.validateTwoFactorToken(
+        user.email,
+        dto.code
       );
     }
 

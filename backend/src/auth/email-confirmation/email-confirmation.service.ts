@@ -80,7 +80,7 @@ export class EmailConfirmationService {
       verificationToken.token
     );
 
-    return true;
+    return verificationToken;
   }
 
   private async generateVerificationToken(email: string) {
@@ -89,11 +89,13 @@ export class EmailConfirmationService {
 
     await this.tokenModel.deleteOne({ email, type: TokenType.VERIFICATION });
 
-    return this.tokenModel.create({
+    const verificationToken = await this.tokenModel.create({
       email,
       token,
       expiresIn,
       type: TokenType.VERIFICATION,
     });
+
+    return verificationToken;
   }
 }
