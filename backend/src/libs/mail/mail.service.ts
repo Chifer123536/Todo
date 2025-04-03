@@ -3,9 +3,9 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { render } from "@react-email/components";
 
-// import { ResetPasswordTemplate } from "./templates/reset-password.template";
 // import { TwoFactorAuthTemplate } from "./templates/two-factor-auth.template";
 import { ConfirmationTemplate } from "./templates/confirmation.template";
+import { ResetPasswordTemplate } from "./templates/reset-password.template";
 
 @Injectable()
 export class MailService {
@@ -18,15 +18,15 @@ export class MailService {
     const domain = this.configService.getOrThrow<string>("ALLOWED_ORIGIN");
     const html = await render(ConfirmationTemplate({ domain, token }));
 
-    return this.sendMail(email, "Подтверждение почты", html);
+    return this.sendMail(email, "Confirm your email", html);
   }
 
-  // public async sendPasswordResetEmail(email: string, token: string) {
-  //   const domain = this.configService.getOrThrow<string>("ALLOWED_ORIGIN");
-  //   const html = await render(ResetPasswordTemplate({ domain, token }));
+  public async sendPasswordResetEmail(email: string, token: string) {
+    const domain = this.configService.getOrThrow<string>("ALLOWED_ORIGIN");
+    const html = await render(ResetPasswordTemplate({ domain, token }));
 
-  //   return this.sendMail(email, "Сброс пароля", html);
-  // }
+    return this.sendMail(email, "Password reset", html);
+  }
 
   // public async sendTwoFactorTokenEmail(email: string, token: string) {
   //   const html = await render(TwoFactorAuthTemplate({ token }));

@@ -43,17 +43,15 @@ export class EmailConfirmationService {
       );
     }
 
-    const hasExpired = new Date(existingToken.expiresIn) < new Date();
-
-    if (hasExpired) {
+    if (new Date(existingToken.expiresIn) < new Date()) {
       throw new BadRequestException(
         "Verification token has expired. Please request a new verification token."
       );
     }
 
-    const existingUser = await this.userService.findByEmail(
-      existingToken.email
-    );
+    const existingUser = await this.userModel.findOne({
+      email: existingToken.email,
+    });
 
     if (!existingUser) {
       throw new NotFoundException(
@@ -89,25 +87,13 @@ export class EmailConfirmationService {
     const token = uuidv4();
     const expiresIn = new Date(new Date().getTime() + 3600 * 1000);
 
-    const existingToken = await this.tokenModel.findOne({
-      email,
-      type: TokenType.VERIFICATION,
-    });
+    await this.tokenModel.deleteOne({ email, type: TokenType.VERIFICATION });
 
-    if (existingToken) {
-      await this.tokenModel.deleteOne({
-        _id: existingToken._id,
-        type: TokenType.VERIFICATION,
-      });
-    }
-
-    const verificationToken = await this.tokenModel.create({
+    return this.tokenModel.create({
       email,
       token,
       expiresIn,
       type: TokenType.VERIFICATION,
     });
-
-    return verificationToken;
   }
 }

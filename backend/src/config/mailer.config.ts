@@ -1,4 +1,3 @@
-import { isDev } from "@/libs/common/utils/is-dev.util";
 import { MailerOptions } from "@nestjs-modules/mailer";
 import { ConfigService } from "@nestjs/config";
 
@@ -8,10 +7,10 @@ export const getMailerConfig = async (
   transport: {
     host: configService.getOrThrow<string>("MAIL_HOST"),
     port: configService.getOrThrow<number>("MAIL_PORT"),
-    secure: !isDev(configService),
+    secure: false,
     auth: {
       user: configService.getOrThrow<string>("MAIL_LOGIN"),
-      paass: configService.getOrThrow<string>("MAIL_PASSWORD"),
+      pass: configService.getOrThrow<string>("MAIL_PASSWORD"),
     },
   },
   defaults: {

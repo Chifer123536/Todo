@@ -10,7 +10,6 @@ import { UserService } from "@/user/user.service";
 import { AuthMethod } from "@/shared/enums";
 import { User, UserDocument } from "@/schemas/user.schema";
 import { Account, AccountDocument } from "@/schemas/account.schema";
-
 import { Request, Response } from "express";
 import { LoginDto } from "./dto/login.dto";
 import { verify } from "argon2";
@@ -27,7 +26,7 @@ export class AuthService {
     @InjectModel(Account.name)
     private readonly accountModel: Model<AccountDocument>,
     private readonly userService: UserService,
-    private readonly ConfigService: ConfigService,
+    private readonly configService: ConfigService,
     private readonly providerService: ProviderService,
     private readonly emailConfirmationService: EmailConfirmationService
   ) {}
@@ -111,14 +110,12 @@ export class AuthService {
 
     if (!account) {
       await this.accountModel.create({
-        data: {
-          userId: user.id,
-          type: "oauth",
-          provider: profile.provider,
-          accessToken: profile.access_token,
-          refreshToken: profile.refresh_token,
-          expiresAt: profile.expires_at,
-        },
+        userId: user.id,
+        type: "oauth",
+        provider: profile.provider,
+        accessToken: profile.access_token,
+        refreshToken: profile.refresh_token,
+        expiresAt: profile.expires_at,
       });
     }
 
@@ -131,8 +128,8 @@ export class AuthService {
         if (err) {
           return reject(new InternalServerErrorException("Failed to logout"));
         }
-        res.clearCookie(this.ConfigService.getOrThrow<string>("SESSION_NAME")),
-          resolve();
+        res.clearCookie(this.configService.getOrThrow<string>("SESSION_NAME"));
+        resolve();
       });
     });
   }
