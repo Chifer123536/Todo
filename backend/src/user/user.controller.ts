@@ -1,8 +1,17 @@
-import { Controller, Get, HttpCode, HttpStatus, Param } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+} from "@nestjs/common";
 import { UserService } from "./user.service";
 import { AuthoRized } from "@/auth/decorators/authorized.decorator";
 import { Authorization } from "@/auth/decorators/auth.decorator";
 import { UserRole } from "@/shared/enums";
+import { UpdateUserDto } from "./dto/apdate-user.dto";
 
 @Controller("users")
 export class UserController {
@@ -20,5 +29,15 @@ export class UserController {
   @Get("by-id/:id")
   public async findById(@Param("id") id: string) {
     return this.userService.findById(id);
+  }
+
+  @Authorization()
+  @HttpCode(HttpStatus.OK)
+  @Patch("profile")
+  public async updateProfile(
+    @AuthoRized("id") userId: string,
+    @Body() dto: UpdateUserDto
+  ) {
+    return this.userService.update(userId, dto);
   }
 }

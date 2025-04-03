@@ -1,35 +1,45 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { AuthMethod } from "@/shared/enums";
+import { hash } from "argon2";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { User, UserDocument } from "../schemas/user.schema";
-import { hash } from "argon2";
+
+import { User, UserDocument } from "@/schemas/user.schema";
+import { UpdateUserDto } from "@/user/dto/apdate-user.dto";
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>
+  ) {}
 
-  async findById(id: string) {
-    const user = await this.userModel.findById(id).populate("accounts").exec();
+  public async findById(id: string) {
+    const user = await this.userModel.findById(id).populate("accounts");
+
     if (!user) {
-      throw new NotFoundException("User was not found");
+      throw new NotFoundException("User not found");
     }
+
     return user;
   }
 
-  async findByEmail(email: string) {
-    return this.userModel.findOne({ email }).populate("accounts").exec();
+  public async findByEmail(email: string) {
+    const user = await this.userModel.findOne({ email }).populate("accounts");
+
+    return user;
   }
 
-  async create(
+  public async create(
     email: string,
     password: string,
     displayName: string,
     picture: string,
-    method: string,
+    method: AuthMethod,
     isVerified: boolean
   ) {
     const hashedPassword = password ? await hash(password) : "";
-    const user = new this.userModel({
+
+    const user = await this.userModel.create({
       email,
       password: hashedPassword,
       displayName,
@@ -37,6 +47,23 @@ export class UserService {
       method,
       isVerified,
     });
-    return user.save();
+
+    return user;
+  }
+
+  public async update(userId: string, dto: UpdateUserDto) {
+    const user = await this.findById(userId);
+
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      user.id,
+      {
+        email: dto.email,
+        displayName: dto.name,
+        isTwoFactorEnabled: dto.isTwoFactorEnabled,
+      },
+      { new: true }
+    );
+
+    return updatedUser;
   }
 }
