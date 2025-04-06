@@ -10,6 +10,7 @@ import { getProvidersConfig } from "@/config/providers.config";
 import { MongooseModule } from "@nestjs/mongoose";
 import { User, UserSchema } from "@/schemas/user.schema";
 import { Account, AccountSchema } from "@/schemas/account.schema";
+import { Token, TokenSchema } from "@/schemas/token.schema"; // <--- Импортируем Token
 import { EmailConfirmationModule } from "./email-confirmation/email-confirmation.module";
 import { UserService } from "@/user/user.service";
 import { MailService } from "@/libs/mail/mail.service";
@@ -20,6 +21,7 @@ import { TwoFactorAuthService } from "./two-factor-auth/two-factor-auth.service"
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Account.name, schema: AccountSchema },
+      { name: Token.name, schema: TokenSchema },
     ]),
 
     ProviderModule.registerAsync({
