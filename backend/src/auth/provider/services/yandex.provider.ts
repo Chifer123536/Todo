@@ -1,5 +1,5 @@
 import { BaseOAuthService } from "./base-oauth.service";
-import { TypeProviderOptions } from "./types/provider.options.types";
+import { TypeProviderOptions } from "./types/provider-options.types";
 import { TypeUserInfo } from "./types/user-info-types";
 
 export class YandexProvider extends BaseOAuthService {

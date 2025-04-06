@@ -101,7 +101,6 @@ export class AuthService {
   ) {
     const providerInstance = this.providerService.findByService(provider);
     const profile = await providerInstance.findUserByCode(code);
-    console.log(profile);
 
     const account = await this.accountModel.findOne({
       id: profile.id,
@@ -116,14 +115,28 @@ export class AuthService {
       return this.saveSession(req, user);
     }
 
-    user = await this.userService.create(
-      profile.email,
-      "",
-      profile.name,
-      profile.picture,
-      AuthMethod[profile.provider.toUpperCase()],
-      true
-    );
+    try {
+      user = await this.userService.create(
+        profile.email,
+        "",
+        profile.name,
+        profile.picture,
+        AuthMethod[profile.provider.toUpperCase()],
+        true
+      );
+    } catch (error: any) {
+      if (
+        error?.code === 11000 &&
+        error?.keyPattern?.email &&
+        error?.keyValue?.email
+      ) {
+        throw new ConflictException(
+          `A user with email "${error.keyValue.email}" already exists`
+        );
+      }
+
+      throw error;
+    }
 
     if (!account) {
       await this.accountModel.create({

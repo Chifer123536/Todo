@@ -7,8 +7,12 @@ export class User extends Document {
   @Prop({ required: true, unique: true })
   email!: string;
 
-  @Prop({ required: true })
-  password!: string;
+  @Prop({
+    required: function (this: User) {
+      return this.method === AuthMethod.CREDENTIALS; // CREDENTIALS == password login
+    },
+  })
+  password?: string;
 
   @Prop({ required: true })
   displayName!: string;

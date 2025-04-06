@@ -3,7 +3,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import { TypeBaseProviderOptions } from "./types/base-provider.options.types";
+
+import { TypeBaseProviderOptions } from "./types/base-provider-options.types";
 import { TypeUserInfo } from "./types/user-info-types";
 
 @Injectable()
@@ -44,26 +45,26 @@ export class BaseOAuthService {
       grant_type: "authorization_code",
     });
 
-    const tokenRequest = await fetch(this.options.access_url, {
+    const tokensRequest = await fetch(this.options.access_url, {
       method: "POST",
       body: tokenQuery,
       headers: {
-        "Content-type": "application/x-www-form-urlencoded", //Тип содержимого
-        Accept: "application/json", //Тип ответа
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
       },
     });
 
-    if (!tokenRequest.ok) {
+    if (!tokensRequest.ok) {
       throw new BadRequestException(
-        `Failed to retrieve user with {${this.options.profile_url}}. Please check the validity of the access token.`
+        `Failed to retrieve the user from ${this.options.profile_url}. Please check the validity of the access token.`
       );
     }
 
-    const tokens = await tokenRequest.json();
+    const tokens = await tokensRequest.json();
 
     if (!tokens.access_token) {
       throw new BadRequestException(
-        `No tokens from ${this.options.access_url}. Please ensure the authorization code is valid.`
+        `No tokens received from ${this.options.access_url}. Ensure that the authorization code is valid.`
       );
     }
 
@@ -75,7 +76,7 @@ export class BaseOAuthService {
 
     if (!userRequest.ok) {
       throw new UnauthorizedException(
-        `Failed to retrieve the user from ${this.options.profile_url}. Please check the access token.`
+        `Failed to retrieve the user from ${this.options.profile_url}. Please check the validity of the access token.`
       );
     }
 
@@ -115,6 +116,3 @@ export class BaseOAuthService {
     return this.options.scopes;
   }
 }
-
-// Базовый сервис для работы с OAuth-авторизацией. Предоставляет общий механизм аутентификации через внешних провайдеров (Google, GitHub и т.д.), который затем можно расширять для конкретных провайдеров.
-// Этот сервис: Формирует ссылку для авторизации (getAuthUrl()). Обменивает код на токен и получает пользователя (findUserByCode()). Использует геттеры и сеттеры для удобного управления параметрами. Геттеры позволяют обращаться к свойствам через service.name, service.access_url без скобок. Сеттеры дают возможность изменять baseUrl через service.baseUrl = "..."
