@@ -6,16 +6,16 @@ import { getTodos } from "../Redux/Slices/todoSlice";
 const useTodoListActions = () => {
   const dispatch: AppDispatch = useDispatch();
   const { error, todos, loading, todosLength } = useSelector(
-    (state: RootState) => state.todos
+    (state: RootState) => state.todos,
   );
 
   const todosPerPage = 5;
   const [currentPage, setCurrentPage] = useState<number>(
-    Number(localStorage.getItem("currentPage")) || 1
+    Number(localStorage.getItem("currentPage")) || 1,
   );
   const [prevTodosLength, setPrevTodosLength] = useState(todosLength);
   const firstLoading = useSelector(
-    (state: RootState) => state.todos.initialLoading
+    (state: RootState) => state.todos.initialLoading,
   );
 
   useEffect(() => {
