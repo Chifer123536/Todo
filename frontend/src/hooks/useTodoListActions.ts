@@ -1,38 +1,47 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 import { getTodos } from "../Redux/Slices/todoSlice";
 
 const useTodoListActions = () => {
   const dispatch: AppDispatch = useDispatch();
-  const { error, todos, loading, todosLength } = useSelector(
+  const { error, todos, loading, todosLength, initialLoading } = useSelector(
     (state: RootState) => state.todos,
   );
 
   const todosPerPage = 5;
   const [currentPage, setCurrentPage] = useState<number>(
-    Number(localStorage.getItem("currentPage")) || 1,
+    () => Number(localStorage.getItem("currentPage")) || 1,
   );
-  const [prevTodosLength, setPrevTodosLength] = useState(todosLength);
-  const firstLoading = useSelector(
-    (state: RootState) => state.todos.initialLoading,
-  );
+  const [prevTodosLength, setPrevTodosLength] = useState(0);
+  const didMountRef = useRef(false);
 
   useEffect(() => {
     dispatch(getTodos());
   }, [dispatch]);
 
   useEffect(() => {
-    const lastPage = Math.ceil(todosLength / todosPerPage);
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
 
-    if (prevTodosLength !== 0) {
-      if (todosLength > prevTodosLength && currentPage === lastPage - 1) {
-        setCurrentPage(lastPage);
-        localStorage.setItem("currentPage", lastPage.toString());
-      } else if (todosLength < prevTodosLength && currentPage > lastPage) {
-        setCurrentPage(lastPage);
-        localStorage.setItem("currentPage", lastPage.toString());
-      }
+    const lastPage = Math.max(1, Math.ceil(todosLength / todosPerPage));
+
+    // Если мы на предпоследней странице, переходим на последнюю
+    if (
+      prevTodosLength !== 0 &&
+      todosLength > prevTodosLength &&
+      currentPage === lastPage - 1
+    ) {
+      setCurrentPage(lastPage);
+      localStorage.setItem("currentPage", lastPage.toString());
+    }
+
+    // Если текущая страница больше последней допустимой
+    if (currentPage > lastPage) {
+      setCurrentPage(lastPage);
+      localStorage.setItem("currentPage", lastPage.toString());
     }
 
     setPrevTodosLength(todosLength);
@@ -48,13 +57,14 @@ const useTodoListActions = () => {
     const end = currentPage * todosPerPage;
     return todos.slice(start, end);
   }, [todos, currentPage]);
+
   return {
     error,
     todos,
     loading,
     todosLength,
     currentTodos,
-    firstLoading,
+    firstLoading: initialLoading,
     handlePageChange,
     todosPerPage,
     currentPage,
