@@ -1,11 +1,16 @@
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import "./styles/index.scss";
 import { Provider } from "react-redux";
-import store from "./Redux/store.ts";
+
+import { App } from "@/app/App.tsx";
+import { store } from "@/shared/config/store.ts";
+
+import "./styles/index.scss";
+import { ThemeProvider } from "@/app/providers/ThemeProvider";
 
 createRoot(document.getElementById("root")!).render(
-  <Provider store={store}>
-    <App />
-  </Provider>
+  <ThemeProvider>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </ThemeProvider>,
 );

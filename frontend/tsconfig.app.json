@@ -18,7 +18,13 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Aliases */
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
-  "include": ["src", "src/utils/.ts"]
+  "include": ["src", "src/shared/lib/utils/.ts"]
 }
