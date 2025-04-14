@@ -1,8 +1,7 @@
 import { FormEvent, useState, MutableRefObject } from "react";
-import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "@/shared/config/store";
 import { addTodo } from "@/entities/todo/model/slice";
+import { useAppDispatch } from "@/shared/lib/hooks";
 
 export const useAddActions = (
   limit: number,
@@ -12,7 +11,7 @@ export const useAddActions = (
   showMessage: (message: string) => void,
   inputRef: MutableRefObject<HTMLInputElement | null>,
 ) => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [title, setTitle] = useState("");
   const [showLimitHint, setShowLimitHint] = useState(false);
   const [isAdding, setIsAdding] = useState(false);

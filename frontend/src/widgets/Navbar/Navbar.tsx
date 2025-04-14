@@ -1,13 +1,12 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/shared/config/store";
 
 import { ThemeToggle } from "@/features/ThemeToggle";
 
 import styles from "./Navbar.module.scss";
+import { useAppSelector } from "@/shared/lib/hooks";
 
 export const Navbar: React.FC = () => {
-  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  const darkMode = useAppSelector((state) => state.theme.darkMode);
 
   return (
     <nav className={`${styles.navbar} ${darkMode ? styles["dark-mode"] : ""}`}>

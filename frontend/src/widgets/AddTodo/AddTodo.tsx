@@ -1,18 +1,18 @@
 import { memo, useState, useRef, useCallback } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/shared/config/store";
 
 import { ModalCard, ModalContent } from "@/shared/ui/ModalCard";
-import { useHotkey, useOverflowMessage } from "@/shared/lib/hooks";
+import {
+  useAppSelector,
+  useHotkey,
+  useOverflowMessage,
+} from "@/shared/lib/hooks";
 import { getAnimatedText } from "@/shared/lib/getAnimatedText";
 import { useAddActions } from "@/features/AddTodo";
 
 import styles from "./AddTodo.module.scss";
 
 export const AddTodo: React.FC = memo(() => {
-  const todosLength = useSelector(
-    (state: RootState) => state.todos.todosLength,
-  );
+  const todosLength = useAppSelector((state) => state.todos.todosLength);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 

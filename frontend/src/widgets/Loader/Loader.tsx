@@ -1,14 +1,11 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/shared/config/store";
 
 import styles from "./Loader.module.scss";
+import { useAppSelector } from "@/shared/lib/hooks";
 
 export const Loader: React.FC = () => {
-  const initialLoading = useSelector(
-    (state: RootState) => state.todos.initialLoading,
-  );
-  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  const initialLoading = useAppSelector((state) => state.todos.initialLoading);
+  const darkMode = useAppSelector((state) => state.theme.darkMode);
 
   if (!initialLoading) return null;
 

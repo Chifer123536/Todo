@@ -1,10 +1,8 @@
-import { useSelector } from "react-redux";
-import { RootState } from "@/shared/config/store";
-
 import styles from "./ErrorMessage.module.scss";
+import { useAppSelector } from "@/shared/lib/hooks";
 
 export const ErrorMessage: React.FC = () => {
-  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  const darkMode = useAppSelector((state) => state.theme.darkMode);
 
   return (
     <div className={styles.errorContainer}>

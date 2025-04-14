@@ -1,14 +1,12 @@
-import { useDispatch, useSelector } from "react-redux";
-
 import { toggleTheme } from "@/app/providers/ThemeProvider/model/slice";
-import { AppDispatch, RootState } from "@/shared/config/store";
 import { FaSun, FaMoon } from "react-icons/fa";
 
 import styles from "./ThemeToggle.module.scss";
+import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
 
 export const ThemeToggle: React.FC = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  const dispatch = useAppDispatch();
+  const darkMode = useAppSelector((state) => state.theme.darkMode);
 
   const handleThemeToggle = () => {
     dispatch(toggleTheme());

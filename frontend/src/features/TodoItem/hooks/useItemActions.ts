@@ -1,4 +1,3 @@
-import { useDispatch } from "react-redux";
 import { useState } from "react";
 import {
   changeStatus,
@@ -6,11 +5,11 @@ import {
   editTodo,
   ITodo,
 } from "@/entities/todo/model/slice";
-import { AppDispatch } from "@/shared/config/store";
 import { useOverflowMessage } from "@/shared/lib/hooks/useOverflowMessage";
+import { useAppDispatch } from "@/shared/lib/hooks";
 
 export const useItemActions = (todo: ITodo) => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { overflowMessage, showMessage } = useOverflowMessage(1000);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
