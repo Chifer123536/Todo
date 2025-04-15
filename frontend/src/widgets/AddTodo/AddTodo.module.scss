@@ -1,5 +1,3 @@
-@import "../ModalCard/ModalCard.module.scss";
-
 .formContainer {
   display: flex;
   position: relative;
@@ -22,7 +20,9 @@ form {
   height: 5vh;
   padding: 0 1vw;
   font-size: clamp(1vw, 1vw, 4vw);
-  transition: border 0.25s ease, color 0.25s ease;
+  transition:
+    border 0.25s ease,
+    color 0.25s ease;
   outline: none;
 
   color: var(--input-text-color);

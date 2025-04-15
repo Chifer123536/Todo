@@ -1,6 +1,6 @@
 import React from "react";
 
-import styles from "./../TodoItem/TodoItem.module.scss";
+import styles from "./ModalCard.module.scss";
 
 interface ModalContentProps {
   value: string;
@@ -37,7 +37,9 @@ export const ModalContent: React.FC<ModalContentProps> = ({
           disabled={isLoading}
           className={styles.textarea}
         />
-        <div className={`limit_hint ${showLimitHint ? "visible" : ""}`}>
+        <div
+          className={`${styles.limit_hint} ${showLimitHint ? styles.visible : ""}`}
+        >
           Max length: {limit}
         </div>
       </div>

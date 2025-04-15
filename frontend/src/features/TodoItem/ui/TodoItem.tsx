@@ -2,7 +2,7 @@ import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
 
 import { ITodo } from "@/entities/todo/model/slice";
-import { ModalCard } from "@/shared/ui/ModalCard/ModalCard";
+import { ModalCard } from "@/shared/ui/ModalCard";
 import { ModalContent } from "@/shared/ui/ModalCard/ModalContent";
 import { useItemActions } from "@/features/TodoItem/hooks/useItemActions";
 import { useHotkey } from "@/shared/lib/hooks/useHotkey";

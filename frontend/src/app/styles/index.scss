@@ -1,9 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "./themes/LightTheme.scss";
-@import "./themes/DarkTheme.scss";
-@import "../components/AddTodo/AddTodo.module.scss";
+@import "@/app/providers/ThemeProvider/config/themes/LightTheme.scss";
+@import "@/app/providers/ThemeProvider/config/themes/DarkTheme.scss";
 
 html,
 body {

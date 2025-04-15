@@ -4,7 +4,11 @@ import { FaSun, FaMoon } from "react-icons/fa";
 import styles from "./ThemeToggle.module.scss";
 import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
 
-export const ThemeToggle: React.FC = () => {
+interface ThemeToggleProps {
+  className?: string;
+}
+
+export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
   const dispatch = useAppDispatch();
   const darkMode = useAppSelector((state) => state.theme.darkMode);
 
@@ -13,7 +17,10 @@ export const ThemeToggle: React.FC = () => {
   };
 
   return (
-    <button onClick={handleThemeToggle} className={styles.themeToggle}>
+    <button
+      onClick={handleThemeToggle}
+      className={`${styles.themeToggle} ${className || ""}`}
+    >
       {darkMode ? <FaSun /> : <FaMoon />}
     </button>
   );
