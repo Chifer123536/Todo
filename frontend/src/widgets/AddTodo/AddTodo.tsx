@@ -8,6 +8,7 @@ import {
 } from "@/shared/lib/hooks";
 import { getAnimatedText } from "@/shared/lib/getAnimatedText";
 import { useAddActions } from "@/features/AddTodo";
+import { OverflowMessage } from "@/shared/ui/OverflowMessage/OverflowMessage";
 
 import styles from "./AddTodo.module.scss";
 
@@ -47,13 +48,7 @@ export const AddTodo: React.FC = memo(() => {
   return (
     <div className={styles.formContainer}>
       {overflowMessage && (
-        <div
-          className={`${styles.overflowMessage} ${
-            isModalOpen ? styles.modalVisible : ""
-          }`}
-        >
-          {overflowMessage}
-        </div>
+        <OverflowMessage message={overflowMessage} isModalOpen={isModalOpen} />
       )}
 
       <form onSubmit={handleFormSubmit}>

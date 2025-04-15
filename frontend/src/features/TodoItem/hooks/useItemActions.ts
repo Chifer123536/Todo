@@ -8,9 +8,17 @@ import {
 import { useOverflowMessage } from "@/shared/lib/hooks/useOverflowMessage";
 import { useAppDispatch } from "@/shared/lib/hooks";
 
-export const useItemActions = (todo: ITodo) => {
+export const useItemActions = (
+  todo: ITodo,
+  externalShowMessage?: (msg: string) => void,
+) => {
   const dispatch = useAppDispatch();
-  const { overflowMessage, showMessage } = useOverflowMessage(1000);
+
+  const { overflowMessage, showMessage: internalShowMessage } =
+    useOverflowMessage(1000);
+
+  const showMessage = externalShowMessage || internalShowMessage;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
   const [showLimitHint, setShowLimitHint] = useState(false);
@@ -74,7 +82,7 @@ export const useItemActions = (todo: ITodo) => {
   };
 
   return {
-    overflowMessage,
+    overflowMessage: externalShowMessage ? null : overflowMessage,
     handleEditSave,
     handleDelete,
     handleChange,

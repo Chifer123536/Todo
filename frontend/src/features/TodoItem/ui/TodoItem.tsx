@@ -5,7 +5,8 @@ import { ITodo } from "@/entities/todo/model/slice";
 import { ModalCard } from "@/shared/ui/ModalCard";
 import { ModalContent } from "@/shared/ui/ModalCard/ModalContent";
 import { useItemActions } from "@/features/TodoItem/hooks/useItemActions";
-import { useHotkey } from "@/shared/lib/hooks/useHotkey";
+import { useHotkey, useOverflowMessage } from "@/shared/lib/hooks";
+import { OverflowMessage } from "@/shared/ui/OverflowMessage/OverflowMessage";
 import { getAnimatedText } from "@/shared/lib/getAnimatedText/getAnimatedText";
 
 import styles from "./TodoItem.module.scss";
@@ -15,6 +16,8 @@ interface ITodoItemProps {
 }
 
 export const TodoItem: React.FC<ITodoItemProps> = memo(({ todo }) => {
+  const { overflowMessage, showMessage } = useOverflowMessage(1000);
+
   const {
     handleEditSave,
     handleDelete,
@@ -26,7 +29,7 @@ export const TodoItem: React.FC<ITodoItemProps> = memo(({ todo }) => {
     showLimitHint,
     isEditing,
     isDeleting,
-  } = useItemActions(todo);
+  } = useItemActions(todo, showMessage);
 
   useHotkey(setIsModalOpen);
 
@@ -66,6 +69,10 @@ export const TodoItem: React.FC<ITodoItemProps> = memo(({ todo }) => {
           Delete
         </button>
       </motion.div>
+
+      {overflowMessage && (
+        <OverflowMessage message={overflowMessage} isModalOpen={isModalOpen} />
+      )}
 
       <ModalCard isOpen={isModalOpen} onClose={closeModal}>
         <ModalContent
