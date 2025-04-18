@@ -1,7 +1,7 @@
 import { toggleTheme } from "@/app/providers/ThemeProvider/model/slice";
 import { FaSun, FaMoon } from "react-icons/fa";
 
-import styles from "./ThemeToggle.module.scss";
+import styles from "./themeToggle.module.scss";
 import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
 
 interface ThemeToggleProps {

@@ -1,38 +1,32 @@
 import { memo, useState, useRef, useCallback } from "react";
 
 import { ModalCard, ModalContent } from "@/shared/ui/ModalCard";
-import {
-  useAppSelector,
-  useHotkey,
-  useOverflowMessage,
-} from "@/shared/lib/hooks";
+import { useAppDispatch, useAppSelector, useHotkey } from "@/shared/lib/hooks";
 import { getAnimatedText } from "@/shared/lib/getAnimatedText";
 import { useAddActions } from "@/features/AddTodo";
-import { OverflowMessage } from "@/shared/ui/OverflowMessage/OverflowMessage";
+import { setOverflowMessage } from "@/features/OverflowMessage/model/slice";
 
-import styles from "./AddTodo.module.scss";
+import styles from "./addTodo.module.scss";
 
 export const AddTodo: React.FC = memo(() => {
+  const dispatch = useAppDispatch();
   const todosLength = useAppSelector((state) => state.todos.todosLength);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const limit: number = 999;
   const todosPerPage = 5;
   const maxPages = 10;
   const maxTodos = todosPerPage * maxPages;
 
   useHotkey(setIsModalOpen);
-  const { overflowMessage, showMessage } = useOverflowMessage(1000);
+
+  const showMessage = useCallback(
+    (message: string) => dispatch(setOverflowMessage(message)),
+    [dispatch],
+  );
+
   const { title, showLimitHint, handleInputChange, handleSubmit, isAdding } =
-    useAddActions(
-      limit,
-      maxTodos,
-      todosLength,
-      setIsModalOpen,
-      showMessage,
-      inputRef,
-    );
+    useAddActions(maxTodos, todosLength, setIsModalOpen, showMessage, inputRef);
 
   const handleOpenModal = useCallback(() => setIsModalOpen(true), []);
   const handleCloseModal = useCallback(() => setIsModalOpen(false), []);
@@ -47,10 +41,6 @@ export const AddTodo: React.FC = memo(() => {
 
   return (
     <div className={styles.formContainer}>
-      {overflowMessage && (
-        <OverflowMessage message={overflowMessage} isModalOpen={isModalOpen} />
-      )}
-
       <form onSubmit={handleFormSubmit}>
         <input
           ref={inputRef}
@@ -60,13 +50,12 @@ export const AddTodo: React.FC = memo(() => {
           placeholder="Enter new task..."
           onChange={(e) => handleInputChange(e.target.value)}
           className={styles.input}
-          onKeyDown={(e) => e.key === "Enter" && handleFormSubmit(e)}
         />
         <button
           type="button"
           className={styles.addTodoButton}
-          disabled={isAdding}
           onClick={handleOpenModal}
+          disabled={isAdding}
         >
           {isAdding ? getAnimatedText("Add...") : "Add"}
         </button>
@@ -78,7 +67,7 @@ export const AddTodo: React.FC = memo(() => {
           onChange={handleInputChange}
           onSave={handleSubmit}
           onCancel={handleCloseModal}
-          limit={limit}
+          limit={999}
           showLimitHint={showLimitHint}
           isLoading={isAdding}
           placeholder="Enter new task..."

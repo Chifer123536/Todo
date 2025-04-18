@@ -5,7 +5,7 @@ import { Pagination } from "@/shared/ui/Pagination";
 import { Loader } from "@/widgets/Loader";
 import { ErrorMessage } from "@/widgets/ErrorMessage";
 
-import styles from "./TodoList.module.scss";
+import styles from "./todoList.module.scss";
 
 export const TodoList: React.FC = () => {
   const {

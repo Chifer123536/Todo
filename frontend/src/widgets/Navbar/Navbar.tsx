@@ -1,12 +1,14 @@
 import React from "react";
-
 import { ThemeToggle } from "@/features/ThemeToggle";
-
-import styles from "./Navbar.module.scss";
 import { useAppSelector } from "@/shared/lib/hooks";
+import { getOverflowMessage } from "@/features/OverflowMessage/model/selectors";
+import { OverflowMessage } from "@/features/OverflowMessage/ui/OverflowMessage/OverflowMessage";
+
+import styles from "./navbar.module.scss";
 
 export const Navbar: React.FC = () => {
   const darkMode = useAppSelector((state) => state.theme.darkMode);
+  const overflowMessage = useAppSelector(getOverflowMessage);
 
   return (
     <nav className={`${styles.navbar} ${darkMode ? styles["dark-mode"] : ""}`}>
@@ -24,7 +26,11 @@ export const Navbar: React.FC = () => {
             </div>
             <h1 className={styles.title}>Todo List</h1>
           </div>
-
+          {overflowMessage && (
+            <div className={styles.messageWrapper}>
+              <OverflowMessage />
+            </div>
+          )}
           <div className={styles.themeToggleContainer}>
             <ThemeToggle />
           </div>

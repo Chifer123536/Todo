@@ -4,7 +4,7 @@
   background-color: var(--navbar-background);
   box-shadow: 0 0.4vh 0.6vh #1b1a41;
   position: fixed;
-  z-index: 50;
+  z-index: 1050;
 }
 
 .container {
@@ -22,6 +22,7 @@
   justify-content: space-between;
   align-items: center;
   height: 8vh;
+  position: relative;
 }
 
 .themeButton {
@@ -81,4 +82,12 @@
   font-size: 2.5vh;
   font-weight: 600;
   color: var(--title-color);
+}
+
+.messageWrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
 }

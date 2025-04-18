@@ -5,63 +5,57 @@ import {
   editTodo,
   ITodo,
 } from "@/entities/todo/model/slice";
-import { useOverflowMessage } from "@/shared/lib/hooks/useOverflowMessage";
 import { useAppDispatch } from "@/shared/lib/hooks";
+import { TODO_LIMIT } from "@/features/OverflowMessage/model/slice";
 
 export const useItemActions = (
   todo: ITodo,
-  externalShowMessage?: (msg: string) => void,
+  showMessage: (msg: string) => void,
 ) => {
   const dispatch = useAppDispatch();
-
-  const { overflowMessage, showMessage: internalShowMessage } =
-    useOverflowMessage(1000);
-
-  const showMessage = externalShowMessage || internalShowMessage;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
   const [showLimitHint, setShowLimitHint] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeliting] = useState(false);
-  const limit = 999;
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleEditSave = async () => {
-    if (todo._id) {
-      if (editedTitle.trim() === "") {
-        showMessage("Task cannot be empty.");
-        return;
-      }
+    if (!todo._id) return;
 
-      if (editedTitle.length > limit) {
-        showMessage(`Exceeded limit by ${editedTitle.length - limit}`);
-        return;
-      }
+    if (!editedTitle.trim()) {
+      showMessage("Task cannot be empty.");
+      return;
+    }
 
-      try {
-        setIsEditing(true);
-        setIsModalOpen(false);
-        await dispatch(editTodo({ ...todo, title: editedTitle })).unwrap();
-      } catch (error) {
-        console.error("Error editing todo", error);
-        showMessage("Error editing todo, please try again.");
-      } finally {
-        setIsEditing(false);
-      }
+    if (editedTitle.length > TODO_LIMIT) {
+      showMessage(`Limit exceeded -${editedTitle.length - TODO_LIMIT}`);
+      return;
+    }
+
+    try {
+      setIsEditing(true);
+      setIsModalOpen(false);
+      await dispatch(editTodo({ ...todo, title: editedTitle })).unwrap();
+    } catch (error) {
+      console.error("Error editing todo", error);
+      showMessage("Error editing todo, please try again.");
+    } finally {
+      setIsEditing(false);
     }
   };
 
   const handleDelete = async () => {
-    if (todo._id) {
-      try {
-        setIsDeliting(true);
-        await dispatch(deleteTodo(todo._id)).unwrap();
-      } catch (error) {
-        console.error("Error deleting todo", error);
-        showMessage("Error deleting todo, please try again.");
-      } finally {
-        setIsDeliting(false);
-      }
+    if (!todo._id) return;
+
+    try {
+      setIsDeleting(true);
+      await dispatch(deleteTodo(todo._id)).unwrap();
+    } catch (error) {
+      console.error("Error deleting todo", error);
+      showMessage("Error deleting todo, please try again.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -73,16 +67,15 @@ export const useItemActions = (
 
   const handleTextareaChange = (value: string) => {
     setEditedTitle(value);
-    if (value.length > limit) {
+    if (value.length > TODO_LIMIT) {
       setShowLimitHint(true);
-      showMessage(`Exceeded limit by ${value.length - limit} characters.`);
+      showMessage(`Exceeded limit by ${value.length - TODO_LIMIT} characters.`);
     } else {
       setShowLimitHint(false);
     }
   };
 
   return {
-    overflowMessage: externalShowMessage ? null : overflowMessage,
     handleEditSave,
     handleDelete,
     handleChange,

@@ -2,9 +2,9 @@ import { FormEvent, useState, MutableRefObject } from "react";
 
 import { addTodo } from "@/entities/todo/model/slice";
 import { useAppDispatch } from "@/shared/lib/hooks";
+import { TODO_LIMIT } from "@/features/OverflowMessage/model/slice";
 
 export const useAddActions = (
-  limit: number,
   maxTodos: number,
   todosLength: number,
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -17,12 +17,12 @@ export const useAddActions = (
   const [isAdding, setIsAdding] = useState(false);
 
   const handleInputChange = (value: string) => {
-    const excess = value.length - limit;
+    const excess = value.length - TODO_LIMIT;
     if (excess > 0) {
       showMessage(`Limit exceeded -${excess}`);
     }
     setTitle(value);
-    setShowLimitHint(value.length >= limit);
+    setShowLimitHint(value.length >= TODO_LIMIT);
   };
 
   const handleSubmit = async (e?: FormEvent) => {
@@ -30,8 +30,8 @@ export const useAddActions = (
 
     if (isAdding) return;
 
-    if (title.length > limit) {
-      showMessage(`Limit exceeded -${title.length - limit}`);
+    if (title.length > TODO_LIMIT) {
+      showMessage(`Limit exceeded -${title.length - TODO_LIMIT}`);
       return;
     }
 
@@ -53,7 +53,6 @@ export const useAddActions = (
       console.error("Error adding todo", error);
       showMessage("Error adding todo, please try again.");
     } finally {
-      // Автофокус на инпут
       setTimeout(() => {
         inputRef.current?.focus();
       }, 0);

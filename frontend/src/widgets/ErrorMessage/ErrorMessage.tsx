@@ -1,4 +1,4 @@
-import styles from "./ErrorMessage.module.scss";
+import styles from "./errorMessage.module.scss";
 import { useAppSelector } from "@/shared/lib/hooks";
 
 export const ErrorMessage: React.FC = () => {

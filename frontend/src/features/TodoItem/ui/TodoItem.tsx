@@ -1,22 +1,28 @@
 import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
+import { useAppDispatch } from "@/shared/lib/hooks";
 
 import { ITodo } from "@/entities/todo/model/slice";
 import { ModalCard } from "@/shared/ui/ModalCard";
 import { ModalContent } from "@/shared/ui/ModalCard/ModalContent";
 import { useItemActions } from "@/features/TodoItem/hooks/useItemActions";
-import { useHotkey, useOverflowMessage } from "@/shared/lib/hooks";
-import { OverflowMessage } from "@/shared/ui/OverflowMessage/OverflowMessage";
+import { useHotkey } from "@/shared/lib/hooks/useHotkey";
 import { getAnimatedText } from "@/shared/lib/getAnimatedText/getAnimatedText";
+import { setOverflowMessage } from "@/features/OverflowMessage/model/slice";
 
-import styles from "./TodoItem.module.scss";
+import styles from "./todoItem.module.scss";
 
 interface ITodoItemProps {
   todo: ITodo;
 }
 
 export const TodoItem: React.FC<ITodoItemProps> = memo(({ todo }) => {
-  const { overflowMessage, showMessage } = useOverflowMessage(1000);
+  const dispatch = useAppDispatch();
+
+  const showMessage = useCallback(
+    (message: string) => dispatch(setOverflowMessage(message)),
+    [dispatch],
+  );
 
   const {
     handleEditSave,
@@ -69,10 +75,6 @@ export const TodoItem: React.FC<ITodoItemProps> = memo(({ todo }) => {
           Delete
         </button>
       </motion.div>
-
-      {overflowMessage && (
-        <OverflowMessage message={overflowMessage} isModalOpen={isModalOpen} />
-      )}
 
       <ModalCard isOpen={isModalOpen} onClose={closeModal}>
         <ModalContent
