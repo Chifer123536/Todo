@@ -1,10 +1,11 @@
 import { memo, useState, useRef, useCallback } from "react";
 
-import { ModalCard, ModalContent } from "@/shared/ui/ModalCard";
-import { useAppDispatch, useAppSelector, useHotkey } from "@/shared/lib/hooks";
+import { ModalCard, ModalContent } from "@/shared/todo/ui/ModalCard";
+import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
 import { getAnimatedText } from "@/shared/lib/getAnimatedText";
-import { useAddActions } from "@/features/AddTodo";
-import { setOverflowMessage } from "@/features/OverflowMessage/model/slice";
+import { useHotkey } from "@/shared/todo/hooks/useHotkey";
+import { useAddActions } from "@/features/todo/AddTodo";
+import { setOverflowMessage } from "@/features/todo/OverflowMessage/model/slice";
 
 import styles from "./addTodo.module.scss";
 

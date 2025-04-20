@@ -1,8 +1,8 @@
 import React from "react";
-import { ThemeToggle } from "@/features/ThemeToggle";
+import { ThemeToggle } from "@/shared/todo/ui/ThemeToggle";
 import { useAppSelector } from "@/shared/lib/hooks";
-import { getOverflowMessage } from "@/features/OverflowMessage/model/selectors";
-import { OverflowMessage } from "@/features/OverflowMessage/ui/OverflowMessage/OverflowMessage";
+import { getOverflowMessage } from "@/features/todo/OverflowMessage/model/selectors";
+import { OverflowMessage } from "@/features/todo/OverflowMessage/ui/OverflowMessage";
 
 import styles from "./navbar.module.scss";
 

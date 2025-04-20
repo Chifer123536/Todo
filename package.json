@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@types/react-helmet": "^6.1.11",
     "concurrently": "^9.1.2",
     "prettier": "^3.5.3"
   },
@@ -11,5 +12,8 @@
     "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
     "start:frontend": "cd frontend && yarn dev",
     "start:backend": "cd backend && yarn start:dev"
+  },
+  "dependencies": {
+    "react-helmet-async": "^2.0.5"
   }
 }

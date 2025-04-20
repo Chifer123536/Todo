@@ -1,3 +1,3 @@
 export { App } from "./App";
 export { AppRouter } from "./providers/router/AppRouter";
-export { StoreProvider } from "./providers/StoreProvider/StoreProvider";
+export { StoreProvider } from "../shared/auth/providers/StoreProvider";

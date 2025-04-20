@@ -1,7 +1,7 @@
-import { TodoItem } from "@/features/TodoItem";
-import { useTodoListActions } from "@/features/TodoList";
+import { TodoItem } from "@/features/todo/TodoItem";
+import { useTodoListActions } from "@/features/todo/TodoList";
 
-import { Pagination } from "@/shared/ui/Pagination";
+import { Pagination } from "@/shared/todo/ui/Pagination";
 import { Loader } from "@/widgets/Loader";
 import { ErrorMessage } from "@/widgets/ErrorMessage";
 
