@@ -13,7 +13,5 @@
     "start:frontend": "cd frontend && yarn dev",
     "start:backend": "cd backend && yarn start:dev"
   },
-  "dependencies": {
-    "react-helmet-async": "^2.0.5"
-  }
+  "dependencies": {}
 }

@@ -1,0 +1,25 @@
+:root {
+  background-color: #7a5050;
+}
+
+.light-theme {
+  .main-content {
+    color: black;
+  }
+
+  button {
+    background-color: #ffffff;
+  }
+
+  button:hover {
+    border-color: black;
+  }
+
+  p {
+    color: black;
+  }
+}
+
+body.light-theme {
+  background-color: var(--background-color-light);
+}

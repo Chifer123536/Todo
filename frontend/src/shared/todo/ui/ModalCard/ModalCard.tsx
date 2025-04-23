@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from "react";
 
-import styles from "./ModalCard.module.scss";
+import styles from "./modalCard.module.scss";
 
 interface ModalProps {
   isOpen: boolean;

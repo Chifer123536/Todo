@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import api from "@/shared/todo/api/axiosConfig";
+import api from "@/shared/api";
 
 export interface ITodo {
   _id?: string;

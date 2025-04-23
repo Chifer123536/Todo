@@ -1,14 +1,17 @@
+import { useTheme } from "next-themes";
 import styles from "./errorMessage.module.scss";
-import { useAppSelector } from "@/shared/lib/hooks";
 
 export const ErrorMessage: React.FC = () => {
-  const darkMode = useAppSelector((state) => state.theme.darkMode);
+  const { resolvedTheme } = useTheme();
+
+  const errorImage =
+    resolvedTheme === "dark" ? "/darkError.png" : "/lightError.png";
 
   return (
     <div className={styles.errorContainer}>
       <p className={styles.errorText}>Something went wrong</p>
       <img
-        src={`${darkMode ? "/darkError.png" : "/lightError.png"}`}
+        src={errorImage}
         className={styles.errorIcon}
         alt="errorImage"
         onClick={() => window.location.reload()}

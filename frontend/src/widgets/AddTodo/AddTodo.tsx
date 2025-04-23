@@ -1,16 +1,12 @@
 import { memo, useState, useRef, useCallback } from "react";
-
 import { ModalCard, ModalContent } from "@/shared/todo/ui/ModalCard";
-import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
-import { getAnimatedText } from "@/shared/lib/getAnimatedText";
+import { useAppSelector } from "@/shared/lib/hooks";
 import { useHotkey } from "@/shared/todo/hooks/useHotkey";
-import { useAddActions } from "@/features/todo/AddTodo";
-import { setOverflowMessage } from "@/features/todo/OverflowMessage/model/slice";
+import { useAddActions } from "@/features/todo/hooks/useAddActions";
 
 import styles from "./addTodo.module.scss";
 
 export const AddTodo: React.FC = memo(() => {
-  const dispatch = useAppDispatch();
   const todosLength = useAppSelector((state) => state.todos.todosLength);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -21,13 +17,8 @@ export const AddTodo: React.FC = memo(() => {
 
   useHotkey(setIsModalOpen);
 
-  const showMessage = useCallback(
-    (message: string) => dispatch(setOverflowMessage(message)),
-    [dispatch],
-  );
-
   const { title, showLimitHint, handleInputChange, handleSubmit, isAdding } =
-    useAddActions(maxTodos, todosLength, setIsModalOpen, showMessage, inputRef);
+    useAddActions(maxTodos, todosLength, setIsModalOpen, inputRef);
 
   const handleOpenModal = useCallback(() => setIsModalOpen(true), []);
   const handleCloseModal = useCallback(() => setIsModalOpen(false), []);
@@ -58,7 +49,7 @@ export const AddTodo: React.FC = memo(() => {
           onClick={handleOpenModal}
           disabled={isAdding}
         >
-          {isAdding ? getAnimatedText("Add...") : "Add"}
+          {isAdding ? "Add..." : "Add"}
         </button>
       </form>
 

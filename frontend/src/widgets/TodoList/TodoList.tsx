@@ -1,8 +1,8 @@
-import { TodoItem } from "@/features/todo/TodoItem";
-import { useTodoListActions } from "@/features/todo/TodoList";
+import { TodoItem } from "@/widgets/TodoItem";
+import { useTodoListActions } from "@/features/todo/hooks/useTodoListActions";
 
 import { Pagination } from "@/shared/todo/ui/Pagination";
-import { Loader } from "@/widgets/Loader";
+import { Loader } from "@/widgets/TodoLoader";
 import { ErrorMessage } from "@/widgets/ErrorMessage";
 
 import styles from "./todoList.module.scss";
