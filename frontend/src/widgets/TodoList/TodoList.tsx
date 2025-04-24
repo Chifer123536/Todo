@@ -1,7 +1,6 @@
 import { TodoItem } from "@/widgets/TodoItem";
 import { useTodoListActions } from "@/features/todo/hooks/useTodoListActions";
-
-import { Pagination } from "@/shared/todo/ui/Pagination";
+import { Pagination } from "@/widgets/Pagination";
 import { Loader } from "@/widgets/TodoLoader";
 import { ErrorMessage } from "@/widgets/ErrorMessage";
 
@@ -9,7 +8,6 @@ import styles from "./todoList.module.scss";
 
 export const TodoList: React.FC = () => {
   const {
-    firstLoading,
     error,
     loading,
     todosLength,
@@ -19,16 +17,15 @@ export const TodoList: React.FC = () => {
     handlePageChange,
   } = useTodoListActions();
 
-  if (firstLoading) {
-    return <Loader />;
+  if (loading) {
+    return <Loader isLoading={loading} />;
   }
-
   if (error) return <ErrorMessage />;
 
   return (
     <div className={styles.page}>
       <div className={styles.todoContainer}>
-        {!loading && todosLength === 0 ? (
+        {todosLength === 0 ? (
           <div className={styles.noTasks}>No tasks available</div>
         ) : (
           currentTodos.map((todo) => <TodoItem key={todo._id} todo={todo} />)

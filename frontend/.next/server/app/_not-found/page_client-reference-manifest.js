@@ -1,1 +1,0 @@
-globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/_not-found/page"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"E:\\CODE\\practice\\frontend\\src\\":[],"E:\\CODE\\practice\\frontend\\src\\app\\_not-found\\page":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}}

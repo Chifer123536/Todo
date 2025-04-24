@@ -1,51 +1,25 @@
-import { useEffect, useState, useMemo, useRef } from "react";
-
-import { getTodos } from "@/entities/todo/model/slice";
-import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
+import { useState, useMemo, useEffect } from "react";
+import { useTodosQuery } from "./useTodosQuery";
 
 export const useTodoListActions = () => {
-  const dispatch = useAppDispatch();
-  const { error, todos, loading, todosLength, initialLoading } = useAppSelector(
-    (state) => state.todos,
-  );
+  const { data: todos = [], error, isLoading, isFetching } = useTodosQuery();
 
   const todosPerPage = 5;
+
   const [currentPage, setCurrentPage] = useState<number>(
     () => Number(localStorage.getItem("currentPage")) || 1,
   );
-  const [prevTodosLength, setPrevTodosLength] = useState(0);
-  const didMountRef = useRef(false);
+
+  // Последняя страница вычисляется динамически
+  const lastPage = Math.max(1, Math.ceil(todos.length / todosPerPage));
 
   useEffect(() => {
-    dispatch(getTodos());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (!didMountRef.current) {
-      didMountRef.current = true;
-      return;
-    }
-
-    const lastPage = Math.max(1, Math.ceil(todosLength / todosPerPage));
-
-    // Если мы на предпоследней странице, переходим на последнюю
-    if (
-      prevTodosLength !== 0 &&
-      todosLength > prevTodosLength &&
-      currentPage === lastPage - 1
-    ) {
-      setCurrentPage(lastPage);
-      localStorage.setItem("currentPage", lastPage.toString());
-    }
-
-    // Если текущая страница больше последней допустимой
+    // Если текущая страница больше, чем возможная
     if (currentPage > lastPage) {
       setCurrentPage(lastPage);
       localStorage.setItem("currentPage", lastPage.toString());
     }
-
-    setPrevTodosLength(todosLength);
-  }, [todosLength, currentPage, prevTodosLength]);
+  }, [todos.length, currentPage, lastPage]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -61,12 +35,12 @@ export const useTodoListActions = () => {
   return {
     error,
     todos,
-    loading,
-    todosLength,
+    loading: isLoading,
+    refreshing: isFetching,
+    todosLength: todos.length,
     currentTodos,
-    firstLoading: initialLoading,
     handlePageChange,
-    todosPerPage,
     currentPage,
+    todosPerPage,
   };
 };

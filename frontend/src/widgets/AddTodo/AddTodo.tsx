@@ -1,13 +1,13 @@
 import { memo, useState, useRef, useCallback } from "react";
-import { ModalCard, ModalContent } from "@/shared/todo/ui/ModalCard";
-import { useAppSelector } from "@/shared/lib/hooks";
+import { ModalCard, ModalContent } from "@/widgets/ModalCard";
+import { useTodosQuery } from "@/features/todo/hooks/useTodosQuery";
 import { useHotkey } from "@/shared/todo/hooks/useHotkey";
 import { useAddActions } from "@/features/todo/hooks/useAddActions";
 
 import styles from "./addTodo.module.scss";
 
 export const AddTodo: React.FC = memo(() => {
-  const todosLength = useAppSelector((state) => state.todos.todosLength);
+  const { data: todos = [] } = useTodosQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -18,7 +18,7 @@ export const AddTodo: React.FC = memo(() => {
   useHotkey(setIsModalOpen);
 
   const { title, showLimitHint, handleInputChange, handleSubmit, isAdding } =
-    useAddActions(maxTodos, todosLength, setIsModalOpen, inputRef);
+    useAddActions(maxTodos, todos.length, setIsModalOpen, inputRef);
 
   const handleOpenModal = useCallback(() => setIsModalOpen(true), []);
   const handleCloseModal = useCallback(() => setIsModalOpen(false), []);

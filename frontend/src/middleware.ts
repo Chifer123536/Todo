@@ -4,14 +4,12 @@ export default function middleware(request: NextRequest) {
   const { url, cookies } = request;
 
   const session = cookies.get("session")?.value;
-
   const isAuthPage = url.includes("/auth");
 
   if (isAuthPage) {
     if (session) {
-      return NextResponse.redirect(new URL("/todos/page", url));
+      return NextResponse.redirect(new URL("/", url));
     }
-
     return NextResponse.next();
   }
 
@@ -21,5 +19,5 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/auth/:path*", "/todos/:path*"],
+  matcher: ["/auth/:path*", "/"],
 };

@@ -1,7 +1,7 @@
 import { memo } from "react";
-import { ITodo } from "@/entities/todo/model/slice";
-import { useItemActions } from "../../features/todo/hooks/useItemActions";
-import { ModalCard, ModalContent } from "@/shared/todo/ui/ModalCard";
+import { ITodo } from "@/features/todo/types";
+import { useItemActions } from "@/features/todo/hooks/useItemActions";
+import { ModalCard, ModalContent } from "@/widgets/ModalCard";
 
 import styles from "./todoItem.module.scss";
 

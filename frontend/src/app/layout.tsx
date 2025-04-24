@@ -1,6 +1,7 @@
 import { MainProvider } from "@/shared/providers";
 import { Navbar } from "@/widgets/Navbar";
-import "@/shared/styles/global.scss";
+import "../shared/styles/global.scss";
+import "../shared/styles/global.css";
 
 export const metadata = {
   title: "Todo App",

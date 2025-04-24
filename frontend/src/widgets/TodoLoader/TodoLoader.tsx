@@ -1,11 +1,12 @@
 import React from "react";
 import styles from "./loader.module.scss";
-import { useAppSelector } from "@/shared/lib/hooks";
 
-export const Loader: React.FC = () => {
-  const initialLoading = useAppSelector((state) => state.todos.initialLoading);
+interface LoaderProps {
+  isLoading: boolean;
+}
 
-  if (!initialLoading) return null;
+export const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
+  if (!isLoading) return null;
 
   return (
     <div className={styles.loader_container}>
