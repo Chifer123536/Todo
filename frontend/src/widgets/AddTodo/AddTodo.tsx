@@ -1,3 +1,5 @@
+"use client";
+
 import { memo, useState, useRef, useCallback } from "react";
 import { ModalCard, ModalContent } from "@/widgets/ModalCard";
 import { useTodosQuery } from "@/features/todo/hooks/useTodosQuery";

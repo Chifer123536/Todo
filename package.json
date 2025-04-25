@@ -13,5 +13,7 @@
     "start:frontend": "cd frontend && yarn dev",
     "start:backend": "cd backend && yarn start:dev"
   },
-  "dependencies": {}
+  "dependencies": {
+    "react-google-recaptcha": "^3.1.0"
+  }
 }

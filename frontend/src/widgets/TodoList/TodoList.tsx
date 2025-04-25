@@ -1,3 +1,5 @@
+"use client";
+
 import { TodoItem } from "@/widgets/TodoItem";
 import { useTodoListActions } from "@/features/todo/hooks/useTodoListActions";
 import { Pagination } from "@/widgets/Pagination";
@@ -17,9 +19,7 @@ export const TodoList: React.FC = () => {
     handlePageChange,
   } = useTodoListActions();
 
-  if (loading) {
-    return <Loader isLoading={loading} />;
-  }
+  if (loading) return <Loader isLoading={loading} />;
   if (error) return <ErrorMessage />;
 
   return (

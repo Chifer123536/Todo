@@ -1,21 +1,21 @@
-import Link from "next/link";
-import { buttonVariants } from "@/shared/components/ui";
+import { TodoList } from "@/widgets/TodoList";
+import { AddTodo } from "@/widgets/AddTodo";
+import { Navbar } from "@/widgets/Navbar";
+import { Metadata } from "next";
 
-export default function HomePage() {
+export const metadata: Metadata = {
+  title: "Todo List",
+  description: "Manage your tasks",
+};
+
+export default function TodosPage() {
   return (
-    <div className="space-y-5 text-center">
-      <h1 className="text-4xl font-bold">Todo List</h1>
-      <div className="flex justify-center gap-4">
-        <Link href="/auth/login" className={buttonVariants()}>
-          Login
-        </Link>
-        <Link
-          href="/auth/register"
-          className={buttonVariants({ variant: "outline" })}
-        >
-          Register
-        </Link>
+    <>
+      <Navbar />
+      <div className="layout">
+        <AddTodo />
+        <TodoList />
       </div>
-    </div>
+    </>
   );
 }
