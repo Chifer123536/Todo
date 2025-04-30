@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TodoService } from "../services/todo.service";
+import { ITodo } from "@/shared/todo/model/slice";
 import { toast } from "sonner";
 
 export function useUpdateTodoMutation() {
@@ -7,13 +8,20 @@ export function useUpdateTodoMutation() {
 
   return useMutation({
     mutationFn: TodoService.update,
-    onSuccess() {
-      toast.success("Todo updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    onMutate: async (updatedTodo: ITodo) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      const previousTodos = queryClient.getQueryData<ITodo[]>(["todos"]) ?? [];
+
+      queryClient.setQueryData<ITodo[]>(["todos"], (old) =>
+        old?.map((todo) => (todo._id === updatedTodo._id ? updatedTodo : todo)),
+      );
+
+      return { previousTodos };
     },
-    onError(error) {
+    onError: (_error, _, context) => {
+      queryClient.setQueryData(["todos"], context?.previousTodos);
       toast.error("Error updating todo, please try again.");
-      console.error(error);
     },
   });
 }

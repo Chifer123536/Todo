@@ -13,6 +13,6 @@ export function toastMessageHandler(error: Error) {
       toast.error(errorMessage);
     }
   } else {
-    toast.error("Ошибка со строны сервера");
+    toast.error("Server error occurred");
   }
 }

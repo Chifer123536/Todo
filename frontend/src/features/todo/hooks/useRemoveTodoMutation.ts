@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TodoService } from "../services/todo.service";
+import { ITodo } from "@/shared/todo/model/slice";
 import { toast } from "sonner";
 
 export function useRemoveTodoMutation() {
@@ -7,13 +8,20 @@ export function useRemoveTodoMutation() {
 
   return useMutation({
     mutationFn: TodoService.remove,
-    onSuccess() {
-      toast.success("Todo deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    onMutate: async (todoId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      const previousTodos = queryClient.getQueryData<ITodo[]>(["todos"]) ?? [];
+
+      queryClient.setQueryData<ITodo[]>(["todos"], (old) =>
+        old?.filter((todo) => todo._id !== todoId),
+      );
+
+      return { previousTodos };
     },
-    onError(error) {
+    onError: (_error, _, context) => {
+      queryClient.setQueryData(["todos"], context?.previousTodos);
       toast.error("Error deleting todo, please try again.");
-      console.error(error);
     },
   });
 }

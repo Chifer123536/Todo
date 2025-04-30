@@ -7,11 +7,11 @@ export function useAddTodoMutation() {
 
   return useMutation({
     mutationFn: TodoService.add,
-    onSuccess() {
-      toast.success("Todo added successfully");
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["todos"] });
+      toast.success("Task added successfully.");
     },
-    onError(error) {
+    onError: (error) => {
       toast.error("Error adding todo, please try again.");
       console.error(error);
     },

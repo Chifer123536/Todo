@@ -42,6 +42,7 @@
   justify-content: center;
   align-items: center;
   margin-left: auto;
+  padding-right: 2vw;
 }
 
 .navbar_mainContent__7IJbt {
@@ -104,9 +105,6 @@
 /*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[11].use[5]!./src/shared/styles/global.scss ***!
   \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-@charset "UTF-8";
-/* теперь без @import "./theme/LightTheme.scss" и DarkTheme */
-@import url("https://unpkg.com/@geist/fonts/latin.css");
 html,
 body {
   height: 100%;
@@ -159,40 +157,40 @@ p {
 /*!********************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[3]!./src/shared/styles/themes/light.css ***!
   \********************************************************************************************************************************************************************************************************************************************************************************/
-/* светлая тема: все переменные в :root */
-:root {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 3.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 3.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 3.9%;
-  --primary: 0 0% 9%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 96.1%;
-  --secondary-foreground: 0 0% 9%;
-  --muted: 0 0% 96.1%;
-  --muted-foreground: 0 0% 45.1%;
-  --accent: 0 0% 96.1%;
-  --accent-foreground: 0 0% 9%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 89.8%;
-  --input: 0 0% 89.8%;
-  --ring: 0 0% 3.9%;
-  --chart-1: 12 76% 61%;
-  --chart-2: 173 58% 39%;
-  --chart-3: 197 37% 24%;
-  --chart-4: 43 74% 66%;
-  --chart-5: 27 87% 67%;
-  --radius: 0.5rem;
-}
+  /* светлая тема: все переменные в :root */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
 
 /*!*******************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[3]!./src/shared/styles/themes/dark.css ***!
   \*******************************************************************************************************************************************************************************************************************************************************************************/
-/* тёмная тема: те же переменные, но внутри класса .dark */
 .dark {
+  /* Новая красивая база */
   --background: 0 0% 3.9%;
   --foreground: 0 0% 98%;
   --card: 0 0% 3.9%;
@@ -217,13 +215,54 @@ p {
   --chart-3: 30 80% 55%;
   --chart-4: 280 65% 60%;
   --chart-5: 340 75% 55%;
+
+  /* + Твои кастомные старые переменные */
+  --background-color: rgb(17, 18, 24);
+  --background-modal-input-color: rgb(22, 24, 31);
+
+  --text-color: white;
+  --text-placeholder-color: gray;
+  --text-limit-color: gray;
+
+  --navbar-background: #1b1a41;
+
+  --button-background: rgb(22, 23, 25);
+  --button-hover-color: white;
+  --button-hover-border-color: white;
+
+  --pagination-color: gray;
+
+  --todo_item-background: #c2a1ff0c;
+  --todo_item-completed-color: gray;
+
+  --input-color: #1b1a4130;
+  --input-text-color: gray;
+  --input-border-color: #464646;
+
+  --input-hover-color: white;
+  --input-border-hover-color: #878787;
+
+  --addTodoButton-background: #1b1a41;
+
+  --overflowMessage-color: rgb(255, 0, 68);
+
+  --title-color: white;
+
+  --custom_checkbox-color: white;
+  --custom_checkbox-background: #a7a7a7;
+  --custom_checkbox-border: black;
+  --custom_checkbox-checked-background: #8b71ff;
+  --custom_checkbox-outline-color: #8b71ff88;
+
+  --delete_button-color: rgb(108, 44, 255);
+  --delete_button-background: rgba(169, 122, 255, 0.1);
+
+  --noTasks: white;
 }
 
 /*!**************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[3]!./src/shared/styles/global.css ***!
   \**************************************************************************************************************************************************************************************************************************************************************************/
-/* глобальные CSS-переменные — импорт тем до любых @tailwind */
-
 *, ::before, ::after{
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -332,7 +371,9 @@ p {
   --tw-contain-style:  ;
 }
 
-/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */
+/*
+! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com
+*/
 
 /*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
@@ -737,7 +778,6 @@ html,
 body{
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-    font-family: var(--font-geist-sans), sans-serif;
 }
 .container{
   width: 100%;
@@ -781,23 +821,20 @@ body{
 .inset-0{
   inset: 0px;
 }
-.left-2{
-  left: 0.5rem;
-}
-.left-5{
-  left: 1.25rem;
-}
-.top-5{
-  top: 1.25rem;
-}
 .left-1\/2{
   left: 50%;
 }
-.top-1\/2{
-  top: 50%;
+.left-2{
+  left: 0.5rem;
+}
+.top-\[1\.5vh\]{
+  top: 1.5vh;
 }
 .z-50{
   z-index: 50;
+}
+.z-\[9999\]{
+  z-index: 9999;
 }
 .m-auto{
   margin: auto;
@@ -866,29 +903,17 @@ body{
 .h-9{
   height: 2.25rem;
 }
+.h-\[3vh\]{
+  height: 3vh;
+}
+.h-\[5vh\]{
+  height: 5vh;
+}
 .h-full{
   height: 100%;
 }
 .h-px{
   height: 1px;
-}
-.h-\[1\.2rem\]{
-  height: 1.2rem;
-}
-.h-\[2\.5vh\]{
-  height: 2.5vh;
-}
-.h-\[4vh\]{
-  height: 4vh;
-}
-.h-\[3vh\]{
-  height: 3vh;
-}
-.h-\[3\.5vh\]{
-  height: 3.5vh;
-}
-.h-\[6vh\]{
-  height: 6vh;
 }
 .w-10{
   width: 2.5rem;
@@ -914,42 +939,35 @@ body{
 .w-9{
   width: 2.25rem;
 }
-.w-\[400px\]{
-  width: 400px;
-}
-.w-full{
-  width: 100%;
-}
-.w-\[1\.2rem\]{
-  width: 1.2rem;
-}
-.w-\[2\.5vh\]{
-  width: 2.5vh;
-}
-.w-\[4vh\]{
-  width: 4vh;
+.w-\[10vw\]{
+  width: 10vw;
 }
 .w-\[3vh\]{
   width: 3vh;
 }
-.w-\[3\.5vh\]{
-  width: 3.5vh;
+.w-\[400px\]{
+  width: 400px;
 }
-.w-\[6vh\]{
-  width: 6vh;
+.w-\[5vh\]{
+  width: 5vh;
+}
+.w-\[auto\]{
+  width: auto;
+}
+.w-full{
+  width: 100%;
 }
 .min-w-\[8rem\]{
   min-width: 8rem;
 }
+.min-w-\[8vw\]{
+  min-width: 8vw;
+}
 .shrink-0{
   flex-shrink: 0;
 }
-.-translate-x-1\/2{
-  --tw-translate-x: -50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-.-translate-y-1\/2{
-  --tw-translate-y: -50%;
+.-translate-x-\[15\%\]{
+  --tw-translate-x: -15%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 .rotate-0{
@@ -1039,6 +1057,12 @@ body{
 .whitespace-nowrap{
   white-space: nowrap;
 }
+.rounded-\[0\.4vh\]{
+  border-radius: 0.4vh;
+}
+.rounded-\[1vh\]{
+  border-radius: 1vh;
+}
 .rounded-full{
   border-radius: 9999px;
 }
@@ -1051,26 +1075,14 @@ body{
 .rounded-sm{
   border-radius: calc(var(--radius) - 4px);
 }
-.rounded-\[0\.4vh\]{
-  border-radius: 0.4vh;
-}
-.rounded-\[0\.4rem\]{
-  border-radius: 0.4rem;
-}
 .border{
   border-width: 1px;
 }
 .border-2{
   border-width: 2px;
 }
-.border-\[1\.5px\]{
-  border-width: 1.5px;
-}
 .border-solid{
   border-style: solid;
-}
-.border-none{
-  border-style: none;
 }
 .border-input{
   border-color: hsl(var(--input));
@@ -1102,6 +1114,9 @@ body{
 .fill-current{
   fill: currentColor;
 }
+.p-0{
+  padding: 0px;
+}
 .p-1{
   padding: 0.25rem;
 }
@@ -1111,8 +1126,8 @@ body{
 .p-6{
   padding: 1.5rem;
 }
-.p-0{
-  padding: 0px;
+.p-\[1vh\]{
+  padding: 1vh;
 }
 .px-2{
   padding-left: 0.5rem;
@@ -1150,6 +1165,9 @@ body{
 .text-2xl{
   font-size: 1.5rem;
   line-height: 2rem;
+}
+.text-\[2vh\]{
+  font-size: 2vh;
 }
 .text-sm{
   font-size: 0.875rem;
@@ -1225,14 +1243,14 @@ body{
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
-.shadow-sm{
-  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
 .shadow-none{
   --tw-shadow: 0 0 #0000;
   --tw-shadow-colored: 0 0 #0000;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.shadow-sm{
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 .outline-none{
@@ -1247,16 +1265,16 @@ body{
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
-.ring{
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
 .ring-offset-background{
   --tw-ring-offset-color: hsl(var(--background));
 }
 .filter{
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.transition{
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 .transition-colors{
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
@@ -1265,11 +1283,6 @@ body{
 }
 .transition-transform{
   transition-property: transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-.transition-all{
-  transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
@@ -1349,11 +1362,6 @@ body{
   text-decoration-line: underline;
 }
 
-.hover\:outline-none:hover{
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-
 .focus\:bg-accent:focus{
   background-color: hsl(var(--accent));
 }
@@ -1362,19 +1370,9 @@ body{
   color: hsl(var(--accent-foreground));
 }
 
-.focus\:shadow-none:focus{
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
 .focus\:outline-none:focus{
   outline: 2px solid transparent;
   outline-offset: 2px;
-}
-
-.focus\:outline-0:focus{
-  outline-width: 0px;
 }
 
 .focus\:ring-0:focus{
@@ -1388,15 +1386,15 @@ body{
   outline-offset: 2px;
 }
 
-.focus-visible\:ring-2:focus-visible{
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
 .focus-visible\:ring-0:focus-visible{
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus-visible\:ring-2:focus-visible{
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
@@ -1410,11 +1408,6 @@ body{
 
 .focus-visible\:ring-offset-background:focus-visible{
   --tw-ring-offset-color: hsl(var(--background));
-}
-
-.active\:outline-none:active{
-  outline: 2px solid transparent;
-  outline-offset: 2px;
 }
 
 .disabled\:pointer-events-none:disabled{
@@ -1497,6 +1490,10 @@ body{
   background-color: hsl(var(--input));
 }
 
+.data-\[disabled\]\:opacity-100[data-disabled]{
+  opacity: 1;
+}
+
 .data-\[disabled\]\:opacity-50[data-disabled]{
   opacity: 0.5;
 }
@@ -1551,11 +1548,6 @@ body{
 
 .data-\[side\=top\]\:slide-in-from-bottom-2[data-side="top"]{
   --tw-enter-translate-y: 0.5rem;
-}
-
-.dark\:-rotate-90:is(.dark *){
-  --tw-rotate: -90deg;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .dark\:rotate-0:is(.dark *){

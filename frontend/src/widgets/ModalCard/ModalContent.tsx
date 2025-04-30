@@ -1,6 +1,6 @@
 import React from "react";
 
-import styles from "./modalCard.module.scss";
+import styles from "./ModalCard.module.scss";
 
 interface ModalContentProps {
   value: string;

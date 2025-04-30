@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useMemo, useEffect } from "react";
 import { useTodosQuery } from "./useTodosQuery";
 
@@ -9,7 +7,6 @@ export const useTodoListActions = () => {
 
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Подгружаем текущую страницу из localStorage — только на клиенте
   useEffect(() => {
     const stored = localStorage.getItem("currentPage");
     if (stored) {
@@ -18,7 +15,6 @@ export const useTodoListActions = () => {
     }
   }, []);
 
-  // Следим, чтобы currentPage не превышал максимум
   useEffect(() => {
     const lastPage = Math.max(1, Math.ceil(todos.length / todosPerPage));
     if (currentPage > lastPage) {
@@ -36,6 +32,14 @@ export const useTodoListActions = () => {
     const start = (currentPage - 1) * todosPerPage;
     return todos.slice(start, start + todosPerPage);
   }, [todos, currentPage]);
+
+  useEffect(() => {
+    if (!isFetching && todos.length > 0) {
+      const lastPage = Math.ceil(todos.length / todosPerPage);
+      setCurrentPage(lastPage);
+      localStorage.setItem("currentPage", String(lastPage));
+    }
+  }, [isFetching, todos.length]);
 
   return {
     error,

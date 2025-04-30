@@ -1,13 +1,14 @@
 import { FormEvent, useState, MutableRefObject } from "react";
-import { toast } from "sonner";
 import { useAddTodoMutation } from "./useAddTodoMutation";
 import { useTodoInput } from "@/shared/todo/hooks/useTodoInput";
 
 export const useAddActions = (
   maxTodos: number,
   todosLength: number,
+  todosPerPage: number,
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
   inputRef: MutableRefObject<HTMLInputElement | null>,
+  handlePageChange: (page: number) => void,
 ) => {
   const {
     value: title,
@@ -16,33 +17,36 @@ export const useAddActions = (
     handleChange,
     validateTitle,
   } = useTodoInput();
-
   const [isAdding, setIsAdding] = useState(false);
+
   const { mutateAsync: addTodo } = useAddTodoMutation();
 
   const handleSubmit = async (e?: FormEvent) => {
     e?.preventDefault();
     if (isAdding) return;
-
     if (!validateTitle(title)) return;
 
     if (todosLength >= maxTodos) {
-      toast.error("The task limit has been reached.");
       return;
     }
 
     try {
-      setIsModalOpen(false);
       setIsAdding(true);
+      setIsModalOpen(false);
+
       await addTodo({ title, completed: false });
-      toast.success("Task added successfully.");
+
+      setTimeout(() => {
+        const updatedTodosLength = todosLength + 1;
+        const lastPage = Math.ceil(updatedTodosLength / todosPerPage);
+        handlePageChange(lastPage);
+      }, 100);
     } catch (error) {
       console.error("Error adding todo", error);
-      toast.error("Error adding todo, please try again.");
     } finally {
-      setTimeout(() => inputRef.current?.focus(), 0);
       setTitle("");
       setIsAdding(false);
+      setTimeout(() => inputRef.current?.focus(), 0);
     }
   };
 

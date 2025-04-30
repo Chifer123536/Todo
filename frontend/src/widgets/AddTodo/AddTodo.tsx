@@ -5,22 +5,31 @@ import { ModalCard, ModalContent } from "@/widgets/ModalCard";
 import { useTodosQuery } from "@/features/todo/hooks/useTodosQuery";
 import { useHotkey } from "@/shared/todo/hooks/useHotkey";
 import { useAddActions } from "@/features/todo/hooks/useAddActions";
+import { useTodoListActions } from "@/features/todo/hooks/useTodoListActions";
 
-import styles from "./addTodo.module.scss";
+import styles from "./AddTodo.module.scss";
 
 export const AddTodo: React.FC = memo(() => {
   const { data: todos = [] } = useTodosQuery();
+  const { handlePageChange, todosPerPage } = useTodoListActions();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const todosPerPage = 5;
   const maxPages = 10;
   const maxTodos = todosPerPage * maxPages;
 
   useHotkey(setIsModalOpen);
 
   const { title, showLimitHint, handleInputChange, handleSubmit, isAdding } =
-    useAddActions(maxTodos, todos.length, setIsModalOpen, inputRef);
+    useAddActions(
+      maxTodos,
+      todos.length,
+      todosPerPage,
+      setIsModalOpen,
+      inputRef,
+      handlePageChange,
+    );
 
   const handleOpenModal = useCallback(() => setIsModalOpen(true), []);
   const handleCloseModal = useCallback(() => setIsModalOpen(false), []);

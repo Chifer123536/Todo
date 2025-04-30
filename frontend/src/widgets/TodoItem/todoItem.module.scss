@@ -1,4 +1,4 @@
-.todo_item {
+.todoItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -41,7 +41,7 @@
     }
   }
 
-  .todo_title {
+  .title {
     flex: 1;
     white-space: nowrap; /* Запрещаем перенос текста */
     overflow: hidden; /* Скрываем текст, выходящий за границы */
@@ -75,7 +75,7 @@
     }
   }
 
-  .delete_button {
+  .deleteButton {
     display: flex;
     align-items: center;
     justify-content: center;
