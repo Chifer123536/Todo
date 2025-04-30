@@ -7,6 +7,7 @@ import { Loader } from "@/widgets/TodoLoader";
 import { ErrorMessage } from "@/widgets/ErrorMessage";
 
 import styles from "./todoList.module.scss";
+import { AddTodo } from "../AddTodo";
 
 export const TodoList: React.FC = () => {
   const {
@@ -24,6 +25,7 @@ export const TodoList: React.FC = () => {
 
   return (
     <div className={styles.page}>
+      <AddTodo />
       <div className={styles.todoContainer}>
         {todosLength === 0 ? (
           <div className={styles.noTasks}>No tasks available</div>
@@ -31,7 +33,6 @@ export const TodoList: React.FC = () => {
           currentTodos.map((todo) => <TodoItem key={todo._id} todo={todo} />)
         )}
       </div>
-
       {todosLength > todosPerPage && (
         <Pagination
           todosLength={todosLength}

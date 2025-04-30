@@ -1,11 +1,11 @@
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
 
-import { NewVerificationForm } from '@/features/auth/components'
+import { NewVerificationForm } from "@/features/auth/components";
 
 export const metadata: Metadata = {
-	title: 'Подтверждение почты'
-}
+  title: "Email confirmation",
+};
 
 export default function NewVerificationPage() {
-	return <NewVerificationForm />
+  return <NewVerificationForm />;
 }

@@ -1,5 +1,4 @@
 import { TodoList } from "@/widgets/TodoList";
-import { AddTodo } from "@/widgets/AddTodo";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,7 +10,6 @@ export default function TodosPage() {
   return (
     <>
       <div className="layout">
-        <AddTodo />
         <TodoList />
       </div>
     </>

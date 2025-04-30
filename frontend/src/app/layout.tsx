@@ -19,7 +19,9 @@ export default function RootLayout({
       <body>
         <MainProvider>
           <Navbar />
-          {children}
+          <main className="min-h-screen w-full px-4 pt-[10vh] flex items-center justify-center">
+            {children}
+          </main>
         </MainProvider>
       </body>
     </html>

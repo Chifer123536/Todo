@@ -40,15 +40,15 @@ export function ResetPasswordForm() {
     if (recaptchaValue) {
       reset({ values, recaptcha: recaptchaValue });
     } else {
-      toast.error("Пожалуйста, завершите reCAPTCHA");
+      toast.error("Please complete the reCAPTCHA");
     }
   };
 
   return (
     <AuthWrapper
-      heading="Сброс пароля"
-      description="Для сброса пароля введите свою почту"
-      backButtonLabel="Войти в аккаунт"
+      heading="Reset Password"
+      description="Enter your email to reset your password"
+      backButtonLabel="Back to login"
       backButtonHref="/auth/login"
     >
       <Form {...form}>
@@ -61,10 +61,10 @@ export function ResetPasswordForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Почта</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="ivan@example.com"
+                    placeholder="john@example.com"
                     disabled={isLoadingReset}
                     type="email"
                     {...field}
@@ -82,7 +82,7 @@ export function ResetPasswordForm() {
             />
           </div>
           <Button type="submit" disabled={isLoadingReset}>
-            Сбросить
+            Reset Password
           </Button>
         </form>
       </Form>

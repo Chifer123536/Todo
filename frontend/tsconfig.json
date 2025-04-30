@@ -2,16 +2,10 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -27,12 +21,8 @@
     /* Aliases */
     "baseUrl": "src",
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@shared/*": [
-        "shared/*"
-      ]
+      "@/*": ["./*"],
+      "@shared/*": ["shared/*"]
     },
     "allowJs": true,
     "incremental": true,
@@ -44,12 +34,6 @@
       }
     ]
   },
-  "include": [
-    "src",
-    "src/shared/lib/utils/.ts",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src", "src/shared/lib/utils/.ts", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }
