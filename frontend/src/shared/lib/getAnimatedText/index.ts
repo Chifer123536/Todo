@@ -1,0 +1,1 @@
+export { getAnimatedText } from "./getAnimatedText";

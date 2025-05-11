@@ -1,0 +1,95 @@
+.todoItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 80vw;
+  height: 50px;
+  max-width: 100%;
+  background-color: var(--todo_item-background);
+
+  .custom_checkbox {
+    appearance: none;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 4px;
+
+    background-color: var(--custom_checkbox-background);
+    border: 1px solid var(--custom_checkbox-border);
+
+    &:checked {
+      background-color: var(--custom_checkbox-checked-background);
+
+      &::before {
+        content: "✓";
+        position: absolute;
+        font-size: 1rem;
+        color: var(--custom_checkbox-color);
+      }
+    }
+
+    &:hover {
+      outline: 1px solid var(--custom_checkbox-outline-color);
+      opacity: 50%;
+    }
+  }
+
+  .title {
+    flex: 1;
+    white-space: nowrap; /* Запрещаем перенос текста */
+    overflow: hidden; /* Скрываем текст, выходящий за границы */
+    text-overflow: ellipsis; /* Добавляем многоточие */
+    transition: color 0.3s;
+    font-size: 1.2rem;
+    margin: 0;
+    cursor: pointer;
+    color: var(--text-color);
+
+    &.completed,
+    &.completed span {
+      text-decoration: line-through;
+      color: var(--todo_item-completed-color);
+    }
+  }
+
+  // Для заголовка
+  input[type="text"] {
+    flex: 1;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    padding: 5px;
+
+    color: var(--text-color);
+    background-color: var(--input-background);
+    border: 1px solid var(--input-border);
+
+    &:focus {
+      border-color: var(--input-focus-border);
+    }
+  }
+
+  .deleteButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    font-size: 1rem;
+    padding: 0.7rem;
+
+    background-color: transparent;
+    border: 0.1rem solid var(--delete_button-color);
+    color: var(--delete_button-color);
+
+    &:hover {
+      border: 0.15rem solid var(--delete_button-color);
+      background-color: var(--delete_button-background);
+    }
+  }
+}

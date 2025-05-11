@@ -1,0 +1,40 @@
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 30vh;
+  text-align: center;
+}
+
+.errorIcon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.errorText {
+  font-size: calc(1em + 0.5vw);
+  font-weight: bold;
+  color: var(--text-color);
+  // margin-top: clamp(60px, 2vh, 40px); // Можно было бы и так, но у медиа запросов как-то больше контроля.
+}
+
+@media (max-height: 314px) {
+  .errorText {
+    margin-top: 15px;
+  }
+}
+
+@media (max-height: 235px) {
+  .errorText {
+    margin-top: 40px;
+  }
+}
+@media (max-height: 188px) {
+  .errorText {
+    margin-top: 60px;
+  }
+}

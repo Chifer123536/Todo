@@ -1,0 +1,51 @@
+.formContainer {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  top: 0%;
+  width: 100%;
+
+  form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 30vw;
+  }
+}
+
+.input {
+  width: 70%;
+  height: 5vh;
+  padding: 0 1vw;
+  font-size: clamp(1vw, 1vw, 4vw);
+  transition:
+    border 0.25s ease,
+    color 0.25s ease;
+  outline: none;
+
+  color: var(--input-text-color);
+  background-color: var(--input-color);
+  border: var(--input-border-color) 0.1vw solid;
+
+  &:hover {
+    border: var(--input-border-hover-color) 0.1vw solid;
+    color: var(--input-hover-color);
+  }
+  &:focus {
+    color: var(--text-color);
+  }
+}
+
+.addTodoButton {
+  display: flex;
+  height: 5vh;
+  font-size: 2.5vh;
+  background-color: var(--addTodoButton-background);
+  border: var(--input-border-color) 0.1vw solid;
+  border-radius: 0;
+  padding: 0 1vw;
+  justify-content: center;
+  align-items: center;
+}

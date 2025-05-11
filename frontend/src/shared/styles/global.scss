@@ -1,0 +1,49 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  scrollbar-width: none;
+  font-family: sans-serif;
+}
+
+button {
+  border-radius: 3%;
+  border: 1px solid transparent;
+  padding: 0.6vw 1.2vw;
+  font-size: 1vw;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  background-color: var(--button-background);
+  color: var(--text-color);
+
+  &:hover {
+    border: 0.1vw solid var(--button-hover-border-color);
+    color: white;
+  }
+  &:active {
+    opacity: 0.75;
+    transition: opacity 0.3s;
+  }
+}
+
+h3 {
+  font-size: 1vw;
+}
+p {
+  font-size: 0.9vw;
+}
+
+.pt-16 {
+  padding-top: 1rem;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: 17.5vh;
+  gap: 1rem;
+}

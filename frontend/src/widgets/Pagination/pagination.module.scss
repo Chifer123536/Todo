@@ -1,0 +1,32 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  position: relative;
+
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 4vh;
+  gap: 0.3vw;
+}
+
+.pageButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--pagination-color);
+
+  width: clamp(10px, 5vw, 50px);
+  height: clamp(10px, 5vw, 50px);
+  font-size: clamp(15px, 2vw, 1.1rem);
+  padding: 0;
+
+  &:hover {
+    color: var(--button-hover-color);
+    transition: color 0.3s;
+  }
+}
+
+.active {
+  color: var(--button-hover-color);
+}
