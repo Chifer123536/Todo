@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { ITodo } from "@/shared/todo/model/types";
+import { ITodo } from "@/shared/todo/types";
 import { useTodoInput } from "@/shared/todo/hooks/useTodoInput";
 import { useUpdateTodoMutation } from "./useUpdateTodoMutation";
 import { useRemoveTodoMutation } from "./useRemoveTodoMutation";
