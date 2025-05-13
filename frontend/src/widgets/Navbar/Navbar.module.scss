@@ -46,38 +46,44 @@
     height: 4vh;
     width: 4vh;
     margin-right: 1vw;
-  }
 
-  .logo {
-    height: 100%;
-    width: 100%;
-    rotate: -15deg;
-    transition: transform 1.2s ease-in-out;
-  }
+    .hoverArea {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      background: transparent;
+      z-index: 2;
 
-  .hoverArea {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    width: 50%;
-    background: transparent;
-    z-index: 2;
+      &.left {
+        left: 0;
+      }
 
-    &.left {
-      left: 0;
+      &.right {
+        right: 0;
+      }
     }
 
-    &.right {
-      right: 0;
+    .logoImageWrapper {
+      position: relative;
+      height: 100%;
+      width: 100%;
+
+      .logo {
+        height: 100%;
+        width: 100%;
+        rotate: -15deg;
+        transition: transform 1.2s ease-in-out;
+      }
     }
-  }
 
-  .left:hover ~ .logo {
-    transform: rotate(-360deg);
-  }
+    .left:hover ~ .logoImageWrapper .logo {
+      transform: rotate(-360deg);
+    }
 
-  .right:hover ~ .logo {
-    transform: rotate(360deg);
+    .right:hover ~ .logoImageWrapper .logo {
+      transform: rotate(360deg);
+    }
   }
 }
 

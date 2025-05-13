@@ -36,11 +36,15 @@ export const useAddActions = (
 
       await addTodo({ title, completed: false });
 
-      setTimeout(() => {
-        const updatedTodosLength = todosLength + 1;
-        const lastPage = Math.ceil(updatedTodosLength / todosPerPage);
-        handlePageChange(lastPage);
-      }, 100);
+      // вычисляем последнюю страницу с учётом новой задачи
+      const updatedTodosLength = todosLength + 1;
+      const lastPage = Math.ceil(updatedTodosLength / todosPerPage);
+
+      // переключаем страницу и записываем в localStorage
+      handlePageChange(lastPage);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("currentPage", String(lastPage));
+      }
     } catch (error) {
       console.error("Error adding todo", error);
     } finally {

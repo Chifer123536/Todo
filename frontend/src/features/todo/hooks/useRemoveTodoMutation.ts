@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TodoService } from "../services/todo.service";
-import { ITodo } from "@/shared/todo/model/types";
+import { ITodo } from "@/shared/todo/types";
 import { toast } from "sonner";
 
 export function useRemoveTodoMutation() {

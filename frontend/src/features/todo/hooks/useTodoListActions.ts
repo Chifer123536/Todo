@@ -17,7 +17,7 @@ export const useTodoListActions = () => {
       if (!isNaN(parsed) && parsed > 0) {
         setCurrentPage(parsed);
       }
-      setHydrated(true); // только после чтения localStorage
+      setHydrated(true);
     }
   }, []);
 
@@ -39,8 +39,10 @@ export const useTodoListActions = () => {
 
   const currentTodos = useMemo(() => {
     if (!hydrated) return [];
+
     const start = (currentPage - 1) * todosPerPage;
-    return todos.slice(start, start + todosPerPage);
+    const end = start + todosPerPage;
+    return todos.slice(start, end);
   }, [todos, currentPage, hydrated]);
 
   return {
