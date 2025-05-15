@@ -36,7 +36,7 @@ export function SettingsForm() {
     resolver: zodResolver(SettingsSchema),
     values: {
       name: user?.displayName || "",
-      email: user?.email || "",
+      password: "",
       isTwoFactorEnabled: user?.isTwoFactorEnabled || false,
     },
   });
@@ -94,15 +94,15 @@ export function SettingsForm() {
                 />
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Password</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="ivan@example.com"
+                          placeholder="******"
                           disabled={isLoadingUpdate}
-                          type="email"
+                          type="password"
                           {...field}
                         />
                       </FormControl>

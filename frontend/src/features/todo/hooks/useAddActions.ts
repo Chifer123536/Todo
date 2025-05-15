@@ -1,4 +1,4 @@
-import { FormEvent, useState, MutableRefObject } from "react";
+import { FormEvent, MutableRefObject } from "react";
 import { useAddTodoMutation } from "./useAddTodoMutation";
 import { useTodoInput } from "@/shared/todo/hooks/useTodoInput";
 
@@ -17,47 +17,32 @@ export const useAddActions = (
     handleChange,
     validateTitle,
   } = useTodoInput();
-  const [isAdding, setIsAdding] = useState(false);
 
-  const { mutateAsync: addTodo } = useAddTodoMutation();
+  const { mutate } = useAddTodoMutation();
 
-  const handleSubmit = async (e?: FormEvent) => {
+  const handleSubmit = (e?: FormEvent) => {
     e?.preventDefault();
-    if (isAdding) return;
     if (!validateTitle(title)) return;
+    if (todosLength >= maxTodos) return;
 
-    if (todosLength >= maxTodos) {
-      return;
+    setIsModalOpen(false);
+
+    const updatedTodosLength = todosLength + 1;
+    const lastPage = Math.ceil(updatedTodosLength / todosPerPage);
+    handlePageChange(lastPage);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("currentPage", String(lastPage));
     }
 
-    try {
-      setIsAdding(true);
-      setIsModalOpen(false);
+    mutate({ title, completed: false });
 
-      await addTodo({ title, completed: false });
-
-      // вычисляем последнюю страницу с учётом новой задачи
-      const updatedTodosLength = todosLength + 1;
-      const lastPage = Math.ceil(updatedTodosLength / todosPerPage);
-
-      // переключаем страницу и записываем в localStorage
-      handlePageChange(lastPage);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("currentPage", String(lastPage));
-      }
-    } catch (error) {
-      console.error("Error adding todo", error);
-    } finally {
-      setTitle("");
-      setIsAdding(false);
-      setTimeout(() => inputRef.current?.focus(), 0);
-    }
+    setTitle("");
+    setTimeout(() => inputRef.current?.focus(), 0);
   };
 
   return {
     title,
     showLimitHint,
-    isAdding,
     handleInputChange: handleChange,
     handleSubmit,
   };

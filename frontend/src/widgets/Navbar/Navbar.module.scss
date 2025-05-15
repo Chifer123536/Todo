@@ -17,7 +17,6 @@
   @media (min-width: 64vw) {
     padding: 0 1.5vw;
   }
-
   @media (min-width: 102vw) {
     padding: 0 2vw;
   }
@@ -28,63 +27,54 @@
   justify-content: space-between;
   align-items: center;
   height: 8vh;
-  position: relative;
-}
-
-.mainContent {
-  padding-top: 8vh;
 }
 
 .logoContainer {
   display: flex;
   align-items: center;
+}
+
+.logoWrapper {
   position: relative;
+  display: inline-block;
+  height: 4vh;
+  width: 4vh;
+  margin-right: 1vw;
+}
 
-  .logoWrapper {
-    position: relative;
-    display: inline-block;
-    height: 4vh;
-    width: 4vh;
-    margin-right: 1vw;
+.hoverArea {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  background: transparent;
+  z-index: 2;
 
-    .hoverArea {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      width: 50%;
-      background: transparent;
-      z-index: 2;
-
-      &.left {
-        left: 0;
-      }
-
-      &.right {
-        right: 0;
-      }
-    }
-
-    .logoImageWrapper {
-      position: relative;
-      height: 100%;
-      width: 100%;
-
-      .logo {
-        height: 100%;
-        width: 100%;
-        rotate: -15deg;
-        transition: transform 1.2s ease-in-out;
-      }
-    }
-
-    .left:hover ~ .logoImageWrapper .logo {
-      transform: rotate(-360deg);
-    }
-
-    .right:hover ~ .logoImageWrapper .logo {
-      transform: rotate(360deg);
-    }
+  &.left {
+    left: 0;
   }
+  &.right {
+    right: 0;
+  }
+}
+
+.logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  transform: rotate(-15deg);
+  transition: transform 1.2s ease-in-out;
+  object-fit: contain;
+}
+
+.left:hover ~ .logo {
+  transform: rotate(-360deg);
+}
+
+.right:hover ~ .logo {
+  transform: rotate(360deg);
 }
 
 .title {

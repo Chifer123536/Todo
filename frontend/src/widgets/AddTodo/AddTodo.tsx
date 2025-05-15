@@ -23,7 +23,7 @@ export const AddTodo: React.FC<AddTodoProps> = memo(
 
     useHotkey(setIsModalOpen);
 
-    const { title, showLimitHint, handleInputChange, handleSubmit, isAdding } =
+    const { title, showLimitHint, handleInputChange, handleSubmit } =
       useAddActions(
         maxTodos,
         todosLength,
@@ -51,7 +51,6 @@ export const AddTodo: React.FC<AddTodoProps> = memo(
             ref={inputRef}
             type="text"
             value={title}
-            disabled={isAdding}
             placeholder="Enter new task..."
             onChange={(e) => handleInputChange(e.target.value)}
             className={styles.input}
@@ -60,9 +59,8 @@ export const AddTodo: React.FC<AddTodoProps> = memo(
             type="button"
             className={styles.addTodoButton}
             onClick={handleOpenModal}
-            disabled={isAdding}
           >
-            {isAdding ? "Add..." : "Add"}
+            Add
           </button>
         </form>
 
@@ -74,7 +72,7 @@ export const AddTodo: React.FC<AddTodoProps> = memo(
             onCancel={handleCloseModal}
             limit={999}
             showLimitHint={showLimitHint}
-            isLoading={isAdding}
+            isLoading={false}
             placeholder="Enter new task..."
             cancelText="Cancel"
             accepText="Create"

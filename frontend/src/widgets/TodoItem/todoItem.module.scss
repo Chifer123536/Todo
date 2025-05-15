@@ -43,9 +43,9 @@
 
   .title {
     flex: 1;
-    white-space: nowrap; /* Запрещаем перенос текста */
-    overflow: hidden; /* Скрываем текст, выходящий за границы */
-    text-overflow: ellipsis; /* Добавляем многоточие */
+    white-space: nowrap; /* Перенос текста */
+    text-overflow: ellipsis; /* Многоточие */
+    overflow: hidden;
     transition: color 0.3s;
     font-size: 1.2rem;
     margin: 0;

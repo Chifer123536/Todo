@@ -15,3 +15,7 @@ export class Todo extends Document {
 }
 
 export const TodoSchema = SchemaFactory.createForClass(Todo);
+
+// Индексы для ускорения запросов
+TodoSchema.index({ userId: 1 });
+TodoSchema.index({ completed: 1 });

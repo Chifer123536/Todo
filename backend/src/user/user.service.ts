@@ -54,13 +54,18 @@ export class UserService {
   public async update(userId: string, dto: UpdateUserDto) {
     const user = await this.findById(userId);
 
+    const updateData: Partial<User> = {
+      displayName: dto.name,
+      isTwoFactorEnabled: dto.isTwoFactorEnabled,
+    };
+
+    if (dto.password) {
+      updateData.password = await hash(dto.password);
+    }
+
     const updatedUser = await this.userModel.findByIdAndUpdate(
       user.id,
-      {
-        email: dto.email,
-        displayName: dto.name,
-        isTwoFactorEnabled: dto.isTwoFactorEnabled,
-      },
+      updateData,
       { new: true }
     );
 

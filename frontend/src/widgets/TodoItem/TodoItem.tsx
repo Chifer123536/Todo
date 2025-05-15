@@ -43,6 +43,7 @@ export const TodoItem: React.FC<TodoItemProps> = memo(({ todo }) => {
           checked={todo.completed}
           onChange={handleChange}
           disabled={isEditing || isDeleting}
+          className={styles.custom_checkbox}
         />
         <h3
           className={`${styles.title} ${todo.completed ? styles.completed : ""}`}

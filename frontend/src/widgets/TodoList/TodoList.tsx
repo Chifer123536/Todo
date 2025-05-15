@@ -51,7 +51,9 @@ export const TodoList: React.FC = () => {
         {todosLength === 0 ? (
           <div className={styles.noTasks}>No tasks available</div>
         ) : (
-          currentTodos.map((todo) => <TodoItem key={todo._id} todo={todo} />)
+          currentTodos.map((todo) => (
+            <TodoItem key={todo.clientId ?? todo._id} todo={todo} />
+          ))
         )}
       </div>
       {todosLength > todosPerPage && (

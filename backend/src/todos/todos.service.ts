@@ -24,9 +24,11 @@ export class TodosService {
       return cached;
     }
 
-    const todos = await this.todoModel.find({ userId }).exec();
-    await this.redisService.set(cacheKey, todos, 60); // TTL
+    console.time("MongoDB getTodos");
+    const todos = await this.todoModel.find({ userId }).lean();
+    console.timeEnd("MongoDB getTodos");
 
+    await this.redisService.set(cacheKey, todos, 60); // TTL
     return todos;
   }
 
@@ -35,9 +37,15 @@ export class TodosService {
     userId: string
   ): Promise<Todo> {
     const newTodo = new this.todoModel({ ...createTodoDto, userId });
-    const saved = await newTodo.save();
 
-    await this.redisService.del(this.getCacheKey(userId));
+    console.time("MongoDB saveTodo");
+    const saved = await newTodo.save();
+    console.timeEnd("MongoDB saveTodo");
+
+    this.redisService
+      .del(this.getCacheKey(userId))
+      .catch((err) => console.error("Redis del error:", err));
+
     return saved;
   }
 
@@ -55,9 +63,10 @@ export class TodosService {
       throw new NotFoundException("Todo not found");
     }
 
-    await this.redisService.del(
-      this.getCacheKey(updatedTodo.userId.toString())
-    );
+    this.redisService
+      .del(this.getCacheKey(updatedTodo.userId.toString()))
+      .catch((err) => console.error("Redis del error:", err));
+
     return updatedTodo;
   }
 
@@ -66,8 +75,9 @@ export class TodosService {
     if (!deletedTodo) {
       throw new NotFoundException("Todo not found");
     }
-    await this.redisService.del(
-      this.getCacheKey(deletedTodo.userId.toString())
-    );
+
+    this.redisService
+      .del(this.getCacheKey(deletedTodo.userId.toString()))
+      .catch((err) => console.error("Redis del error:", err));
   }
 }
