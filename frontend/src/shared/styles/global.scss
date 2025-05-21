@@ -15,16 +15,18 @@ button {
   font-weight: 500;
   cursor: pointer;
   transition: border-color 0.25s;
-  background-color: var(--button-background);
-  color: var(--text-color);
+  border: 1px solid transparent;
 
   &:hover {
-    border: 0.1vw solid var(--button-hover-border-color);
-    color: white;
+    color: var(--modal-save-button-hover-text);
   }
   &:active {
     opacity: 0.75;
     transition: opacity 0.3s;
+  }
+  &:focus {
+    box-shadow: none;
+    border-color: transparent;
   }
 }
 
@@ -46,4 +48,8 @@ p {
   width: 100%;
   padding-top: 17.5vh;
   gap: 1rem;
+}
+
+* {
+  outline: none;
 }

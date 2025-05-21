@@ -1,33 +1,49 @@
 .pagination {
   display: flex;
   justify-content: center;
-  position: relative;
-
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 4vh;
-  gap: 0.3vw;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
 }
 
 .pageButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  color: var(--pagination-color);
-  background-color: #ffffff04;
-
-  width: clamp(10px, 5vw, 50px);
-  height: clamp(10px, 5vw, 50px);
-  font-size: clamp(15px, 2vw, 1.1rem);
-  padding: 0;
+  background-color: var(--page-button-background);
+  color: var(--page-button-text);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: #bbb;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.1s ease;
+  text-align: center;
+  user-select: none;
 
   &:hover {
-    color: var(--button-hover-color);
-    transition: color 0.3s;
+    background-color: var(--page-button-background-hover);
+    color: var(--page-button-text-hover);
+    box-shadow: 0 0 8px 3px rgba(185, 185, 185, 0.6);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
   }
 }
 
 .active {
-  color: var(--button-hover-color);
+  background-color: var(--page-button-background-active);
+  color: (var(--page-button-text-active));
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .pagination {
+    gap: 0.1rem;
+  }
+  .pageButton {
+    font-size: 0.5rem;
+    padding: 0.5rem 0.8rem;
+  }
 }

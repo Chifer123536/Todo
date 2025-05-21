@@ -1,5 +1,7 @@
 :root {
+  /* === Базовые цвета UI === */
   --background: 0 0% 100%;
+  --toast-background: 100 100% 100%;
   --foreground: 0 0% 3.9%;
   --card: 0 0% 100%;
   --card-foreground: 0 0% 3.9%;
@@ -18,10 +20,60 @@
   --border: 0 0% 89.8%;
   --input: 0 0% 89.8%;
   --ring: 0 0% 3.9%;
-  --chart-1: 12 76% 61%;
-  --chart-2: 173 58% 39%;
-  --chart-3: 197 37% 24%;
-  --chart-4: 43 74% 66%;
-  --chart-5: 27 87% 67%;
-  --radius: 0.5rem;
+
+  /* === Loader === */
+  --loader-dot-color: #000000;
+
+  /* === Навбар === */
+  --navbar-background: #ffffff;
+  --title-color: #000000;
+
+  /* === Add Todo === */
+  --input-border-hover-color: #000000;
+  --add-button-text-shadow:
+    0 0 5px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 0, 0, 0.4),
+    0 0 15px rgba(0, 0, 0, 0.3);
+
+  /* === Todo Item === */
+  --todo-item-background: #6b6b6b0c;
+  --todo-item-completed-color: gray;
+
+  --delete-button-text: #1c1c1c82;
+
+  --checkbox-color: #000000;
+  --checkbox-background: #a7a7a7;
+  --checkbox-border: #d7d7d7;
+  --checkbox-checked-background: #acacac;
+  --checkbox-box-shadow: 0 0 8px 3px rgba(12, 12, 12, 0.6);
+
+  /* === Page Button === */
+  --page-button-background: #f1f1f182;
+  --page-button-background-hover: #c0c0c0;
+  --page-button-background-active: #b3b3b3;
+
+  --page-button-text: #1e1e28;
+  --page-button-text-hover: #1e1e28;
+  --page-button-text-active: #ffffff;
+
+  /* === Модальные окна === */
+  --modal-background: #e3e3e3;
+  --modal-textarea-hover-shadow: inset 0 0 8px #090909;
+  --modal-textarea-focus-shadow: inset 0 0 8px #ffffff4b;
+  --modal-overlay-background: 30, 30, 30;
+  --textarea-background: #e3e3e3;
+  --textarea-focus-background: #ffffff;
+  --text-placeholder-color: #777a8b;
+  --icon-color: #bbb;
+  --icon-hover-color: #ffffff;
+  --icon-hover-background: #c2c2c2;
+  --modal-save-button-text: #fff;
+  --modal-save-button-hover-text: #000000;
+  --modal-save-button-background: #000000;
+  --modal-save-button-hover-background: #ffffff;
+  --modal-save-button-shadow: 0 0 4px rgb(0, 0, 0);
+  --modal-delete-button-text: #000000;
+  --modal-delete-button-hover-text: #ffffff;
+  --modal-delete-button-background: #ededed;
+  --modal-delete-button-hover-background: #161719;
+  --modal-delete-button-shadow: 0 0 4px rgb(255, 255, 255);
 }

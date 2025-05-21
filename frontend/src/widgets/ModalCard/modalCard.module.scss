@@ -5,10 +5,21 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(var(--modal-overlay-background), 0.7);
+  backdrop-filter: blur(6px);
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal_content {
@@ -16,14 +27,26 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: var(--background-color);
-  padding: 2rem;
-  padding-right: 5rem;
+  background: var(--modal-background);
+  padding: 4rem 0.4rem 2rem 0.4rem;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
   height: calc(90% - 98px);
-  width: 864px;
-  opacity: 0.9;
+  width: 50vw;
+  opacity: 0.95;
+  animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow: hidden;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .textarea_container {
@@ -33,43 +56,51 @@
 }
 
 .textarea {
-  display: flex;
-  width: 90%;
+  width: 100%;
   height: 80%;
-  left: 0%;
-  background-color: var(--background-modal-input-color);
-  color: #ffffff;
+  background-color: var(--textarea-background);
   padding: 1rem;
   border: none;
   border-radius: 5px;
-  outline: none;
   font-size: 1rem;
   resize: none;
-  overflow-wrap: break-word;
-  line-height: 1.5;
-  white-space: pre-wrap;
   overflow-y: scroll;
+  box-shadow: inset 0 0 8px var(--textarea-shadow);
+  transition:
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
   scrollbar-width: none;
   -ms-overflow-style: none;
-}
 
-.textarea::-webkit-scrollbar {
-  display: none;
-}
+  &:hover {
+    background-color: var(--textarea-focus-background);
+    box-shadow: var(--modal-textarea-hover-shadow);
+  }
+  &:focus {
+    box-shadow: var(--modal-textarea-focus-shadow);
+    background-color: var(--textarea-focus-background);
+  }
 
-.textarea::placeholder {
-  color: var(--text-placeholder-color);
-  font-style: italic;
+  &::placeholder {
+    color: var(--text-placeholder-color);
+    font-style: italic;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .limit_hint {
   position: fixed;
-  bottom: 0%;
+  top: 10px;
   left: 10px;
   font-size: 0.8rem;
   color: var(--text-limit-color);
   opacity: 0;
   transition: opacity 0.3s ease;
+  user-select: none;
+  pointer-events: none;
 }
 
 .visible {
@@ -81,16 +112,30 @@
   top: 10px;
   right: 10px;
   background: transparent;
-  border: 1px solid transparent;
-  font-size: 1rem;
+  border: none;
+  font-size: 1.5rem;
   cursor: pointer;
   height: 50px;
   width: 50px;
-  margin-left: 10%;
-
+  color: var(--icon-color);
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 8px;
+  z-index: 10;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+
+  &:hover {
+    color: var(--icon-hover-color);
+    background-color: var(--icon-hover-background);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--icon-hover-color);
+    outline-offset: 2px;
+  }
 }
 
 .modal_button_container {
@@ -100,24 +145,66 @@
   align-items: center;
   margin-top: auto;
   gap: 10%;
-  bottom: 0px;
+  bottom: -10px;
+}
+
+.modal_save_button,
+.modal_delete_button {
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  min-width: 120px;
+  background-color: var(--button-background);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 .modal_save_button {
   position: relative;
-  right: 13%;
-  border: 0.1px solid transparent;
+  right: 2%;
+  background-color: var(--modal-save-button-background);
+  color: var(--modal-save-button-text);
+  box-shadow: var(--modal-save-button-shadow);
+
+  &:hover:not(:disabled) {
+    background-color: var(--modal-save-button-hover-background);
+    box-shadow: var(--modal-delete-button-shadow);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
+
 .modal_delete_button {
   position: relative;
-  left: 3%;
-  border: 0.1px solid transparent;
+  left: 2%;
+  background-color: var(--modal-delete-button-background);
+  color: var(--modal-delete-button-text);
+  box-shadow: var(--modal-delete-button-shadow);
+
+  &:hover:not(:disabled) {
+    background-color: var(--modal-delete-button-hover-background);
+    color: var(--modal-delete-button-hover-text);
+    box-shadow: var(--modal-save-button-shadow);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 @media (max-width: 640px) {
   .modal_content {
     width: 100%;
     height: 100%;
+    overflow-y: scroll;
   }
 }
 
@@ -125,8 +212,5 @@
   .textarea {
     width: 100%;
     height: 100%;
-  }
-  .modal_save_button {
-    right: 3%;
   }
 }

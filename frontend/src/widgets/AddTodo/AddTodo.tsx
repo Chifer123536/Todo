@@ -47,23 +47,26 @@ export const AddTodo: React.FC<AddTodoProps> = memo(
     return (
       <div className={styles.formContainer}>
         <form onSubmit={handleFormSubmit}>
-          <input
-            ref={inputRef}
-            type="text"
-            value={title}
-            placeholder="Enter new task..."
-            onChange={(e) => handleInputChange(e.target.value)}
-            className={styles.input}
-          />
-          <button
-            type="button"
-            className={styles.addTodoButton}
-            onClick={handleOpenModal}
-          >
-            Add
-          </button>
+          <div className={styles.inputWrapper}>
+            <input
+              ref={inputRef}
+              type="text"
+              value={title}
+              placeholder="Enter new task..."
+              onChange={(e) => handleInputChange(e.target.value)}
+              className={styles.input}
+            />
+            <button
+              type="button"
+              className={styles.addTodoButton}
+              onClick={handleOpenModal}
+            >
+              <span className={styles.addText}>Add</span>
+            </button>
+          </div>
         </form>
 
+        {/* Модалка */}
         <ModalCard isOpen={isModalOpen} onClose={handleCloseModal}>
           <ModalContent
             value={title}

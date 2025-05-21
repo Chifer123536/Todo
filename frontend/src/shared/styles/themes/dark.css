@@ -1,6 +1,7 @@
 .dark {
-  /* Новая красивая база */
-  --background: 0 0% 3.9%;
+  /* === Базовые цвета UI === */
+  --background: 0 0% 6.9;
+  --toast-background: 0 0% 5.9%;
   --foreground: 0 0% 98%;
   --card: 0 0% 3.9%;
   --card-foreground: 0 0% 98%;
@@ -19,52 +20,60 @@
   --border: 0 0% 14.9%;
   --input: 0 0% 14.9%;
   --ring: 0 0% 83.1%;
-  --chart-1: 220 70% 50%;
-  --chart-2: 160 60% 45%;
-  --chart-3: 30 80% 55%;
-  --chart-4: 280 65% 60%;
-  --chart-5: 340 75% 55%;
 
-  /* Кастомные переменные */
-  --background-color: rgb(17, 18, 24);
-  --background-modal-input-color: rgb(22, 24, 31);
+  /* === Loader === */
+  --loader-dot-color: #ffffff;
 
-  --text-color: white;
-  --text-placeholder-color: gray;
-  --text-limit-color: gray;
+  /* === Навбар === */
+  --navbar-background: rgb(15, 15, 15);
+  --title-color: #ffffff;
 
-  --navbar-background: rgb(10, 10, 10);
+  /* === Add Todo === */
+  --input-border-hover-color: #ffffff;
+  --add-button-text-shadow:
+    0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.4),
+    0 0 15px rgba(255, 255, 255, 0.3);
 
-  --button-background: rgb(22, 23, 25);
-  --button-hover-color: white;
-  --button-hover-border-color: white;
+  /* === Todo Item === */
+  --todo-item-background: #6b6b6b0c;
+  --todo-item-completed-color: gray;
 
-  --pagination-color: gray;
+  --delete-button-text: #ddd;
 
-  --todo_item-background: #c2a1ff0c;
-  --todo_item-completed-color: gray;
+  --checkbox-color: #ffffff;
+  --checkbox-background: #a7a7a7;
+  --checkbox-border: #000000;
+  --checkbox-checked-background: #282828;
+  --checkbox-box-shadow: 0 0 8px 3px rgba(255, 255, 255, 0.6);
 
-  --input-color: #1b1a4130;
-  --input-text-color: gray;
-  --input-border-color: #464646;
+  /* === Page Button === */
+  --page-button-background: #1c1c1c82;
+  --page-button-background-hover: #c0c0c0;
+  --page-button-background-active: #ffffff;
 
-  --input-hover-color: white;
-  --input-border-hover-color: #878787;
+  --page-button-text: #1e1e28;
+  --page-button-text-hover: #1e1e28;
+  --page-button-text-active: #000000;
 
-  --addTodoButton-background: #1b1a41;
-
-  --overflowMessage-color: rgb(255, 0, 68);
-
-  --title-color: white;
-
-  --custom_checkbox-color: white;
-  --custom_checkbox-background: #a7a7a7;
-  --custom_checkbox-border: black;
-  --custom_checkbox-checked-background: #8b71ff;
-  --custom_checkbox-outline-color: #8b71ff88;
-
-  --delete_button-color: rgb(108, 44, 255);
-  --delete_button-background: rgba(169, 122, 255, 0.1);
-
-  --noTasks: white;
+  /* === Модальные окна === */
+  --modal-background: #111111;
+  --modal-textarea-hover-shadow: inset 0 0 8px #090909;
+  --modal-textarea-focus-shadow: inset 0 0 8px #ffffff4b;
+  --modal-overlay-background: 30, 30, 30;
+  --textarea-background: #111111;
+  --textarea-focus-background: #111111;
+  --text-placeholder-color: #777a8b;
+  --icon-color: #bbb;
+  --icon-hover-color: #ffffff;
+  --icon-hover-background: #3b3b3b;
+  --modal-save-button-text: #1e1e28;
+  --modal-save-button-hover-text: #ffffff;
+  --modal-save-button-background: #ededed; /* ебебеб */
+  --modal-save-button-hover-background: #161719;
+  --modal-save-button-shadow: 0 0 4px rgb(255, 255, 255);
+  --modal-delete-button-text: #ddd;
+  --modal-delete-button-hover-text: #1e1e28;
+  --modal-delete-button-background: #111111;
+  --modal-delete-button-hover-background: #ffffff;
+  --modal-delete-button-shadow: 0 0 4px rgb(0, 0, 0);
 }

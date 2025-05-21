@@ -5,6 +5,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --radius: 0.5rem;
+}
+
 @layer base {
   html,
   body {

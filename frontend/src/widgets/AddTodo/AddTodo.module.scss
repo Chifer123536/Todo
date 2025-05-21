@@ -12,40 +12,61 @@
     align-items: center;
     justify-content: center;
     width: 30vw;
+
+    .inputWrapper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      border-bottom: 0.1vw solid gray;
+      transition: border-color 0.25s ease;
+
+      &:focus-within,
+      &:hover {
+        border-bottom-color: var(--input-border-hover-color);
+      }
+    }
   }
 }
 
 .input {
-  width: 70%;
+  flex: 1;
   height: 5vh;
   padding: 0 1vw;
   font-size: clamp(1vw, 1vw, 4vw);
-  transition:
-    border 0.25s ease,
-    color 0.25s ease;
+  background-color: transparent;
+  border: none;
   outline: none;
-
-  color: var(--input-text-color);
-  background-color: var(--input-color);
-  border: var(--input-border-color) 0.1vw solid;
+  transition: color 0.25s ease;
 
   &:hover {
-    border: var(--input-border-hover-color) 0.1vw solid;
-    color: var(--input-hover-color);
+    color: var(--text-hover);
   }
+
   &:focus {
-    color: var(--text-color);
+    color: var(--text);
   }
 }
 
 .addTodoButton {
-  display: flex;
+  background-color: transparent;
+  border: none;
+  padding: 0 1vw;
   height: 5vh;
   font-size: 2.5vh;
-  background-color: var(--addTodoButton-background);
-  border: var(--input-border-color) 0.1vw solid;
-  border-radius: 0;
-  padding: 0 1vw;
+  display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.25s ease;
+
+  &:hover .addText,
+  &:focus .addText {
+    text-shadow: var(--add-button-text-shadow);
+  }
+}
+
+.addText {
+  font-weight: 500;
+  transition: text-shadow 0.5s ease;
 }

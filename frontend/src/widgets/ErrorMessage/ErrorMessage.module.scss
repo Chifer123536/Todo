@@ -18,7 +18,6 @@
 .errorText {
   font-size: calc(1em + 0.5vw);
   font-weight: bold;
-  color: var(--text-color);
   // margin-top: clamp(60px, 2vh, 40px); // Можно было бы и так, но у медиа запросов как-то больше контроля.
 }
 

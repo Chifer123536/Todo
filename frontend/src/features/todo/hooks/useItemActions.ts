@@ -6,14 +6,16 @@ import { ITodo } from "@/shared/todo/types";
 import { useTodoInput } from "@/shared/todo/hooks/useTodoInput";
 import { useUpdateTodoMutation } from "./useUpdateTodoMutation";
 import { useRemoveTodoMutation } from "./useRemoveTodoMutation";
+import { useTodoValidation } from "@/shared/todo/hooks/useTodoValidation";
 
 export const useItemActions = (todo: ITodo) => {
   const {
     value: editedTitle,
     showLimitHint,
     handleChange: handleTextareaChange,
-    validateTitle,
   } = useTodoInput(todo.title);
+
+  const { validateTitle } = useTodoValidation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -62,10 +64,10 @@ export const useItemActions = (todo: ITodo) => {
     handleDelete,
     handleChange,
     handleTextareaChange,
-    isModalOpen,
-    setIsModalOpen,
     editedTitle,
     showLimitHint,
+    isModalOpen,
+    setIsModalOpen,
     isEditing,
     isDeleting,
   };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTodoValidation, TODO_LIMIT } from "./useTodoValidation";
+import { TODO_LIMIT } from "./useTodoValidation";
 
 export const useTodoInput = (initialValue = "") => {
   const [value, setValue] = useState(initialValue);
@@ -7,13 +7,8 @@ export const useTodoInput = (initialValue = "") => {
     initialValue.length > TODO_LIMIT,
   );
 
-  const { validateTitle, showLimitToast } = useTodoValidation();
-
   const handleChange = (val: string) => {
     setValue(val);
-
-    showLimitToast(val);
-
     setShowLimitHint(val.length > TODO_LIMIT);
   };
 
@@ -22,6 +17,5 @@ export const useTodoInput = (initialValue = "") => {
     setValue,
     showLimitHint,
     handleChange,
-    validateTitle,
   };
 };

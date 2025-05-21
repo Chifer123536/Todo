@@ -131,7 +131,7 @@ export function LoginForm() {
             <ReCAPTCHA
               sitekey={process.env.GOOGLE_RECAPTCHA_SITE_KEY as string}
               onChange={setRecaptchaValue}
-              theme={theme === "light" ? "light" : "dark"}
+              theme={theme === "light" ? "dark" : "light"}
             />
           </div>
           <Button type="submit" disabled={isLoadingLogin}>

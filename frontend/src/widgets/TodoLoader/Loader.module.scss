@@ -12,14 +12,7 @@
   border-radius: 50%;
   opacity: 0;
   animation: fadeInScale 1.5s infinite ease-in-out;
-}
-
-.dark {
-  background-color: black;
-}
-
-.light {
-  background-color: white;
+  background-color: var(--loader-dot-color);
 }
 
 .dot:nth-child(1) {

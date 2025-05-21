@@ -7,6 +7,7 @@ import { useItemActions } from "@/features/todo/hooks/useItemActions";
 import { useHotkey } from "@/shared/todo/hooks";
 import { getAnimatedText } from "@/shared/lib/getAnimatedText";
 import { ModalCard, ModalContent } from "@/widgets/ModalCard";
+import { FaTrash } from "react-icons/fa";
 
 import styles from "./TodoItem.module.scss";
 
@@ -49,18 +50,14 @@ export const TodoItem: React.FC<TodoItemProps> = memo(({ todo }) => {
           className={`${styles.title} ${todo.completed ? styles.completed : ""}`}
           onClick={() => setIsModalOpen(true)}
         >
-          {isDeleting
-            ? getAnimatedText("Deleting...")
-            : isEditing
-              ? getAnimatedText("Editing...")
-              : todo.title}
+          {isEditing ? getAnimatedText("Editing...") : todo.title}
         </h3>
         <button
           onClick={handleDelete}
           className={styles.deleteButton}
           disabled={isEditing || isDeleting}
         >
-          Delete
+          <FaTrash size={14} />
         </button>
       </motion.div>
 
@@ -69,12 +66,12 @@ export const TodoItem: React.FC<TodoItemProps> = memo(({ todo }) => {
           value={editedTitle}
           onChange={handleTextareaChange}
           onSave={handleEditSave}
-          onCancel={() => setIsModalOpen(false)}
+          onCancel={handleDelete}
           limit={999}
           showLimitHint={showLimitHint}
           isLoading={isEditing}
           placeholder="Edit task..."
-          cancelText="Cancel"
+          cancelText="Delete"
           accepText="Save"
         />
       </ModalCard>
