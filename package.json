@@ -1,9 +1,14 @@
 {
-  "name": "practice",
+  "name": "todo-list",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "main": "index.js",
   "license": "MIT",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "devDependencies": {
     "@eslint/js": "^9.25.1",
     "@types/react-helmet": "^6.1.11",
@@ -18,11 +23,8 @@
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
-    "start:frontend": "cd frontend && yarn dev",
-    "start:backend": "cd backend && yarn start:dev"
-  },
-  "dependencies": {
-    "react-google-recaptcha": "^3.1.0"
+    "start": "concurrently \"yarn workspace backend start:dev\" \"yarn workspace frontend dev\"",
+    "start:frontend": "yarn workspace frontend dev",
+    "start:backend": "yarn workspace backend start:dev"
   }
 }

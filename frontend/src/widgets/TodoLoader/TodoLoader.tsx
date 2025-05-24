@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./Loader.module.scss";
 import { useTheme } from "next-themes";
 
@@ -8,13 +8,8 @@ interface LoaderProps {
 
 export const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!isLoading || !mounted) return null;
+  if (!isLoading) return null;
 
   const dotClass =
     resolvedTheme === "dark"
@@ -23,9 +18,9 @@ export const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
 
   return (
     <div className={styles.loader_container}>
-      <span className={dotClass}></span>
-      <span className={dotClass}></span>
-      <span className={dotClass}></span>
+      <span className={dotClass} data-testid="loader-dot"></span>
+      <span className={dotClass} data-testid="loader-dot"></span>
+      <span className={dotClass} data-testid="loader-dot"></span>
     </div>
   );
 };
