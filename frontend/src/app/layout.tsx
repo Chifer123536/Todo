@@ -7,6 +7,9 @@ import { ToggleThemeWrapper } from "@/shared/components/ui/ToggleThemeWrapper";
 export const metadata = {
   title: "Todo App",
   description: "Manage your tasks easily",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
@@ -16,7 +19,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
       <body>
         <MainProvider>
           <Navbar />
