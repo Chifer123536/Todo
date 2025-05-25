@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "clean": "rimraf .next",
-    "test": "jest"
+    "test": "jest",
+    "test:ci": "jest --ci"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.6",
