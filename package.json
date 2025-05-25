@@ -25,6 +25,7 @@
   "scripts": {
     "start": "concurrently \"yarn workspace backend start:dev\" \"yarn workspace frontend dev\"",
     "start:frontend": "yarn workspace frontend dev",
-    "start:backend": "yarn workspace backend start:dev"
+    "start:backend": "yarn workspace backend start:dev",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
   }
 }
