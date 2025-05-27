@@ -1,2 +1,2 @@
-export { SettingsForm } from "./SettingsForm";
-export { UserButton } from "./UserButton";
+export { SettingsForm } from "./SettingsForm"
+export { UserButton } from "./UserButton"

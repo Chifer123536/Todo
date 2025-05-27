@@ -1,0 +1,27 @@
+{
+  "tabWidth": 2,
+  "useTabs": false,
+  "endOfLine": "lf",
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "none",
+  "bracketSpacing": true,
+  "jsxBracketSameLine": false,
+  "overrides": [
+    {
+      "files": "frontend/**/*.{js,jsx,ts,tsx}",
+      "options": {
+        "parser": "typescript",
+        "semi": false,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "backend/**/*.{js,jsx,ts,tsx}",
+      "options": {
+        "parser": "babel-ts",
+        "plugins": ["@babel/plugin-syntax-decorators"]
+      }
+    }
+  ]
+}

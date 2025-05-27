@@ -1,2 +1,2 @@
-export { ModalCard } from "./ModalCard";
-export { ModalContent } from "./ModalContent";
+export { ModalCard } from "./ModalCard"
+export { ModalContent } from "./ModalContent"

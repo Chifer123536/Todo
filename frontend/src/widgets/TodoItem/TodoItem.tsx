@@ -1,18 +1,18 @@
-"use client";
+"use client"
 
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { ITodo } from "@/features/todo/types";
-import { useItemActions } from "@/features/todo/hooks/useItemActions";
-import { useHotkey } from "@/shared/todo/hooks";
-import { getAnimatedText } from "@/shared/lib/getAnimatedText";
-import { ModalCard, ModalContent } from "@/widgets/ModalCard";
-import { FaTrash } from "react-icons/fa";
+import { memo } from "react"
+import { motion } from "framer-motion"
+import { ITodo } from "@/features/todo/types"
+import { useItemActions } from "@/features/todo/hooks/useItemActions"
+import { useHotkey } from "@/shared/todo/hooks"
+import { getAnimatedText } from "@/shared/lib/getAnimatedText"
+import { ModalCard, ModalContent } from "@/widgets/ModalCard"
+import { FaTrash } from "react-icons/fa"
 
-import styles from "./TodoItem.module.scss";
+import styles from "./TodoItem.module.scss"
 
 interface TodoItemProps {
-  todo: ITodo;
+  todo: ITodo
 }
 
 export const TodoItem: React.FC<TodoItemProps> = memo(({ todo }) => {
@@ -26,10 +26,10 @@ export const TodoItem: React.FC<TodoItemProps> = memo(({ todo }) => {
     handleChange,
     handleDelete,
     handleEditSave,
-    handleTextareaChange,
-  } = useItemActions(todo);
+    handleTextareaChange
+  } = useItemActions(todo)
 
-  useHotkey(setIsModalOpen);
+  useHotkey(setIsModalOpen)
 
   return (
     <>
@@ -76,5 +76,5 @@ export const TodoItem: React.FC<TodoItemProps> = memo(({ todo }) => {
         />
       </ModalCard>
     </>
-  );
-});
+  )
+})

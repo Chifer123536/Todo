@@ -1,27 +1,27 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { TodoService } from "../services/todo.service";
-import { ITodo } from "@/shared/todo/types";
-import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { TodoService } from "../services/todo.service"
+import { ITodo } from "@/shared/todo/types"
+import { toast } from "sonner"
 
 export function useRemoveTodoMutation() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: TodoService.remove,
     onMutate: async (todoId: string) => {
-      await queryClient.cancelQueries({ queryKey: ["todos"] });
+      await queryClient.cancelQueries({ queryKey: ["todos"] })
 
-      const previousTodos = queryClient.getQueryData<ITodo[]>(["todos"]) ?? [];
+      const previousTodos = queryClient.getQueryData<ITodo[]>(["todos"]) ?? []
 
       queryClient.setQueryData<ITodo[]>(["todos"], (old) =>
-        old?.filter((todo) => todo._id !== todoId),
-      );
+        old?.filter((todo) => todo._id !== todoId)
+      )
 
-      return { previousTodos };
+      return { previousTodos }
     },
     onError: (_error, _, context) => {
-      queryClient.setQueryData(["todos"], context?.previousTodos);
-      toast.error("Error deleting todo, please try again.");
-    },
-  });
+      queryClient.setQueryData(["todos"], context?.previousTodos)
+      toast.error("Error deleting todo, please try again.")
+    }
+  })
 }

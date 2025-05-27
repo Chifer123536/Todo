@@ -1,12 +1,12 @@
-"use client";
+"use client"
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTheme } from "next-themes";
-import Link from "next/link";
-import { useState } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useTheme } from "next-themes"
+import Link from "next/link"
+import { useState } from "react"
+import ReCAPTCHA from "react-google-recaptcha"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 import {
   Button,
@@ -16,36 +16,36 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
-} from "@/shared/components/ui";
+  Input
+} from "@/shared/components/ui"
 
-import { useLoginMutation } from "../hooks";
-import { LoginSchema, TypeLoginSchema } from "../schemes";
+import { useLoginMutation } from "../hooks"
+import { LoginSchema, TypeLoginSchema } from "../schemes"
 
-import { AuthWrapper } from "./AuthWrapper";
+import { AuthWrapper } from "./AuthWrapper"
 
 export function LoginForm() {
-  const { theme } = useTheme();
-  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
-  const [isShowTwoFactor, setIsShowFactor] = useState(false);
+  const { theme } = useTheme()
+  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null)
+  const [isShowTwoFactor, setIsShowFactor] = useState(false)
 
   const form = useForm<TypeLoginSchema>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: "",
-      password: "",
-    },
-  });
+      password: ""
+    }
+  })
 
-  const { login, isLoadingLogin } = useLoginMutation(setIsShowFactor);
+  const { login, isLoadingLogin } = useLoginMutation(setIsShowFactor)
 
   const onSubmit = (values: TypeLoginSchema) => {
     if (recaptchaValue) {
-      login({ values, recaptcha: recaptchaValue });
+      login({ values, recaptcha: recaptchaValue })
     } else {
-      toast.error("Please complete the reCAPTCHA");
+      toast.error("Please complete the reCAPTCHA")
     }
-  };
+  }
 
   return (
     <AuthWrapper
@@ -140,5 +140,5 @@ export function LoginForm() {
         </form>
       </Form>
     </AuthWrapper>
-  );
+  )
 }

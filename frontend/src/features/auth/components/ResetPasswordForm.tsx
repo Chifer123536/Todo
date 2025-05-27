@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTheme } from "next-themes";
-import { useState } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useTheme } from "next-themes"
+import { useState } from "react"
+import ReCAPTCHA from "react-google-recaptcha"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 import {
   Button,
@@ -15,34 +15,34 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
-} from "@/shared/components/ui";
+  Input
+} from "@/shared/components/ui"
 
-import { useResetPasswordMutation } from "../hooks";
-import { ResetPasswordSchema, TypeResetPasswordSchema } from "../schemes";
+import { useResetPasswordMutation } from "../hooks"
+import { ResetPasswordSchema, TypeResetPasswordSchema } from "../schemes"
 
-import { AuthWrapper } from "./AuthWrapper";
+import { AuthWrapper } from "./AuthWrapper"
 
 export function ResetPasswordForm() {
-  const { theme } = useTheme();
-  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+  const { theme } = useTheme()
+  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null)
 
   const form = useForm<TypeResetPasswordSchema>({
     resolver: zodResolver(ResetPasswordSchema),
     defaultValues: {
-      email: "",
-    },
-  });
+      email: ""
+    }
+  })
 
-  const { reset, isLoadingReset } = useResetPasswordMutation();
+  const { reset, isLoadingReset } = useResetPasswordMutation()
 
   const onSubmit = (values: TypeResetPasswordSchema) => {
     if (recaptchaValue) {
-      reset({ values, recaptcha: recaptchaValue });
+      reset({ values, recaptcha: recaptchaValue })
     } else {
-      toast.error("Please complete the reCAPTCHA");
+      toast.error("Please complete the reCAPTCHA")
     }
-  };
+  }
 
   return (
     <AuthWrapper
@@ -87,5 +87,5 @@ export function ResetPasswordForm() {
         </form>
       </Form>
     </AuthWrapper>
-  );
+  )
 }

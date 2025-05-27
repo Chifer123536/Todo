@@ -1,3 +1,3 @@
-import { apiClient } from "@/shared/utils/axios/axios-client";
+import { apiClient } from "@/shared/utils/axios/axios-client"
 
-export const api = apiClient;
+export const api = apiClient

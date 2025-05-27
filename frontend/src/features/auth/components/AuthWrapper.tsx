@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { type PropsWithChildren } from "react";
+import Link from "next/link"
+import { type PropsWithChildren } from "react"
 
 import {
   Button,
@@ -8,17 +8,17 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@/shared/components/ui";
+  CardTitle
+} from "@/shared/components/ui"
 
-import { AuthSocial } from "./AuthSocial";
+import { AuthSocial } from "./AuthSocial"
 
 interface AuthWrapperProps {
-  heading: string;
-  description?: string;
-  backButtonLabel?: string;
-  backButtonHref?: string;
-  isShowSocial?: boolean;
+  heading: string
+  description?: string
+  backButtonLabel?: string
+  backButtonHref?: string
+  isShowSocial?: boolean
 }
 
 export function AuthWrapper({
@@ -27,7 +27,7 @@ export function AuthWrapper({
   description,
   backButtonLabel,
   backButtonHref,
-  isShowSocial = false,
+  isShowSocial = false
 }: PropsWithChildren<AuthWrapperProps>) {
   return (
     <Card className="w-[400px]">
@@ -47,5 +47,5 @@ export function AuthWrapper({
         )}
       </CardFooter>
     </Card>
-  );
+  )
 }

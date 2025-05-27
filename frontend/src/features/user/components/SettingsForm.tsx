@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
 
 import {
   Button,
@@ -20,34 +20,34 @@ import {
   FormMessage,
   Input,
   Loading,
-  Switch,
-} from "@/shared/components/ui";
-import { useProfile } from "@/shared/auth/hooks";
+  Switch
+} from "@/shared/components/ui"
+import { useProfile } from "@/shared/auth/hooks"
 
-import { useUpdateProfileMutation } from "../hooks/useUpdateProfileMutation";
-import { SettingsSchema, TypeSettingsSchema } from "../schemes";
+import { useUpdateProfileMutation } from "../hooks/useUpdateProfileMutation"
+import { SettingsSchema, TypeSettingsSchema } from "../schemes"
 
-import { UserButton } from "./UserButton";
+import { UserButton } from "./UserButton"
 
 export function SettingsForm() {
-  const { data: user, isLoading } = useProfile();
+  const { data: user, isLoading } = useProfile()
 
   const form = useForm<TypeSettingsSchema>({
     resolver: zodResolver(SettingsSchema),
     values: {
       name: user?.displayName || "",
       password: "",
-      isTwoFactorEnabled: user?.isTwoFactorEnabled || false,
-    },
-  });
+      isTwoFactorEnabled: user?.isTwoFactorEnabled || false
+    }
+  })
 
-  const { update, isLoadingUpdate } = useUpdateProfileMutation();
+  const { update, isLoadingUpdate } = useUpdateProfileMutation()
 
   const onSubmit = (values: TypeSettingsSchema) => {
-    update(values);
-  };
+    update(values)
+  }
 
-  if (!user) return null;
+  if (!user) return null
 
   return (
     <div className="space-y-4">
@@ -139,5 +139,5 @@ export function SettingsForm() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { LuLogOut, LuSettings2 } from "react-icons/lu";
-import { useRouter, usePathname } from "next/navigation";
+import { LuLogOut, LuSettings2 } from "react-icons/lu"
+import { useRouter, usePathname } from "next/navigation"
 
-import { IUser } from "@/features/auth/types";
+import { IUser } from "@/features/auth/types"
 import {
   Avatar,
   AvatarFallback,
@@ -11,23 +11,23 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/shared/components/ui";
+  DropdownMenuTrigger
+} from "@/shared/components/ui"
 
-import { useLogoutMutation } from "../hooks";
+import { useLogoutMutation } from "../hooks"
 
 interface UserButtonProps {
-  user: IUser;
+  user: IUser
 }
 
 export function UserButton({ user }: UserButtonProps) {
-  const { logout, isLoadingLogout } = useLogoutMutation();
-  const router = useRouter();
-  const pathname = usePathname();
+  const { logout, isLoadingLogout } = useLogoutMutation()
+  const router = useRouter()
+  const pathname = usePathname()
 
-  if (!user) return null;
+  if (!user) return null
 
-  const isSettingsPage = pathname === "/dashboard/settings";
+  const isSettingsPage = pathname === "/dashboard/settings"
 
   return (
     <DropdownMenu>
@@ -55,5 +55,5 @@ export function UserButton({ user }: UserButtonProps) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

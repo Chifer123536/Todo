@@ -1,21 +1,21 @@
-"use client";
+"use client"
 
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useCallback } from "react"
 
-import styles from "./ModalCard.module.scss";
+import styles from "./ModalCard.module.scss"
 
 interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
+  isOpen: boolean
+  onClose: () => void
+  children: React.ReactNode
 }
 
 export const ModalCard: React.FC<ModalProps> = ({
   isOpen,
   onClose,
-  children,
+  children
 }) => {
-  const modalRef = useRef<HTMLDivElement | null>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null)
 
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
@@ -23,25 +23,25 @@ export const ModalCard: React.FC<ModalProps> = ({
         modalRef.current &&
         !modalRef.current.contains(event.target as Node)
       ) {
-        onClose();
+        onClose()
       }
     },
-    [onClose],
-  );
+    [onClose]
+  )
 
   useEffect(() => {
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside)
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside)
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, handleClickOutside]);
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isOpen, handleClickOutside])
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div className={styles.modal_overlay}>
@@ -52,5 +52,5 @@ export const ModalCard: React.FC<ModalProps> = ({
         {children}
       </div>
     </div>
-  );
-};
+  )
+}

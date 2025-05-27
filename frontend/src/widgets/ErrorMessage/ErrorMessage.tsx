@@ -1,11 +1,11 @@
-import { useTheme } from "next-themes";
-import styles from "./ErrorMessage.module.scss";
+import { useTheme } from "next-themes"
+import styles from "./ErrorMessage.module.scss"
 
 export const ErrorMessage: React.FC = () => {
-  const { resolvedTheme } = useTheme();
+  const { resolvedTheme } = useTheme()
 
   const errorImage =
-    resolvedTheme === "dark" ? "/darkError.png" : "/lightError.png";
+    resolvedTheme === "dark" ? "/darkError.png" : "/lightError.png"
 
   return (
     <div className={styles.errorContainer}>
@@ -17,5 +17,5 @@ export const ErrorMessage: React.FC = () => {
         onClick={() => window.location.reload()}
       />
     </div>
-  );
-};
+  )
+}

@@ -1,4 +1,4 @@
-import { LuLoader as LuLoader2 } from "react-icons/lu";
+import { LuLoader as LuLoader2 } from "react-icons/lu"
 
 export function Loading() {
   return (
@@ -6,5 +6,5 @@ export function Loading() {
       <LuLoader2 className="mr-2 size-5 animate-spin" />
       Загрузка...
     </div>
-  );
+  )
 }

@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import dynamic from "next/dynamic";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTheme } from "next-themes";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import dynamic from "next/dynamic"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useTheme } from "next-themes"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 import {
   Button,
@@ -15,37 +15,37 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
-} from "@/shared/components/ui";
+  Input
+} from "@/shared/components/ui"
 
-import { useNewPasswordMutation } from "../hooks";
-import { NewPasswordSchema, TypeNewPasswordSchema } from "../schemes";
-import { AuthWrapper } from "./AuthWrapper";
+import { useNewPasswordMutation } from "../hooks"
+import { NewPasswordSchema, TypeNewPasswordSchema } from "../schemes"
+import { AuthWrapper } from "./AuthWrapper"
 
 const ReCAPTCHA = dynamic(() => import("react-google-recaptcha"), {
-  ssr: false,
-});
+  ssr: false
+})
 
 export function NewPasswordForm() {
-  const { theme } = useTheme();
-  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+  const { theme } = useTheme()
+  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null)
 
   const form = useForm<TypeNewPasswordSchema>({
     resolver: zodResolver(NewPasswordSchema),
     defaultValues: {
-      password: "",
-    },
-  });
+      password: ""
+    }
+  })
 
-  const { newPassword, isLoadingNew } = useNewPasswordMutation();
+  const { newPassword, isLoadingNew } = useNewPasswordMutation()
 
   const onSubmit = (values: TypeNewPasswordSchema) => {
     if (recaptchaValue) {
-      newPassword({ values, recaptcha: recaptchaValue });
+      newPassword({ values, recaptcha: recaptchaValue })
     } else {
-      toast.error("Please complete the reCAPTCHA");
+      toast.error("Please complete the reCAPTCHA")
     }
-  };
+  }
 
   return (
     <AuthWrapper
@@ -90,5 +90,5 @@ export function NewPasswordForm() {
         </form>
       </Form>
     </AuthWrapper>
-  );
+  )
 }

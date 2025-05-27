@@ -1,20 +1,20 @@
-"use client";
+"use client"
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { type PropsWithChildren, useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { type PropsWithChildren, useState } from "react"
 
 export function TanstackQueryProvider({
-  children,
+  children
 }: PropsWithChildren<unknown>) {
   const [client] = useState(
     new QueryClient({
       defaultOptions: {
         queries: {
-          refetchOnWindowFocus: false, // Не делать refetch при возвращении на вкладку
-        },
-      },
-    }),
-  );
+          refetchOnWindowFocus: false // Не делать refetch при возвращении на вкладку
+        }
+      }
+    })
+  )
 
-  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+  return <QueryClientProvider client={client}>{children}</QueryClientProvider>
 }

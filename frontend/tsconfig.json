@@ -6,19 +6,16 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "types": ["jest", "@testing-library/jest-dom", "node"],
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "preserve",
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    /* Aliases */
     "baseUrl": "src",
     "paths": {
       "@/*": ["./*"],
@@ -34,6 +31,15 @@
       }
     ]
   },
-  "include": ["src", "src/shared/lib/utils/.ts", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src", ".next/types/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "frontend/**/*.test.tsx",
+    "frontend/jest.config.ts",
+    "frontend/jest.setup.ts",
+    "frontend/next-env.d.ts",
+    "frontend/next.config.mjs",
+    "frontend/postcss.config.js",
+    "frontend/tailwind.config.ts"
+  ]
 }

@@ -1,18 +1,18 @@
-import React from "react";
+import React from "react"
 
-import styles from "./ModalCard.module.scss";
+import styles from "./ModalCard.module.scss"
 
 interface ModalContentProps {
-  value: string;
-  onChange: (value: string) => void;
-  onSave: () => void;
-  onCancel: () => void;
-  limit: number;
-  showLimitHint: boolean;
-  isLoading: boolean;
-  placeholder?: string;
-  cancelText: string;
-  accepText: string;
+  value: string
+  onChange: (value: string) => void
+  onSave: () => void
+  onCancel: () => void
+  limit: number
+  showLimitHint: boolean
+  isLoading: boolean
+  placeholder?: string
+  cancelText: string
+  accepText: string
 }
 
 export const ModalContent: React.FC<ModalContentProps> = ({
@@ -25,7 +25,7 @@ export const ModalContent: React.FC<ModalContentProps> = ({
   isLoading,
   placeholder = "Enter text...",
   cancelText,
-  accepText,
+  accepText
 }) => {
   return (
     <>
@@ -60,5 +60,5 @@ export const ModalContent: React.FC<ModalContentProps> = ({
         </button>
       </div>
     </>
-  );
-};
+  )
+}

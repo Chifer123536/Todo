@@ -1,13 +1,13 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { TodoItem } from "@/widgets/TodoItem";
-import { useTodoListActions } from "@/features/todo/hooks/useTodoListActions";
-import { Pagination } from "@/widgets/Pagination";
-import { Loader } from "@/widgets/TodoLoader";
-import { ErrorMessage } from "@/widgets/ErrorMessage";
-import styles from "./TodoList.module.scss";
-import { AddTodo } from "../AddTodo";
+import { useEffect, useState } from "react"
+import { TodoItem } from "@/widgets/TodoItem"
+import { useTodoListActions } from "@/features/todo/hooks/useTodoListActions"
+import { Pagination } from "@/widgets/Pagination"
+import { Loader } from "@/widgets/TodoLoader"
+import { ErrorMessage } from "@/widgets/ErrorMessage"
+import styles from "./TodoList.module.scss"
+import { AddTodo } from "../AddTodo"
 
 export const TodoList: React.FC = () => {
   const {
@@ -17,28 +17,28 @@ export const TodoList: React.FC = () => {
     currentTodos,
     todosPerPage,
     currentPage,
-    handlePageChange,
-  } = useTodoListActions();
+    handlePageChange
+  } = useTodoListActions()
 
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [tooLongLoading, setTooLongLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true)
+  const [tooLongLoading, setTooLongLoading] = useState(false)
 
   useEffect(() => {
     if (!loading) {
-      setInitialLoading(false);
+      setInitialLoading(false)
     }
-  }, [loading]);
+  }, [loading])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (loading) setTooLongLoading(true);
-    }, 5000);
-    return () => clearTimeout(timeout);
-  }, [loading]);
+      if (loading) setTooLongLoading(true)
+    }, 5000)
+    return () => clearTimeout(timeout)
+  }, [loading])
 
-  if (tooLongLoading) return <ErrorMessage />;
-  if (initialLoading || loading) return <Loader isLoading={true} />;
-  if (error) return <ErrorMessage />;
+  if (tooLongLoading) return <ErrorMessage />
+  if (initialLoading || loading) return <Loader isLoading={true} />
+  if (error) return <ErrorMessage />
 
   return (
     <div className={styles.page}>
@@ -61,8 +61,9 @@ export const TodoList: React.FC = () => {
           todosLength={todosLength}
           currentPage={currentPage}
           setCurrentPage={handlePageChange}
+          todosPerPage={todosPerPage}
         />
       )}
     </div>
-  );
-};
+  )
+}

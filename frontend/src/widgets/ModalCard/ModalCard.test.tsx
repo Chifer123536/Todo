@@ -1,86 +1,86 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import React from "react"
+import { render, screen, fireEvent } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 
-import { ModalCard } from "./ModalCard";
-import { ModalContent } from "./ModalContent";
+import { ModalCard } from "./ModalCard"
+import { ModalContent } from "./ModalContent"
 
 describe("ModalCard", () => {
-  const onCloseMock = jest.fn();
+  const onCloseMock = jest.fn()
 
   beforeEach(() => {
-    onCloseMock.mockClear();
-  });
+    onCloseMock.mockClear()
+  })
 
   it("Не рендерит модалку, если isOpen=false", () => {
     const { container } = render(
       <ModalCard isOpen={false} onClose={onCloseMock}>
         <div>Test Content</div>
-      </ModalCard>,
-    );
+      </ModalCard>
+    )
 
-    expect(container.firstChild).toBeNull();
-  });
+    expect(container.firstChild).toBeNull()
+  })
 
   it("Рендерит модалку, если isOpen=true", () => {
     render(
       <ModalCard isOpen={true} onClose={onCloseMock}>
         <div>Test Content</div>
-      </ModalCard>,
-    );
+      </ModalCard>
+    )
 
-    expect(screen.getByText("Test Content")).toBeInTheDocument();
-  });
+    expect(screen.getByText("Test Content")).toBeInTheDocument()
+  })
 
   it("Вызывает onClose при клике на кнопку закрытия", async () => {
     render(
       <ModalCard isOpen={true} onClose={onCloseMock}>
         <div>Content</div>
-      </ModalCard>,
-    );
+      </ModalCard>
+    )
 
-    const closeBtn = screen.getByRole("button", { name: /✖/ });
-    await userEvent.click(closeBtn);
-    expect(onCloseMock).toHaveBeenCalledTimes(1);
-  });
+    const closeBtn = screen.getByRole("button", { name: /✖/ })
+    await userEvent.click(closeBtn)
+    expect(onCloseMock).toHaveBeenCalledTimes(1)
+  })
 
   it("Вызывает onClose при клике вне модального окна (на оверлей)", () => {
     render(
       <ModalCard isOpen={true} onClose={onCloseMock}>
         <div>Content</div>
-      </ModalCard>,
-    );
+      </ModalCard>
+    )
 
     // Клик вне модалки
     fireEvent.mouseDown(
-      screen.getByText("Content").parentElement!.parentElement!,
-    );
-    expect(onCloseMock).toHaveBeenCalledTimes(1);
-  });
+      screen.getByText("Content").parentElement!.parentElement!
+    )
+    expect(onCloseMock).toHaveBeenCalledTimes(1)
+  })
 
   it("Не вызывает onClose при клике внутри модального окна", () => {
     render(
       <ModalCard isOpen={true} onClose={onCloseMock}>
         <div>Content</div>
-      </ModalCard>,
-    );
+      </ModalCard>
+    )
 
     // Клик внутри модалки
-    fireEvent.mouseDown(screen.getByText("Content"));
-    expect(onCloseMock).not.toHaveBeenCalled();
-  });
-});
+    fireEvent.mouseDown(screen.getByText("Content"))
+    expect(onCloseMock).not.toHaveBeenCalled()
+  })
+})
 
 describe("ModalContent", () => {
-  const onChangeMock = jest.fn();
-  const onSaveMock = jest.fn();
-  const onCancelMock = jest.fn();
+  const onChangeMock = jest.fn()
+  const onSaveMock = jest.fn()
+  const onCancelMock = jest.fn()
 
   beforeEach(() => {
-    onChangeMock.mockClear();
-    onSaveMock.mockClear();
-    onCancelMock.mockClear();
-  });
+    onChangeMock.mockClear()
+    onSaveMock.mockClear()
+    onCancelMock.mockClear()
+  })
 
   it("Рендерит textarea с переданным значением и placeholder", () => {
     render(
@@ -95,15 +95,15 @@ describe("ModalContent", () => {
         placeholder="Enter new task..."
         cancelText="Cancel"
         accepText="Save"
-      />,
-    );
+      />
+    )
 
     const textarea = screen.getByPlaceholderText(
-      "Enter new task...",
-    ) as HTMLTextAreaElement;
-    expect(textarea).toBeInTheDocument();
-    expect(textarea.value).toBe("text");
-  });
+      "Enter new task..."
+    ) as HTMLTextAreaElement
+    expect(textarea).toBeInTheDocument()
+    expect(textarea.value).toBe("text")
+  })
 
   it("Вызывает onChange при изменении текста", async () => {
     render(
@@ -117,13 +117,13 @@ describe("ModalContent", () => {
         isLoading={false}
         cancelText="Cancel"
         accepText="Save"
-      />,
-    );
+      />
+    )
 
-    const textarea = screen.getByRole("textbox");
-    await userEvent.type(textarea, "abc");
-    expect(onChangeMock).toHaveBeenCalled();
-  });
+    const textarea = screen.getByRole("textbox")
+    await userEvent.type(textarea, "abc")
+    expect(onChangeMock).toHaveBeenCalled()
+  })
 
   it("Отображает подсказку лимита, если showLimitHint=true", () => {
     render(
@@ -137,11 +137,11 @@ describe("ModalContent", () => {
         isLoading={false}
         cancelText="Cancel"
         accepText="Save"
-      />,
-    );
+      />
+    )
 
-    expect(screen.getByText(/Max length: 15/)).toBeVisible();
-  });
+    expect(screen.getByText(/Max length: 15/)).toBeVisible()
+  })
 
   it("Вызывает onCancel при клике на кнопку отмены", async () => {
     render(
@@ -155,13 +155,13 @@ describe("ModalContent", () => {
         isLoading={false}
         cancelText="Cancel"
         accepText="Save"
-      />,
-    );
+      />
+    )
 
-    const cancelBtn = screen.getByText("Cancel");
-    await userEvent.click(cancelBtn);
-    expect(onCancelMock).toHaveBeenCalledTimes(1);
-  });
+    const cancelBtn = screen.getByText("Cancel")
+    await userEvent.click(cancelBtn)
+    expect(onCancelMock).toHaveBeenCalledTimes(1)
+  })
 
   it("Вызывает onSave при клике на кнопку сохранения", async () => {
     render(
@@ -175,13 +175,13 @@ describe("ModalContent", () => {
         isLoading={false}
         cancelText="Cancel"
         accepText="Save"
-      />,
-    );
+      />
+    )
 
-    const saveBtn = screen.getByText("Save");
-    await userEvent.click(saveBtn);
-    expect(onSaveMock).toHaveBeenCalledTimes(1);
-  });
+    const saveBtn = screen.getByText("Save")
+    await userEvent.click(saveBtn)
+    expect(onSaveMock).toHaveBeenCalledTimes(1)
+  })
 
   it("Отключает textarea и кнопки, если isLoading=true", () => {
     render(
@@ -195,11 +195,11 @@ describe("ModalContent", () => {
         isLoading={true}
         cancelText="Cancel"
         accepText="Save"
-      />,
-    );
+      />
+    )
 
-    expect(screen.getByRole("textbox")).toBeDisabled();
-    expect(screen.getByText("Cancel")).toBeDisabled();
-    expect(screen.getByText("Save")).toBeDisabled();
-  });
-});
+    expect(screen.getByRole("textbox")).toBeDisabled()
+    expect(screen.getByText("Cancel")).toBeDisabled()
+    expect(screen.getByText("Save")).toBeDisabled()
+  })
+})

@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import styles from "./Navbar.module.scss";
+import styles from "./Navbar.module.scss"
 
 export const Navbar: React.FC = () => {
   return (
@@ -29,5 +29,5 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
     </nav>
-  );
-};
+  )
+}

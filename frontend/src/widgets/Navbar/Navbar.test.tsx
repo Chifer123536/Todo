@@ -1,26 +1,26 @@
-import { Navbar } from "./Navbar";
-import { render, screen } from "@testing-library/react";
+import { Navbar } from "./Navbar"
+import { render, screen } from "@testing-library/react"
 
 describe("Navbar", () => {
   it("Рендерит навбар", () => {
-    render(<Navbar />);
+    render(<Navbar />)
 
-    const logoLight = screen.getByAltText("logo light");
-    const logoDark = screen.getByAltText("logo dark");
-    const title = screen.getByText("Todo List");
+    const logoLight = screen.getByAltText("logo light")
+    const logoDark = screen.getByAltText("logo dark")
+    const title = screen.getByText("Todo List")
 
-    expect(logoLight).toBeInTheDocument();
-    expect(logoDark).toBeInTheDocument();
-    expect(title).toBeInTheDocument();
-  });
+    expect(logoLight).toBeInTheDocument()
+    expect(logoDark).toBeInTheDocument()
+    expect(title).toBeInTheDocument()
+  })
 
   it("Логотип соответствует теме", () => {
-    render(<Navbar />);
+    render(<Navbar />)
 
-    const logoLight = screen.getByAltText("logo light");
-    const logoDark = screen.getByAltText("logo dark");
+    const logoLight = screen.getByAltText("logo light")
+    const logoDark = screen.getByAltText("logo dark")
 
-    expect(logoLight.getAttribute("src")).toBe("/darkLogo.png");
-    expect(logoDark.getAttribute("src")).toBe("/lightLogo.png");
-  });
-});
+    expect(logoLight.getAttribute("src")).toBe("/darkLogo.png")
+    expect(logoDark.getAttribute("src")).toBe("/lightLogo.png")
+  })
+})

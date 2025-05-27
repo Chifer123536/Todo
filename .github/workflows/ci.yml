@@ -17,22 +17,14 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
-        run: |
-          cd frontend
-          yarn install --frozen-lockfile
+      - name: Install dependencies (root workspace)
+        run: yarn install --frozen-lockfile
 
-      - name: Lint code
-        run: |
-          cd frontend
-          yarn lint
+      - name: Lint frontend
+        run: yarn workspace frontend lint
 
-      - name: Run tests
-        run: |
-          cd frontend
-          yarn test:ci
+      - name: Run frontend tests
+        run: yarn workspace frontend test:ci
 
-      - name: Build for production
-        run: |
-          cd frontend
-          yarn build
+      - name: Build frontend
+        run: yarn workspace frontend build

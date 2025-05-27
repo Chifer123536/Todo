@@ -1,27 +1,27 @@
-"use client";
+"use client"
 
-import { memo, useState, useRef, useCallback } from "react";
-import { ModalCard, ModalContent } from "@/widgets/ModalCard";
-import { useHotkey } from "@/shared/todo/hooks/useHotkey";
-import { useAddActions } from "@/features/todo/hooks/useAddActions";
+import { memo, useState, useRef, useCallback } from "react"
+import { ModalCard, ModalContent } from "@/widgets/ModalCard"
+import { useHotkey } from "@/shared/todo/hooks/useHotkey"
+import { useAddActions } from "@/features/todo/hooks/useAddActions"
 
-import styles from "./AddTodo.module.scss";
+import styles from "./AddTodo.module.scss"
 
 interface AddTodoProps {
-  todosLength: number;
-  todosPerPage: number;
-  handlePageChange: (page: number) => void;
+  todosLength: number
+  todosPerPage: number
+  handlePageChange: (page: number) => void
 }
 
 export const AddTodo: React.FC<AddTodoProps> = memo(
   ({ todosLength, todosPerPage, handlePageChange }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const inputRef = useRef<HTMLInputElement>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const inputRef = useRef<HTMLInputElement>(null)
 
-    const maxPages = 10;
-    const maxTodos = todosPerPage * maxPages;
+    const maxPages = 10
+    const maxTodos = todosPerPage * maxPages
 
-    useHotkey(setIsModalOpen);
+    useHotkey(setIsModalOpen)
 
     const { title, showLimitHint, handleInputChange, handleSubmit } =
       useAddActions(
@@ -30,19 +30,19 @@ export const AddTodo: React.FC<AddTodoProps> = memo(
         todosPerPage,
         setIsModalOpen,
         inputRef,
-        handlePageChange,
-      );
+        handlePageChange
+      )
 
-    const handleOpenModal = useCallback(() => setIsModalOpen(true), []);
-    const handleCloseModal = useCallback(() => setIsModalOpen(false), []);
+    const handleOpenModal = useCallback(() => setIsModalOpen(true), [])
+    const handleCloseModal = useCallback(() => setIsModalOpen(false), [])
 
     const handleFormSubmit = useCallback(
       (e: React.FormEvent) => {
-        e.preventDefault();
-        handleSubmit(e);
+        e.preventDefault()
+        handleSubmit(e)
       },
-      [handleSubmit],
-    );
+      [handleSubmit]
+    )
 
     return (
       <div className={styles.formContainer}>
@@ -82,6 +82,6 @@ export const AddTodo: React.FC<AddTodoProps> = memo(
           />
         </ModalCard>
       </div>
-    );
-  },
-);
+    )
+  }
+)

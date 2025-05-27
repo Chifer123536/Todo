@@ -1,27 +1,27 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query"
 
-import { toastMessageHandler } from "@/shared/utils";
+import { toastMessageHandler } from "@/shared/utils"
 
-import { TypeRegisterSchema } from "../schemes";
-import { authService } from "../services";
+import { TypeRegisterSchema } from "../schemes"
+import { authService } from "../services"
 
 export function useRegisterMutation() {
   const { mutate: register, isPending: isLoadingRegister } = useMutation({
     mutationKey: ["register user"],
     mutationFn: ({
       values,
-      recaptcha,
+      recaptcha
     }: {
-      values: TypeRegisterSchema;
-      recaptcha: string;
+      values: TypeRegisterSchema
+      recaptcha: string
     }) => authService.register(values, recaptcha),
     onSuccess(data: any) {
-      toastMessageHandler(data);
+      toastMessageHandler(data)
     },
     onError(error) {
-      toastMessageHandler(error);
-    },
-  });
+      toastMessageHandler(error)
+    }
+  })
 
-  return { register, isLoadingRegister };
+  return { register, isLoadingRegister }
 }

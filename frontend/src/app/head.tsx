@@ -5,5 +5,5 @@ export default function Head() {
       <title>Todo List</title>
       <meta name="description" content="Manage your tasks" />
     </>
-  );
+  )
 }

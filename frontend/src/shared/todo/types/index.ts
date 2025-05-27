@@ -1,1 +1,1 @@
-export type { ITodo } from "./types";
+export type { ITodo } from "./types"

@@ -1,14 +1,14 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { AddTodo } from "./AddTodo";
+import React from "react"
+import { render, screen, fireEvent } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 
 jest.mock("@/shared/todo/hooks/useHotkey", () => ({
-  useHotkey: jest.fn(),
-}));
+  useHotkey: jest.fn()
+}))
 
 jest.mock("@/features/todo/hooks/useAddActions", () => ({
-  useAddActions: jest.fn(),
-}));
+  useAddActions: jest.fn()
+}))
 
 jest.mock("@/widgets/ModalCard", () => ({
   ModalCard: ({ isOpen, onClose, children }: any) =>
@@ -20,6 +20,7 @@ jest.mock("@/widgets/ModalCard", () => ({
         {children}
       </div>
     ) : null,
+
   ModalContent: ({
     value,
     onChange,
@@ -28,7 +29,7 @@ jest.mock("@/widgets/ModalCard", () => ({
     showLimitHint,
     placeholder,
     cancelText,
-    accepText,
+    accepText
   }: any) => (
     <div>
       <input
@@ -46,119 +47,111 @@ jest.mock("@/widgets/ModalCard", () => ({
       </button>
       {showLimitHint && <div>Limit reached</div>}
     </div>
-  ),
-}));
+  )
+}))
+
+import { useAddActions } from "@/features/todo/hooks/useAddActions"
+import { AddTodo } from "./AddTodo"
 
 describe("AddTodo", () => {
-  const handlePageChangeMock = jest.fn();
+  const handlePageChangeMock = jest.fn()
+  let user = userEvent.setup()
 
   beforeEach(() => {
-    jest.clearAllMocks();
-  });
+    jest.clearAllMocks()
+    user = userEvent.setup()
+  })
 
-  it("Рендерит input и кнопку Add", () => {
-    const useAddActions =
-      require("@/features/todo/hooks/useAddActions").useAddActions;
-    useAddActions.mockReturnValue({
+  it("renders input and Add button", () => {
+    ;(useAddActions as jest.Mock).mockReturnValue({
       title: "",
       showLimitHint: false,
       handleInputChange: jest.fn(),
-      handleSubmit: jest.fn(),
-    });
+      handleSubmit: jest.fn()
+    })
 
     render(
       <AddTodo
         todosLength={0}
         todosPerPage={5}
         handlePageChange={handlePageChangeMock}
-      />,
-    );
+      />
+    )
 
-    expect(
-      screen.getByPlaceholderText("Enter new task..."),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /add/i })).toBeInTheDocument();
-  });
+    expect(screen.getByPlaceholderText("Enter new task...")).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: /add/i })).toBeInTheDocument()
+  })
 
-  it("Открывает модалку при клике на Add", async () => {
-    const useAddActions =
-      require("@/features/todo/hooks/useAddActions").useAddActions;
-    useAddActions.mockReturnValue({
+  it("opens modal when clicking Add button", async () => {
+    ;(useAddActions as jest.Mock).mockReturnValue({
       title: "test task",
       showLimitHint: false,
       handleInputChange: jest.fn(),
-      handleSubmit: jest.fn(),
-    });
+      handleSubmit: jest.fn()
+    })
 
     render(
       <AddTodo
         todosLength={0}
         todosPerPage={5}
         handlePageChange={handlePageChangeMock}
-      />,
-    );
+      />
+    )
 
-    expect(screen.queryByTestId("modal-input")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("modal-input")).not.toBeInTheDocument()
 
-    const addButton = screen.getByRole("button", { name: /add/i });
-    await userEvent.click(addButton);
+    const addButton = screen.getByRole("button", { name: /add/i })
+    await user.click(addButton)
 
-    expect(screen.getByTestId("modal-input")).toBeInTheDocument();
-    expect(screen.getByTestId("modal-input")).toHaveValue("test task");
-  });
+    expect(screen.getByTestId("modal-input")).toBeInTheDocument()
+    expect(screen.getByTestId("modal-input")).toHaveValue("test task")
+  })
 
-  it("Закрывает модалку при клике Cancel", async () => {
-    const useAddActions =
-      require("@/features/todo/hooks/useAddActions").useAddActions;
-    useAddActions.mockReturnValue({
+  it("closes modal on Cancel button click", async () => {
+    ;(useAddActions as jest.Mock).mockReturnValue({
       title: "test task",
       showLimitHint: false,
       handleInputChange: jest.fn(),
-      handleSubmit: jest.fn(),
-    });
+      handleSubmit: jest.fn()
+    })
 
     render(
       <AddTodo
         todosLength={0}
         todosPerPage={5}
         handlePageChange={handlePageChangeMock}
-      />,
-    );
+      />
+    )
 
-    await userEvent.click(screen.getByRole("button", { name: /add/i }));
+    await user.click(screen.getByRole("button", { name: /add/i }))
+    await user.click(screen.getByTestId("modal-cancel-button"))
 
-    const cancelButton = screen.getByTestId("modal-cancel-button");
-    await userEvent.click(cancelButton);
+    expect(screen.queryByTestId("modal-input")).not.toBeInTheDocument()
+  })
 
-    expect(screen.queryByTestId("modal-input")).not.toBeInTheDocument();
-  });
+  it("calls handleSubmit on form submit", () => {
+    const handleSubmitMock = jest.fn()
 
-  it("Вызывает handleSubmit при сабмите формы", () => {
-    const handleSubmitMock = jest.fn();
-    const handleInputChangeMock = jest.fn();
-
-    const useAddActions =
-      require("@/features/todo/hooks/useAddActions").useAddActions;
-    useAddActions.mockReturnValue({
+    ;(useAddActions as jest.Mock).mockReturnValue({
       title: "some title",
       showLimitHint: false,
-      handleInputChange: handleInputChangeMock,
-      handleSubmit: handleSubmitMock,
-    });
+      handleInputChange: jest.fn(),
+      handleSubmit: handleSubmitMock
+    })
 
     const { container } = render(
       <AddTodo
         todosLength={0}
         todosPerPage={5}
         handlePageChange={handlePageChangeMock}
-      />,
-    );
+      />
+    )
 
-    const form = container.querySelector("form");
-    expect(form).not.toBeNull();
+    const form = container.querySelector("form")
+    expect(form).not.toBeNull()
 
-    fireEvent.submit(form!);
+    fireEvent.submit(form!)
 
-    expect(handleSubmitMock).toHaveBeenCalled();
-  });
-});
+    expect(handleSubmitMock).toHaveBeenCalledTimes(1)
+  })
+})

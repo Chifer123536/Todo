@@ -1,1 +1,1 @@
-export { getAnimatedText } from "./getAnimatedText";
+export { getAnimatedText } from "./getAnimatedText"

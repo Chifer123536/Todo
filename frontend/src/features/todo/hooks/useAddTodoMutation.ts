@@ -1,49 +1,49 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { TodoService } from "../services/todo.service";
-import { ITodo } from "@/shared/todo/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { TodoService } from "../services/todo.service"
+import { ITodo } from "@/shared/todo/types"
 
-type CreateTodoInput = Omit<ITodo, "_id" | "clientId">;
+type CreateTodoInput = Omit<ITodo, "_id" | "clientId">
 
 export function useAddTodoMutation() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (todo: CreateTodoInput) => TodoService.add(todo),
 
     onMutate: async (newTodo: CreateTodoInput) => {
-      await queryClient.cancelQueries({ queryKey: ["todos"] });
+      await queryClient.cancelQueries({ queryKey: ["todos"] })
 
-      const previousTodos = queryClient.getQueryData<ITodo[]>(["todos"]) || [];
+      const previousTodos = queryClient.getQueryData<ITodo[]>(["todos"]) || []
 
-      const tempId = `temp-${Date.now()}`;
+      const tempId = `temp-${Date.now()}`
       const optimisticTodo: ITodo = {
         _id: tempId,
         clientId: tempId,
-        ...newTodo,
-      };
+        ...newTodo
+      }
 
       queryClient.setQueryData<ITodo[]>(
         ["todos"],
-        [...previousTodos, optimisticTodo],
-      );
+        [...previousTodos, optimisticTodo]
+      )
 
-      return { previousTodos, tempId };
+      return { previousTodos, tempId }
     },
 
     onError: (_err, _newTodo, context) => {
       if (context?.previousTodos) {
-        queryClient.setQueryData<ITodo[]>(["todos"], context.previousTodos);
+        queryClient.setQueryData<ITodo[]>(["todos"], context.previousTodos)
       }
     },
 
     onSuccess: (data: ITodo, _vars, context) => {
       queryClient.setQueryData<ITodo[]>(["todos"], (old) => {
-        if (!old || !context?.tempId) return old;
+        if (!old || !context?.tempId) return old
 
         return old.map((todo) =>
-          todo._id === context.tempId ? { ...todo, _id: data._id } : todo,
-        );
-      });
-    },
-  });
+          todo._id === context.tempId ? { ...todo, _id: data._id } : todo
+        )
+      })
+    }
+  })
 }

@@ -1,19 +1,19 @@
-import { useEffect } from "react";
+import { useEffect } from "react"
 
 export const useHotkey = (
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setIsModalOpen(false);
+        setIsModalOpen(false)
       }
-    };
+    }
 
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown)
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [setIsModalOpen]);
-};
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [setIsModalOpen])
+}

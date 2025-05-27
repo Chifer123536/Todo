@@ -1,11 +1,11 @@
-import { type Metadata } from "next";
+import { type Metadata } from "next"
 
-import { SettingsForm } from "@/features/user/components";
+import { SettingsForm } from "@/features/user/components"
 
 export const metadata: Metadata = {
-  title: "Settings",
-};
+  title: "Settings"
+}
 
 export default function SettingsPage() {
-  return <SettingsForm />;
+  return <SettingsForm />
 }

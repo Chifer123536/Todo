@@ -1,37 +1,37 @@
-import { useMutation } from "@tanstack/react-query";
-import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query"
+import { useRouter, useSearchParams } from "next/navigation"
+import { toast } from "sonner"
 
-import { toastMessageHandler } from "@/shared/utils";
+import { toastMessageHandler } from "@/shared/utils"
 
-import { TypeNewPasswordSchema } from "../schemes";
-import { passwordRecoveryService } from "../services/password-recovery.service";
+import { TypeNewPasswordSchema } from "../schemes"
+import { passwordRecoveryService } from "../services/password-recovery.service"
 
 export function useNewPasswordMutation() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const token = searchParams.get("token");
+  const token = searchParams.get("token")
 
   const { mutate: newPassword, isPending: isLoadingNew } = useMutation({
     mutationKey: ["new password"],
     mutationFn: ({
       values,
-      recaptcha,
+      recaptcha
     }: {
-      values: TypeNewPasswordSchema;
-      recaptcha: string;
+      values: TypeNewPasswordSchema
+      recaptcha: string
     }) => passwordRecoveryService.new(values, token, recaptcha),
     onSuccess() {
       toast.success("Password successfully changed", {
-        description: "Now you can log in on your account.",
-      });
-      router.push("/");
+        description: "Now you can log in on your account."
+      })
+      router.push("/")
     },
     onError(error) {
-      toastMessageHandler(error);
-    },
-  });
+      toastMessageHandler(error)
+    }
+  })
 
-  return { newPassword, isLoadingNew };
+  return { newPassword, isLoadingNew }
 }

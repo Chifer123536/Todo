@@ -10,12 +10,17 @@
     "backend"
   ],
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.25.1",
     "@types/react-helmet": "^6.1.11",
-    "@typescript-eslint/eslint-plugin": "^8.31.1",
-    "@typescript-eslint/parser": "^8.31.1",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
     "concurrently": "^9.1.2",
-    "eslint": "^9.25.1",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.4.0",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.0.0",
@@ -26,6 +31,7 @@
     "start": "concurrently \"yarn workspace backend start:dev\" \"yarn workspace frontend dev\"",
     "start:frontend": "yarn workspace frontend dev",
     "start:backend": "yarn workspace backend start:dev",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
+    "lint": "eslint frontend --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint frontend --ext .js,.jsx,.ts,.tsx --fix"
   }
 }

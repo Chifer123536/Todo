@@ -1,4 +1,4 @@
-import styles from "./getAnimatedText.module.scss";
+import styles from "./getAnimatedText.module.scss"
 
 export const getAnimatedText = (text: string): React.ReactNode[] => {
   return text.split("").map((char, index) => (
@@ -9,5 +9,5 @@ export const getAnimatedText = (text: string): React.ReactNode[] => {
     >
       {char}
     </span>
-  ));
-};
+  ))
+}

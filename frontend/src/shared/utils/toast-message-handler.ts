@@ -1,18 +1,18 @@
-import { toast } from "sonner";
+import { toast } from "sonner"
 
 export function toastMessageHandler(error: Error) {
   if (error.message) {
-    const errorMessage = error.message;
-    const firstDotIndex = errorMessage.indexOf(".");
+    const errorMessage = error.message
+    const firstDotIndex = errorMessage.indexOf(".")
 
     if (firstDotIndex !== -1) {
       toast.error(errorMessage.slice(0, firstDotIndex), {
-        description: errorMessage.slice(firstDotIndex + 1),
-      });
+        description: errorMessage.slice(firstDotIndex + 1)
+      })
     } else {
-      toast.error(errorMessage);
+      toast.error(errorMessage)
     }
   } else {
-    toast.error("Server error occurred");
+    toast.error("Server error occurred")
   }
 }

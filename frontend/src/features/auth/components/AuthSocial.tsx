@@ -1,30 +1,30 @@
-"use client";
+"use client"
 
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { FaGoogle, FaYandex } from "react-icons/fa";
-import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
+import { FaGoogle, FaYandex } from "react-icons/fa"
+import { toast } from "sonner"
 
-import { Button } from "@/shared/components/ui";
-import { authService } from "../services";
+import { Button } from "@/shared/components/ui"
+import { authService } from "../services"
 
 export function AuthSocial() {
-  const router = useRouter();
+  const router = useRouter()
 
   const { mutate: oauthByProvider, isPending } = useMutation({
     mutationKey: ["oauth by provider"],
     mutationFn: (provider: "google" | "yandex") =>
       authService.oauthByProvider(provider),
     onSuccess(data) {
-      router.push(data.url);
+      router.push(data.url)
     },
     onError(error: any) {
       toast.error(error.message || "OAuth error. Please register.", {
-        duration: 3000,
-      });
-      router.push("/auth/register");
-    },
-  });
+        duration: 3000
+      })
+      router.push("/auth/register")
+    }
+  })
 
   return (
     <>
@@ -55,5 +55,5 @@ export function AuthSocial() {
         </div>
       </div>
     </>
-  );
+  )
 }

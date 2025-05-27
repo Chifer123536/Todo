@@ -1,21 +1,21 @@
-import { MainProvider } from "@/shared/providers";
-import { Navbar } from "@/widgets/Navbar";
-import "../shared/styles/global.scss";
-import "../shared/styles/global.css";
-import { ToggleThemeWrapper } from "@/shared/components/ui/ToggleThemeWrapper";
+import { MainProvider } from "@/shared/providers"
+import { Navbar } from "@/widgets/Navbar"
+import "../shared/styles/global.scss"
+import "../shared/styles/global.css"
+import { ToggleThemeWrapper } from "@/shared/components/ui/ToggleThemeWrapper"
 
 export const metadata = {
   title: "Todo App",
   description: "Manage your tasks easily",
   icons: {
-    icon: "/favicon.png",
-  },
-};
+    icon: "/favicon.png"
+  }
+}
 
 export default function RootLayout({
-  children,
+  children
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -29,5 +29,5 @@ export default function RootLayout({
         </MainProvider>
       </body>
     </html>
-  );
+  )
 }

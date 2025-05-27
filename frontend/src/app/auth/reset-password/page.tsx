@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata } from "next"
 
-import { ResetPasswordForm } from "@/features/auth/components";
+import { ResetPasswordForm } from "@/features/auth/components"
 
 export const metadata: Metadata = {
-  title: "Password recovery",
-};
+  title: "Password recovery"
+}
 
 export default function ResetPasswordPage() {
-  return <ResetPasswordForm />;
+  return <ResetPasswordForm />
 }
