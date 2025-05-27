@@ -43,7 +43,7 @@ module.exports = [
         React: 'readonly'
       },
       parserOptions: {
-        project: ['./frontend/tsconfig.json'], // Для правил, зависящих от TS-конфигурации
+        project: [require('path').join(__dirname, 'frontend/tsconfig.json')], // Путь к конфигу TS
         ecmaVersion: 'latest',
         sourceType: 'module',
         ecmaFeatures: { jsx: true }

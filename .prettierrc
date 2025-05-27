@@ -19,8 +19,7 @@
     {
       "files": "backend/**/*.{js,jsx,ts,tsx}",
       "options": {
-        "parser": "babel-ts",
-        "plugins": ["@babel/plugin-syntax-decorators"]
+        "parser": "typescript"
       }
     }
   ]
