@@ -20,8 +20,8 @@ jobs:
       - name: Install dependencies (root workspace)
         run: yarn install --frozen-lockfile
 
-      - name: Lint frontend
-        run: yarn workspace frontend lint
+      - name: Lint
+        run: yarn lint
 
       - name: Run frontend tests
         run: yarn workspace frontend test:ci
