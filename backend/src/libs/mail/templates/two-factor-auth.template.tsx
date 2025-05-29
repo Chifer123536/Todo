@@ -1,6 +1,6 @@
-import { Body, Heading, Tailwind, Text } from "@react-email/components";
-import { Html } from "@react-email/html";
-import * as React from "react";
+import { Body, Heading, Tailwind, Text } from '@react-email/components';
+import { Html } from '@react-email/html';
+import * as React from 'react';
 
 interface TwoFactorAuthTemplateProps {
   token: string;
@@ -11,17 +11,16 @@ export function TwoFactorAuthTemplate({ token }: TwoFactorAuthTemplateProps) {
     <Tailwind>
       <Html>
         <Body className="text-black">
-          <Heading>Двухфакторная аутентификация</Heading>
+          <Heading>Two-Factor Authentication</Heading>
           <Text>
-            Ваш код двухфакторной аутентификации: <strong>{token}</strong>
+            Your two-factor authentication code is: <strong>{token}</strong>
           </Text>
           <Text>
-            Пожалуйста, введите этот код в приложении для завершения процесса
-            аутентификации.
+            Please enter this code in the app to complete the authentication
+            process.
           </Text>
           <Text>
-            Если вы не запрашивали этот код, просто проигнорируйте это
-            сообщение.
+            If you did not request this code, simply ignore this message.
           </Text>
         </Body>
       </Html>

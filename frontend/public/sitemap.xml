@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Главная страница -->
+  <url>
+    <loc>https://yourdomain.com/</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- Авторизация -->
+  <url>
+    <loc>https://yourdomain.com/auth/login</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Регистрация -->
+  <url>
+    <loc>https://yourdomain.com/auth/register</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Настройки -->
+  <url>
+    <loc>https://yourdomain.com/dashboard/settings</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>
