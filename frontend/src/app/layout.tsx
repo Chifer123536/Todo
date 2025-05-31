@@ -3,6 +3,7 @@ import { Navbar } from "@/widgets/Navbar"
 import "@/shared/styles/global.scss"
 import "@/shared/styles/global.css"
 import { ToggleThemeWrapper } from "@/shared/components/ui/ToggleThemeWrapper"
+import Script from "next/script"
 
 export const metadata = {
   title: "Todo App – Manage Your Tasks",
@@ -29,14 +30,6 @@ export const metadata = {
   }
 }
 
-const jsonLd = `{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "url": "https://yourdomain.com/",
-  "name": "Todo List",
-  "description": "Manage your tasks with Todo List"
-}`
-
 export default function RootLayout({
   children
 }: {
@@ -45,9 +38,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
+        <Script
+          id="json-ld"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLd }}
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              url: "https://yourdomain.com/",
+              name: "Todo List",
+              description: "Manage your tasks with Todo List"
+            })
+          }}
         />
       </head>
       <body>
