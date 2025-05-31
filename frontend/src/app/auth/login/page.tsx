@@ -1,6 +1,6 @@
-import type { Metadata } from "next"
-
 import { LoginForm } from "@/features/auth/components"
+import { PageWrapper } from "@/shared/components/ui/PageWrapper"
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Login – Todo App",
@@ -10,13 +10,13 @@ export const metadata: Metadata = {
     images: [
       { url: "/og-login.png", width: 1200, height: 630, alt: "Login Page" }
     ]
-  },
-  twitter: {
-    card: "summary_large_image",
-    images: ["/og-login.png"]
   }
 }
 
 export default function LoginPage() {
-  return <LoginForm />
+  return (
+    <PageWrapper title={metadata.title?.toString()}>
+      <LoginForm />
+    </PageWrapper>
+  )
 }

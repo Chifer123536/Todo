@@ -1,6 +1,6 @@
-import type { Metadata } from "next"
-
 import { ResetPasswordForm } from "@/features/auth/components"
+import { PageWrapper } from "@/shared/components/ui/PageWrapper"
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Password Recovery – Todo App",
@@ -15,10 +15,13 @@ export const metadata: Metadata = {
         alt: "Reset Password Page"
       }
     ]
-  },
-  twitter: { card: "summary_large_image", images: ["/og-reset.png"] }
+  }
 }
 
 export default function ResetPasswordPage() {
-  return <ResetPasswordForm />
+  return (
+    <PageWrapper title={metadata.title?.toString()}>
+      <ResetPasswordForm />
+    </PageWrapper>
+  )
 }

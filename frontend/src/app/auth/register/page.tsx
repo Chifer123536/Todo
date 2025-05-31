@@ -1,6 +1,6 @@
-import type { Metadata } from "next"
-
 import { RegisterForm } from "@/features/auth/components"
+import { PageWrapper } from "@/shared/components/ui/PageWrapper"
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Create Account – Todo App",
@@ -15,10 +15,13 @@ export const metadata: Metadata = {
         alt: "Register Page"
       }
     ]
-  },
-  twitter: { card: "summary_large_image", images: ["/og-register.png"] }
+  }
 }
 
 export default function RegisterPage() {
-  return <RegisterForm />
+  return (
+    <PageWrapper title={metadata.title?.toString()}>
+      <RegisterForm />
+    </PageWrapper>
+  )
 }

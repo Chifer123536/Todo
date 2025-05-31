@@ -1,7 +1,7 @@
 import { Suspense } from "react"
-import type { Metadata } from "next"
-
 import { NewPasswordForm } from "@/features/auth/components"
+import { PageWrapper } from "@/shared/components/ui/PageWrapper"
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Set New Password – Todo App",
@@ -16,14 +16,15 @@ export const metadata: Metadata = {
         alt: "New Password Page"
       }
     ]
-  },
-  twitter: { card: "summary_large_image", images: ["/og-new-password.png"] }
+  }
 }
 
 export default function NewPasswordPage() {
   return (
-    <Suspense fallback={null}>
-      <NewPasswordForm />
-    </Suspense>
+    <PageWrapper title={metadata.title?.toString()}>
+      <Suspense fallback={null}>
+        <NewPasswordForm />
+      </Suspense>
+    </PageWrapper>
   )
 }

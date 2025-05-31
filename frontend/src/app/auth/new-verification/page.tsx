@@ -16,8 +16,7 @@ export const metadata: Metadata = {
         alt: "Email Confirmation Page"
       }
     ]
-  },
-  twitter: { card: "summary_large_image", images: ["/og-new-verification.png"] }
+  }
 }
 
 export default function NewVerificationPage() {

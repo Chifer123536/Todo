@@ -1,6 +1,6 @@
-import { type Metadata } from "next"
-
 import { SettingsForm } from "@/features/user/components"
+import { PageWrapper } from "@/shared/components/ui/PageWrapper"
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Settings – Todo App",
@@ -15,10 +15,13 @@ export const metadata: Metadata = {
         alt: "Settings Page"
       }
     ]
-  },
-  twitter: { card: "summary_large_image", images: ["/og-settings.png"] }
+  }
 }
 
 export default function SettingsPage() {
-  return <SettingsForm />
+  return (
+    <PageWrapper title={metadata.title?.toString()}>
+      <SettingsForm />
+    </PageWrapper>
+  )
 }
