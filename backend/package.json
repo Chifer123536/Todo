@@ -17,6 +17,7 @@
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/mongoose": "^11.0.2",
     "@nestjs/platform-express": "^11.0.12",
+    "@nestjs/serve-static": "^5.0.3",
     "@nestlab/google-recaptcha": "^3.9.0",
     "@react-email/components": "^0.0.34",
     "@react-email/html": "^0.0.11",

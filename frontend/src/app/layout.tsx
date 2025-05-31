@@ -20,7 +20,7 @@ export const metadata = {
     url: "https://yourdomain.com/",
     images: [
       {
-        url: "/og-default.png",
+        url: "/og-list.png",
         width: 1200,
         height: 630,
         alt: "Todo App Screenshot"
