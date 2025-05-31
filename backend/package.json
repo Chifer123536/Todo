@@ -42,7 +42,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.25.9",
     "@babel/preset-typescript": "^7.27.0",
-    "@nestjs/cli": "^11.0.5",
+    "@nestjs/cli": "^11.0.7",
     "@types/cookie-parser": "^1.4.8",
     "@types/express-session": "^1.18.1",
     "@types/uuid": "^10.0.0",

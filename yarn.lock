@@ -1258,7 +1258,7 @@
     preview-email "^3.0.19"
     pug "^3.0.2"
 
-"@nestjs/cli@^11.0.5":
+"@nestjs/cli@^11.0.7":
   version "11.0.7"
   resolved "https://registry.yarnpkg.com/@nestjs/cli/-/cli-11.0.7.tgz#204a1969c2609d7cf5e98a4d65819bd8585bead7"
   integrity sha512-svrP8j1R0/lQVJ8ZI3BlDtuZxmkvVJokUJSB04sr6uibunk2wHeVDDVLZvYBUorCdGU/RHJl1IufhqUBM91vAQ==
