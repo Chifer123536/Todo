@@ -1,11 +1,11 @@
 import {
   BadRequestException,
   Injectable,
-  UnauthorizedException,
-} from "@nestjs/common";
+  UnauthorizedException
+} from '@nestjs/common';
 
-import { TypeBaseProviderOptions } from "./types/base-provider-options.types";
-import { TypeUserInfo } from "./types/user-info-types";
+import { TypeBaseProviderOptions } from './types/base-provider-options.types';
+import { TypeUserInfo } from './types/user-info-types';
 
 @Injectable()
 export class BaseOAuthService {
@@ -16,21 +16,30 @@ export class BaseOAuthService {
   protected async extractUserInfo(data: any): Promise<TypeUserInfo> {
     return {
       ...data,
-      provider: this.options.name,
+      provider: this.options.name
     };
   }
 
   public getAuthUrl() {
+    const redirectUri = this.getRedirectUrl();
+
+    console.log('[OAuth] → Provider:', this.options.name);
+    console.log('[OAuth] → redirect_uri =', redirectUri);
+    console.log('[OAuth] → authorize_url =', this.options.authorize_url);
+
     const query = new URLSearchParams({
-      response_type: "code",
+      response_type: 'code',
       client_id: this.options.client_id,
-      redirect_uri: this.getRedirectUrl(),
-      scope: (this.options.scopes ?? []).join(" "),
-      access_type: "offline",
-      prompt: "select_account",
+      redirect_uri: redirectUri,
+      scope: (this.options.scopes ?? []).join(' '),
+      access_type: 'offline',
+      prompt: 'select_account'
     });
 
-    return `${this.options.authorize_url}?${query}`;
+    const fullUrl = `${this.options.authorize_url}?${query}`;
+    console.log('[OAuth] → Final Google URL:', fullUrl);
+
+    return fullUrl;
   }
 
   public async findUserByCode(code: string): Promise<TypeUserInfo> {
@@ -42,16 +51,16 @@ export class BaseOAuthService {
       client_secret,
       code,
       redirect_uri: this.getRedirectUrl(),
-      grant_type: "authorization_code",
+      grant_type: 'authorization_code'
     });
 
     const tokensRequest = await fetch(this.options.access_url, {
-      method: "POST",
+      method: 'POST',
       body: tokenQuery,
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Accept: "application/json",
-      },
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json'
+      }
     });
 
     if (!tokensRequest.ok) {
@@ -70,8 +79,8 @@ export class BaseOAuthService {
 
     const userRequest = await fetch(this.options.profile_url, {
       headers: {
-        Authorization: `Bearer ${tokens.access_token}`,
-      },
+        Authorization: `Bearer ${tokens.access_token}`
+      }
     });
 
     if (!userRequest.ok) {
@@ -88,7 +97,7 @@ export class BaseOAuthService {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       expires_at: tokens.expires_at || tokens.expires_in,
-      provider: this.options.name,
+      provider: this.options.name
     };
   }
 
