@@ -84,7 +84,22 @@ export class AuthController {
       throw new BadRequestException('Code is required');
     }
 
+    // Ждём, пока extractProfileFromCode выполнит сохранение сессии
     await this.authService.extractProfileFromCode(req, provider, code);
+
+    // ⬇️ ЯВНО ждём завершения сохранения сессии
+    await new Promise<void>((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) {
+          console.error('>>> [AuthController] Session save error:', err);
+          return reject(err);
+        }
+        console.log(
+          '>>> [AuthController] Session saved successfully before redirect'
+        );
+        resolve();
+      });
+    });
 
     console.log(
       '<<< [AuthController] OAuth callback completed, redirecting to:',
