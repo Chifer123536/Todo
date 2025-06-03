@@ -2,10 +2,10 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  UnauthorizedException,
-} from "@nestjs/common";
+  UnauthorizedException
+} from '@nestjs/common';
 
-import { UserService } from "@/user/user.service";
+import { UserService } from '@/user/user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,9 +14,9 @@ export class AuthGuard implements CanActivate {
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    if (typeof request.session.userId === "undefined") {
+    if (typeof request.session.userId === 'undefined') {
       throw new UnauthorizedException(
-        "User is not authorized. Please log in to access."
+        'User is not authorized. Please log in to access.'
       );
     }
 

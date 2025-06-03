@@ -2,11 +2,11 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  NotFoundException,
-} from "@nestjs/common";
-import { Request } from "express";
+  NotFoundException
+} from '@nestjs/common';
+import { Request } from 'express';
 
-import { ProviderService } from "../provider/provider.service";
+import { ProviderService } from '../provider/provider.service';
 
 @Injectable()
 export class AuthProviderGuard implements CanActivate {
