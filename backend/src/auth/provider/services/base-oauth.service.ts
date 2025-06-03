@@ -21,25 +21,16 @@ export class BaseOAuthService {
   }
 
   public getAuthUrl() {
-    const redirectUri = this.getRedirectUrl();
-
-    console.log('[OAuth] → Provider:', this.options.name);
-    console.log('[OAuth] → redirect_uri =', redirectUri);
-    console.log('[OAuth] → authorize_url =', this.options.authorize_url);
-
     const query = new URLSearchParams({
       response_type: 'code',
       client_id: this.options.client_id,
-      redirect_uri: redirectUri,
+      redirect_uri: this.getRedirectUrl(),
       scope: (this.options.scopes ?? []).join(' '),
       access_type: 'offline',
       prompt: 'select_account'
     });
 
-    const fullUrl = `${this.options.authorize_url}?${query}`;
-    console.log('[OAuth] → Final Google URL:', fullUrl);
-
-    return fullUrl;
+    return `${this.options.authorize_url}?${query}`;
   }
 
   public async findUserByCode(code: string): Promise<TypeUserInfo> {
