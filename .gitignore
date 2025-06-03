@@ -43,3 +43,4 @@ frontend/.next/
 
 # Игнорировать все .env-файлы
 *.env
+*.env.production
