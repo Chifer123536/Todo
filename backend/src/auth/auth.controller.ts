@@ -39,13 +39,16 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.OK)
   public async register(@Req() req: Request, @Body() dto: RegisterDto) {
-    console.log('>>> [AuthController] register() called');
-    console.log('>>> [AuthController] Request headers:', req.headers);
-    console.log('>>> [AuthController] Register DTO:', dto);
+    console.log('>>> [AuthController] [REGISTER] register() called');
+    console.log(
+      '>>> [AuthController] [REGISTER] Request headers:',
+      req.headers
+    );
+    console.log('>>> [AuthController] [REGISTER] Register DTO:', dto);
 
     const result = await this.authService.register(req, dto);
 
-    console.log('<<< [AuthController] register() result:', result);
+    console.log('<<< [AuthController] [REGISTER] register() result:', result);
     return result;
   }
 
@@ -53,13 +56,13 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   public async login(@Req() req: Request, @Body() dto: LoginDto) {
-    console.log('>>> [AuthController] login() called');
-    console.log('>>> [AuthController] Request headers:', req.headers);
-    console.log('>>> [AuthController] Login DTO:', dto);
+    console.log('>>> [AuthController] [LOGIN] login() called');
+    console.log('>>> [AuthController] [LOGIN] Request headers:', req.headers);
+    console.log('>>> [AuthController] [LOGIN] Login DTO:', dto);
 
     const result = await this.authService.login(req, dto);
 
-    console.log('<<< [AuthController] login() result:', result);
+    console.log('<<< [AuthController] [LOGIN] login() result:', result);
     return result;
   }
 
@@ -71,16 +74,20 @@ export class AuthController {
     @Query('code') code: string,
     @Param('provider') provider: string
   ) {
-    console.log('>>> [AuthController] oauth callback() called');
-    console.log('>>> [AuthController] Provider:', provider);
-    console.log('>>> [AuthController] Code:', code);
     console.log(
-      '>>> [AuthController] Request session before OAuth:',
+      '>>> [AuthController] [OAUTH CALLBACK] oauth callback() called'
+    );
+    console.log('>>> [AuthController] [OAUTH CALLBACK] Provider:', provider);
+    console.log('>>> [AuthController] [OAUTH CALLBACK] Code:', code);
+    console.log(
+      '>>> [AuthController] [OAUTH CALLBACK] Request session before OAuth:',
       req.session
     );
 
     if (!code) {
-      console.warn('>>> [AuthController] No code provided in OAuth callback');
+      console.warn(
+        '>>> [AuthController] [OAUTH CALLBACK] No code provided in OAuth callback'
+      );
       throw new BadRequestException('Code is required');
     }
 
@@ -91,18 +98,21 @@ export class AuthController {
     await new Promise<void>((resolve, reject) => {
       req.session.save((err) => {
         if (err) {
-          console.error('>>> [AuthController] Session save error:', err);
+          console.error(
+            '>>> [AuthController] [OAUTH CALLBACK] Session save error:',
+            err
+          );
           return reject(err);
         }
         console.log(
-          '>>> [AuthController] Session saved successfully before redirect'
+          '>>> [AuthController] [OAUTH CALLBACK] Session saved successfully before redirect'
         );
         resolve();
       });
     });
 
     console.log(
-      '<<< [AuthController] OAuth callback completed, redirecting to:',
+      '<<< [AuthController] [OAUTH CALLBACK] OAuth callback completed, redirecting to:',
       this.configService.get<string>('ALLOWED_ORIGIN')
     );
 
@@ -114,13 +124,16 @@ export class AuthController {
   @UseGuards(AuthProviderGuard)
   @Get('/oauth/connect/:provider')
   public async connect(@Param('provider') provider: string) {
-    console.log('>>> [AuthController] oauth connect() called');
-    console.log('>>> [AuthController] Provider:', provider);
+    console.log('>>> [AuthController] [OAUTH CONNECT] oauth connect() called');
+    console.log('>>> [AuthController] [OAUTH CONNECT] Provider:', provider);
 
     const providerInstance = this.providerService.findByService(provider);
     const authUrl = providerInstance.getAuthUrl();
 
-    console.log('<<< [AuthController] OAuth connect URL:', authUrl);
+    console.log(
+      '<<< [AuthController] [OAUTH CONNECT] OAuth connect URL:',
+      authUrl
+    );
     return {
       url: authUrl
     };
@@ -132,15 +145,17 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
-    console.log('>>> [AuthController] logout() called');
+    console.log('>>> [AuthController] [LOGOUT] logout() called');
     console.log(
-      '>>> [AuthController] Request session before logout:',
+      '>>> [AuthController] [LOGOUT] Request session before logout:',
       req.session
     );
 
     const result = await this.authService.logout(req, res);
 
-    console.log('<<< [AuthController] logout() completed, session destroyed');
+    console.log(
+      '<<< [AuthController] [LOGOUT] logout() completed, session destroyed'
+    );
     return result;
   }
 }

@@ -32,59 +32,69 @@ async function bootstrap() {
   console.log('ALLOWED_ORIGIN =', config.get('ALLOWED_ORIGIN'));
   console.log('==============================');
 
-  // ─── cookieParser ───────────────────────────────────────────────────────────
-  app.use(cookieParser(config.getOrThrow<string>('COOKIES_SECRET')));
+  // ─── Cookie Secret ───────────────────────────────────────────────────────
+  const cookieSecret = config.getOrThrow<string>('COOKIES_SECRET');
+  console.log('[DEBUG] cookieSecret:', cookieSecret);
 
-  // ─── Валидация DTO ──────────────────────────────────────────────────────────
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true
-    })
+  // ─── Парсим и логируем все значения ──────────────────────────────────────
+  const sessionSecret = config.getOrThrow<string>('SESSION_SECRET');
+  const sessionName = config.getOrThrow<string>('SESSION_NAME');
+  const sessionDomain = config.getOrThrow<string>('SESSION_DOMAIN');
+  const sessionMaxAge = ms(config.getOrThrow<StringValue>('SESSION_MAX_AGE'));
+  const sessionHttpOnly = parseBoolean(
+    config.getOrThrow<string>('SESSION_HTTP_ONLY')
   );
+  const sessionSecure = parseBoolean(
+    config.getOrThrow<string>('SESSION_SECURE')
+  );
+  const sessionSameSite = config.getOrThrow<string>(
+    'SESSION_COOKIE_SAME_SITE'
+  ) as 'lax' | 'strict' | 'none';
+  const sessionFolder = config.getOrThrow<string>('SESSION_FOLDER');
 
-  // ─── Session + RedisStore ───────────────────────────────────────────────────
-  const secret = config.getOrThrow<string>('SESSION_SECRET');
-  const name = config.getOrThrow<string>('SESSION_NAME');
-  const domain = config.getOrThrow<string>('SESSION_DOMAIN');
-  const maxAge = ms(config.getOrThrow<StringValue>('SESSION_MAX_AGE'));
-  const httpOnly = parseBoolean(config.getOrThrow<string>('SESSION_HTTP_ONLY'));
-  const secure = parseBoolean(config.getOrThrow<string>('SESSION_SECURE'));
-  const sameSite = config.getOrThrow<string>('SESSION_COOKIE_SAME_SITE') as
-    | 'lax'
-    | 'strict'
-    | 'none';
-  const prefix = config.getOrThrow<string>('SESSION_FOLDER');
-
-  console.log('[DEBUG] Session config →', {
-    secret,
-    name,
-    domain,
-    maxAge,
-    httpOnly,
-    secure,
-    sameSite,
-    prefix
+  console.log('[DEBUG] Session config values →', {
+    sessionSecret,
+    sessionName,
+    sessionDomain,
+    sessionMaxAge,
+    sessionHttpOnly,
+    sessionSecure,
+    sessionSameSite,
+    sessionFolder
   });
 
-  app.use(
-    session({
-      secret,
-      name,
-      resave: true, // можно false, если не надо пересохранять пустую сессию
-      saveUninitialized: false, // не сохранять пустые сессии
-      cookie: {
-        domain,
-        maxAge,
-        httpOnly,
-        secure,
-        sameSite
-      },
-      store: new RedisStore({
-        client: redisClient,
-        prefix
-      })
-    })
-  );
+  // ─── Печатаем типы для отладки ───────────────────────────────────────────
+  console.log('[DEBUG] Types:');
+  console.log('sessionSecure type =', typeof sessionSecure);
+  console.log('sessionSameSite type =', typeof sessionSameSite);
+  console.log('sessionMaxAge type =', typeof sessionMaxAge);
+  console.log('sessionHttpOnly type =', typeof sessionHttpOnly);
+  console.log('sessionSecret type =', typeof sessionSecret);
+
+  // ─── cookieParser ───────────────────────────────────────────────────────────
+  app.use(cookieParser(cookieSecret));
+
+  // ─── Валидация DTO ──────────────────────────────────────────────────────────
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+  // ─── Session + RedisStore ───────────────────────────────────────────────────
+  const sessionConfig = {
+    secret: sessionSecret,
+    name: sessionName,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      domain: sessionDomain,
+      maxAge: sessionMaxAge,
+      httpOnly: sessionHttpOnly,
+      secure: sessionSecure,
+      sameSite: sessionSameSite
+    },
+    store: new RedisStore({ client: redisClient, prefix: sessionFolder })
+  };
+
+  console.log('[DEBUG] Session config to be used →', sessionConfig);
+  app.use(session(sessionConfig));
 
   // ─── CORS ──────────────────────────────────────────────────────────────────
   app.enableCors({
