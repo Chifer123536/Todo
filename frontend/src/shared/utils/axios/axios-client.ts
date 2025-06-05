@@ -3,7 +3,7 @@ import { AxiosCustomError } from "./axios-error"
 import axios, { AxiosRequestConfig } from "axios"
 
 const instance = axios.create({
-  baseURL: process.env.SERVER_URL,
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
   timeout: 5000,
   withCredentials: true
 })
