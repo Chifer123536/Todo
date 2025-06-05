@@ -79,7 +79,9 @@ export function NewPasswordForm() {
           />
           <div className="flex justify-center">
             <ReCAPTCHA
-              sitekey={process.env.GOOGLE_RECAPTCHA_SITE_KEY as string}
+              sitekey={
+                process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY as string
+              }
               onChange={setRecaptchaValue}
               theme={theme === "light" ? "light" : "dark"}
             />
