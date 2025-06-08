@@ -39,31 +39,22 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.OK)
   public async register(@Req() req: Request, @Body() dto: RegisterDto) {
-    console.log('>>> [AuthController] [REGISTER] register() called');
-    console.log(
-      '>>> [AuthController] [REGISTER] Request headers:',
-      req.headers
-    );
-    console.log('>>> [AuthController] [REGISTER] Register DTO:', dto);
-
-    const result = await this.authService.register(req, dto);
-
-    console.log('<<< [AuthController] [REGISTER] register() result:', result);
-    return result;
+    try {
+      return await this.authService.register(req, dto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Recaptcha()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   public async login(@Req() req: Request, @Body() dto: LoginDto) {
-    console.log('>>> [AuthController] [LOGIN] login() called');
-    console.log('>>> [AuthController] [LOGIN] Request headers:', req.headers);
-    console.log('>>> [AuthController] [LOGIN] Login DTO:', dto);
-
-    const result = await this.authService.login(req, dto);
-
-    console.log('<<< [AuthController] [LOGIN] login() result:', result);
-    return result;
+    try {
+      return await this.authService.login(req, dto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('/oauth/callback/:provider')
@@ -75,68 +66,83 @@ export class AuthController {
     @Param('provider') provider: string
   ) {
     console.log(
-      '>>> [AuthController] [OAUTH CALLBACK] oauth callback() called'
+      '\n===================== [OAUTH CALLBACK] >>> REQUEST START ====================='
     );
-    console.log('>>> [AuthController] [OAUTH CALLBACK] Provider:', provider);
-    console.log('>>> [AuthController] [OAUTH CALLBACK] Code:', code);
-    console.log(
-      '>>> [AuthController] [OAUTH CALLBACK] Request session before OAuth:',
-      req.session
-    );
+    console.log('[OAUTH CALLBACK] Provider:', provider);
+    console.log('[OAUTH CALLBACK] Code:', code);
+    console.log('[OAUTH CALLBACK] Session before:', req.session);
 
     if (!code) {
-      console.warn(
-        '>>> [AuthController] [OAUTH CALLBACK] No code provided in OAuth callback'
+      console.warn('!! [OAUTH CALLBACK] No code provided in OAuth callback');
+      console.log(
+        '===================== [OAUTH CALLBACK] <<< REQUEST END =====================\n'
       );
       throw new BadRequestException('Code is required');
     }
 
-    // Ждём, пока extractProfileFromCode выполнит сохранение сессии
-    await this.authService.extractProfileFromCode(req, provider, code);
+    try {
+      await this.authService.extractProfileFromCode(req, provider, code);
 
-    // ⬇️ ЯВНО ждём завершения сохранения сессии
-    await new Promise<void>((resolve, reject) => {
-      req.session.save((err) => {
-        if (err) {
-          console.error(
-            '>>> [AuthController] [OAUTH CALLBACK] Session save error:',
-            err
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) {
+            console.error('!! [OAUTH CALLBACK] Session save error:', err);
+            return reject(err);
+          }
+          console.log(
+            '[OAUTH CALLBACK] Session saved successfully before redirect'
           );
-          return reject(err);
-        }
-        console.log(
-          '>>> [AuthController] [OAUTH CALLBACK] Session saved successfully before redirect'
-        );
-        resolve();
+          resolve();
+        });
       });
-    });
 
-    console.log(
-      '<<< [AuthController] [OAUTH CALLBACK] OAuth callback completed, redirecting to:',
-      this.configService.get<string>('ALLOWED_ORIGIN')
-    );
+      console.log('[OAUTH CALLBACK] Session after:', req.session);
+      console.log(
+        '===================== [OAUTH CALLBACK] <<< REQUEST END =====================\n'
+      );
 
-    return res.redirect(
-      `${this.configService.getOrThrow<string>('ALLOWED_ORIGIN')}/`
-    );
+      if (process.env.NODE_ENV === 'production') {
+        const redirectUrl = `${this.configService.getOrThrow<string>('ALLOWED_ORIGIN')}/`;
+        console.log(
+          '[OAUTH CALLBACK] Returning JSON redirect URL instead of res.redirect:',
+          redirectUrl
+        );
+        return res.json({ redirectTo: redirectUrl });
+      } else {
+        console.log(
+          '[OAUTH CALLBACK] Redirecting to:',
+          this.configService.getOrThrow<string>('ALLOWED_ORIGIN') + '/'
+        );
+        return res.redirect(
+          `${this.configService.getOrThrow<string>('ALLOWED_ORIGIN')}/`
+        );
+      }
+    } catch (error) {
+      console.error('!! [OAUTH CALLBACK] Error:', error);
+      console.log(
+        '===================== [OAUTH CALLBACK] <<< REQUEST END =====================\n'
+      );
+      throw error;
+    }
   }
 
   @UseGuards(AuthProviderGuard)
   @Get('/oauth/connect/:provider')
   public async connect(@Param('provider') provider: string) {
-    console.log('>>> [AuthController] [OAUTH CONNECT] oauth connect() called');
-    console.log('>>> [AuthController] [OAUTH CONNECT] Provider:', provider);
+    console.log(
+      '\n===================== [OAUTH CONNECT] >>> REQUEST START ====================='
+    );
+    console.log('[OAUTH CONNECT] Provider:', provider);
 
     const providerInstance = this.providerService.findByService(provider);
     const authUrl = providerInstance.getAuthUrl();
 
+    console.log('[OAUTH CONNECT] Auth URL:', authUrl);
     console.log(
-      '<<< [AuthController] [OAUTH CONNECT] OAuth connect URL:',
-      authUrl
+      '===================== [OAUTH CONNECT] <<< REQUEST END =====================\n'
     );
-    return {
-      url: authUrl
-    };
+
+    return { url: authUrl };
   }
 
   @Post('logout')
@@ -145,17 +151,28 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
-    console.log('>>> [AuthController] [LOGOUT] logout() called');
     console.log(
-      '>>> [AuthController] [LOGOUT] Request session before logout:',
-      req.session
+      '\n===================== [LOGOUT] >>> REQUEST START ====================='
     );
+    console.log('[LOGOUT] Session before logout:', req.session);
 
-    const result = await this.authService.logout(req, res);
+    try {
+      const result = await this.authService.logout(req, res);
 
-    console.log(
-      '<<< [AuthController] [LOGOUT] logout() completed, session destroyed'
-    );
-    return result;
+      console.log(
+        '[LOGOUT] Session after logout (should be destroyed):',
+        req.session
+      );
+      console.log(
+        '===================== [LOGOUT] <<< REQUEST END =====================\n'
+      );
+      return result;
+    } catch (error) {
+      console.error('!! [LOGOUT] Error:', error);
+      console.log(
+        '===================== [LOGOUT] <<< REQUEST END =====================\n'
+      );
+      throw error;
+    }
   }
 }

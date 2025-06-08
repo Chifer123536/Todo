@@ -1,58 +1,78 @@
-import { AxiosRequestOptions } from "./axios-types"
-import { AxiosCustomError } from "./axios-error"
 import axios, { AxiosRequestConfig } from "axios"
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
-  timeout: 5000,
+  timeout: 10000,
   withCredentials: true
 })
 
-instance.interceptors.response.use(
-  (res) => res,
+instance.interceptors.request.use(
+  (config) => {
+    console.log("[AXIOS REQUEST]", config.method?.toUpperCase(), config.url)
+    console.log("[AXIOS REQUEST] Headers:", config.headers)
+    console.log("[AXIOS REQUEST] Data:", config.data)
+    return config
+  },
   (error) => {
-    const status = error.response?.status || 500
-    const message =
-      error.response?.data?.message || error.message || "Unknown error"
-    return Promise.reject(new AxiosCustomError(status, message))
+    console.error("[AXIOS REQUEST ERROR]", error)
+    return Promise.reject(error)
+  }
+)
+
+instance.interceptors.response.use(
+  (res) => {
+    console.log(
+      "[AXIOS RESPONSE]",
+      res.config.method?.toUpperCase(),
+      res.config.url,
+      "Status:",
+      res.status
+    )
+    console.log("[AXIOS RESPONSE] Data:", res.data)
+    return res
+  },
+  (error) => {
+    console.error(
+      "[AXIOS RESPONSE ERROR]",
+      error.response?.status,
+      error.response?.data,
+      error.message
+    )
+    return Promise.reject(error)
   }
 )
 
 export const apiClient = {
-  get: async <T>(url: string, options?: AxiosRequestOptions): Promise<T> => {
-    const res = await instance.get<T>(url, options as AxiosRequestConfig)
+  get: async <T>(url: string, options?: AxiosRequestConfig): Promise<T> => {
+    const res = await instance.get<T>(url, options)
     return res.data
   },
   post: async <T>(
     url: string,
     data?: any,
-    options?: AxiosRequestOptions
+    options?: AxiosRequestConfig
   ): Promise<T> => {
-    const res = await instance.post<T>(url, data, options as AxiosRequestConfig)
+    const res = await instance.post<T>(url, data, options)
     return res.data
   },
   put: async <T>(
     url: string,
     data?: any,
-    options?: AxiosRequestOptions
+    options?: AxiosRequestConfig
   ): Promise<T> => {
-    const res = await instance.put<T>(url, data, options as AxiosRequestConfig)
+    const res = await instance.put<T>(url, data, options)
     return res.data
   },
-  delete: async <T>(url: string, options?: AxiosRequestOptions): Promise<T> => {
-    const res = await instance.delete<T>(url, options as AxiosRequestConfig)
+  delete: async <T>(url: string, options?: AxiosRequestConfig): Promise<T> => {
+    const res = await instance.delete<T>(url, options)
     return res.data
   },
   patch: async <T>(
     url: string,
     data?: any,
-    options?: AxiosRequestOptions
+    options?: AxiosRequestConfig
   ): Promise<T> => {
-    const res = await instance.patch<T>(
-      url,
-      data,
-      options as AxiosRequestConfig
-    )
+    const res = await instance.patch<T>(url, data, options)
     return res.data
   }
 }

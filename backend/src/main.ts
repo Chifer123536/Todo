@@ -14,7 +14,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
 
-  // ─── Debug: покажем, что именно прочиталось из ENV ─────────────────────────
   console.log('===== STARTUP DEBUG ENV =====');
   console.log('NODE_ENV =', process.env.NODE_ENV);
   console.log('COOKIES_SECRET =', config.get('COOKIES_SECRET'));
@@ -76,6 +75,24 @@ async function bootstrap() {
 
   // ─── Валидация DTO ──────────────────────────────────────────────────────────
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+  // ─── Глобальный логер запросов и ответов ───────────────────────────────────
+  app.use((req, res, next) => {
+    const start = Date.now();
+    console.log(
+      `[REQUEST] ${req.method} ${req.originalUrl} - cookies:`,
+      req.cookies
+    );
+
+    res.on('finish', () => {
+      const ms = Date.now() - start;
+      console.log(
+        `[RESPONSE] ${req.method} ${req.originalUrl} ${res.statusCode} - ${ms}ms`
+      );
+    });
+
+    next();
+  });
 
   // ─── Session + RedisStore ───────────────────────────────────────────────────
   const sessionConfig = {

@@ -32,7 +32,6 @@ export class AuthService {
     private readonly emailConfirmationService: EmailConfirmationService,
     private readonly twoFactorAuthService: TwoFactorAuthService
   ) {
-    // Логируем ключевые ENV-переменные при инициализации AuthService
     console.log('>>> [AuthService] ENV snapshot:');
     [
       'SESSION_NAME',
@@ -47,7 +46,12 @@ export class AuthService {
   }
 
   public async register(req: Request, dto: RegisterDto) {
-    console.log('>>> [AuthService] register() called with DTO:', dto);
+    console.log('>>> [AuthService] register() called');
+    console.log('    Headers.cookie:', req.headers.cookie);
+    console.log('    Request body:', req.body);
+    console.log('    Session before register:', req.session);
+    console.log('    DTO:', dto);
+
     const isExists = await this.userService.findByEmail(dto.email);
     console.log(
       '>>> [AuthService] existing user check for',
@@ -77,13 +81,19 @@ export class AuthService {
     await this.emailConfirmationService.sendVerificationToken(newUser.email);
     console.log('>>> [AuthService] Sent email confirmation to:', newUser.email);
 
+    console.log('    Session after register:', req.session);
+
     return {
       message: 'User registered successfully. Please, confirm your email.'
     };
   }
 
   public async login(req: Request, dto: LoginDto) {
-    console.log('>>> [AuthService] login() called with DTO:', dto);
+    console.log('>>> [AuthService] login() called');
+    console.log('    Headers.cookie:', req.headers.cookie);
+    console.log('    Request body:', req.body);
+    console.log('    Session before login:', req.session);
+    console.log('    DTO:', dto);
 
     const user = await this.userService.findByEmail(dto.email);
     console.log('>>> [AuthService] found user:', user?.email);
@@ -140,7 +150,10 @@ export class AuthService {
       console.log('>>> [AuthService] 2FA code is valid for:', user.email);
     }
 
-    return this.saveSession(req, user);
+    const sessionSaveResult = await this.saveSession(req, user);
+    console.log('    Session after login:', req.session);
+
+    return sessionSaveResult;
   }
 
   public async extractProfileFromCode(
@@ -148,10 +161,12 @@ export class AuthService {
     provider: string,
     code: string
   ) {
-    console.log('>>> [AuthService] extractProfileFromCode called with:', {
-      provider,
-      code
-    });
+    console.log('>>> [AuthService] extractProfileFromCode called with:');
+    console.log('    Headers.cookie:', req.headers.cookie);
+    console.log('    Provider:', provider);
+    console.log('    Code:', code);
+    console.log('    Request body:', req.body);
+    console.log('    Session before extractProfileFromCode:', req.session);
 
     const providerInstance = this.providerService.findByService(provider);
     const profile = await providerInstance.findUserByCode(code);
@@ -225,7 +240,10 @@ export class AuthService {
       console.log('>>> [AuthService] New OAuth account created:', account);
     }
 
-    return this.saveSession(req, user);
+    const sessionSaveResult = await this.saveSession(req, user);
+    console.log('    Session after extractProfileFromCode:', req.session);
+
+    return sessionSaveResult;
   }
 
   public async logout(req: Request, res: Response): Promise<void> {
@@ -233,20 +251,25 @@ export class AuthService {
       '>>> [AuthService] logout() called, session before destroy:',
       req.session
     );
+    console.log('    Headers.cookie before logout:', req.headers.cookie);
 
     return new Promise((resolve, reject) => {
       req.session.destroy((err) => {
         if (err) {
           console.error('<<< [AuthService] Error destroying session:', err);
+          console.trace();
           return reject(new InternalServerErrorException('Failed to logout'));
         }
-        console.log(
-          '<<< [AuthService] Session destroyed successfully for user'
-        );
+        console.log('<<< [AuthService] Session destroyed successfully');
+        console.log('    Session after destroy:', req.session);
         res.clearCookie(this.configService.getOrThrow<string>('SESSION_NAME'));
         console.log(
           '<<< [AuthService] Cleared cookie:',
           this.configService.getOrThrow<string>('SESSION_NAME')
+        );
+        console.log(
+          '    Response headers after clearCookie:',
+          res.getHeaders()
         );
         resolve();
       });
@@ -255,25 +278,25 @@ export class AuthService {
 
   public async saveSession(req: Request, user: User) {
     console.log('>>> [AuthService] Saving session for user:', user.email);
+    console.log('    Session before saving:', req.session);
 
     return new Promise((resolve, reject) => {
       req.session.userId = user.id;
-      console.log(
-        '>>> [AuthService] req.session.userId set to:',
-        req.session.userId
-      );
+      console.log('    req.session.userId set to:', req.session.userId);
 
       req.session.save((err) => {
         if (err) {
           console.error('<<< [AuthService] Error saving session:', err);
+          console.trace();
           return reject(
             new InternalServerErrorException('Failed to save session')
           );
         }
         console.log(
-          '<<< [AuthService] Session saved successfully, user:',
+          '<<< [AuthService] Session saved successfully for user:',
           user.email
         );
+        console.log('    Session after saving:', req.session);
         resolve({ user });
       });
     });
