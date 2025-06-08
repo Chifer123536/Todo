@@ -131,8 +131,22 @@ async function bootstrap() {
   app.use(session(sessionConfig));
 
   // ─── Разрешаем CORS ────────────────────────────────────────────────────────
+  const allowedOrigin = config.get<string>('ALLOWED_ORIGIN');
+  console.log(`${timestamp()} [DEBUG] Resolved ALLOWED_ORIGIN:`, allowedOrigin);
+
   app.enableCors({
-    origin: config.getOrThrow<string>('ALLOWED_ORIGIN'),
+    origin: (origin, callback) => {
+      console.log(`${timestamp()} [CORS CHECK] Request origin:`, origin);
+      if (!origin || origin === allowedOrigin) {
+        callback(null, true);
+      } else {
+        console.warn(
+          `${timestamp()} [CORS BLOCKED] Origin not allowed:`,
+          origin
+        );
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true
   });
 

@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from "axios"
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
-  timeout: 10000,
+  timeout: 15000,
   withCredentials: true
 })
 
