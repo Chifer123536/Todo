@@ -39,9 +39,27 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.OK)
   public async register(@Req() req: Request, @Body() dto: RegisterDto) {
+    console.log(
+      '\n===================== [REGISTER] >>> REQUEST START ====================='
+    );
+    console.log('[REGISTER] Headers:', req.headers);
+    console.log('[REGISTER] Body (DTO):', dto);
+    console.log('[REGISTER] Session before:', req.session);
+
     try {
-      return await this.authService.register(req, dto);
+      const result = await this.authService.register(req, dto);
+
+      console.log('[REGISTER] Session after:', req.session);
+      console.log('[REGISTER] Result:', result);
+      console.log(
+        '===================== [REGISTER] <<< REQUEST END =====================\n'
+      );
+      return result;
     } catch (error) {
+      console.error('!! [REGISTER] Error:', error);
+      console.log(
+        '===================== [REGISTER] <<< REQUEST END =====================\n'
+      );
       throw error;
     }
   }
@@ -50,9 +68,27 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   public async login(@Req() req: Request, @Body() dto: LoginDto) {
+    console.log(
+      '\n===================== [LOGIN] >>> REQUEST START ====================='
+    );
+    console.log('[LOGIN] Headers:', req.headers);
+    console.log('[LOGIN] Body (DTO):', dto);
+    console.log('[LOGIN] Session before:', req.session);
+
     try {
-      return await this.authService.login(req, dto);
+      const result = await this.authService.login(req, dto);
+
+      console.log('[LOGIN] Session after:', req.session);
+      console.log('[LOGIN] Result:', result);
+      console.log(
+        '===================== [LOGIN] <<< REQUEST END =====================\n'
+      );
+      return result;
     } catch (error) {
+      console.error('!! [LOGIN] Error:', error);
+      console.log(
+        '===================== [LOGIN] <<< REQUEST END =====================\n'
+      );
       throw error;
     }
   }
@@ -101,6 +137,7 @@ export class AuthController {
         '===================== [OAUTH CALLBACK] <<< REQUEST END =====================\n'
       );
 
+      // Для проблемы с редиректом куки — возвращаем JSON вместо редиректа
       if (process.env.NODE_ENV === 'production') {
         const redirectUrl = `${this.configService.getOrThrow<string>('ALLOWED_ORIGIN')}/`;
         console.log(
