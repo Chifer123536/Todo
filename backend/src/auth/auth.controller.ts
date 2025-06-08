@@ -49,6 +49,18 @@ export class AuthController {
     try {
       const result = await this.authService.register(req, dto);
 
+      // Сохранение сессии после регистрации
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) {
+            console.error('!! [REGISTER] Session save error:', err);
+            return reject(err);
+          }
+          console.log('[REGISTER] Session saved successfully');
+          resolve();
+        });
+      });
+
       console.log('[REGISTER] Session after:', req.session);
       console.log('[REGISTER] Result:', result);
       console.log(
@@ -67,7 +79,11 @@ export class AuthController {
   @Recaptcha()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  public async login(@Req() req: Request, @Body() dto: LoginDto) {
+  public async login(
+    @Req() req: Request,
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
     console.log(
       '\n===================== [LOGIN] >>> REQUEST START ====================='
     );
@@ -77,6 +93,17 @@ export class AuthController {
 
     try {
       const result = await this.authService.login(req, dto);
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) {
+            console.error('!! [LOGIN] Session save error:', err);
+            return reject(err);
+          }
+          console.log('[LOGIN] Session saved successfully');
+          resolve();
+        });
+      });
 
       console.log('[LOGIN] Session after:', req.session);
       console.log('[LOGIN] Result:', result);
