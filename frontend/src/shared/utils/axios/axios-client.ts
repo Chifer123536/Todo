@@ -43,36 +43,54 @@ instance.interceptors.response.use(
 )
 
 export const apiClient = {
-  get: async <T>(url: string, options?: AxiosRequestConfig): Promise<T> => {
-    const res = await instance.get<T>(url, options)
+  get: async <T>(url: string, options: AxiosRequestConfig = {}): Promise<T> => {
+    const res = await instance.get<T>(url, {
+      ...options,
+      withCredentials: true
+    })
     return res.data
   },
   post: async <T>(
     url: string,
     data?: any,
-    options?: AxiosRequestConfig
+    options: AxiosRequestConfig = {}
   ): Promise<T> => {
-    const res = await instance.post<T>(url, data, options)
+    const res = await instance.post<T>(url, data, {
+      ...options,
+      withCredentials: true
+    })
     return res.data
   },
   put: async <T>(
     url: string,
     data?: any,
-    options?: AxiosRequestConfig
+    options: AxiosRequestConfig = {}
   ): Promise<T> => {
-    const res = await instance.put<T>(url, data, options)
+    const res = await instance.put<T>(url, data, {
+      ...options,
+      withCredentials: true
+    })
     return res.data
   },
-  delete: async <T>(url: string, options?: AxiosRequestConfig): Promise<T> => {
-    const res = await instance.delete<T>(url, options)
+  delete: async <T>(
+    url: string,
+    options: AxiosRequestConfig = {}
+  ): Promise<T> => {
+    const res = await instance.delete<T>(url, {
+      ...options,
+      withCredentials: true
+    })
     return res.data
   },
   patch: async <T>(
     url: string,
     data?: any,
-    options?: AxiosRequestConfig
+    options: AxiosRequestConfig = {}
   ): Promise<T> => {
-    const res = await instance.patch<T>(url, data, options)
+    const res = await instance.patch<T>(url, data, {
+      ...options,
+      withCredentials: true
+    })
     return res.data
   }
 }
