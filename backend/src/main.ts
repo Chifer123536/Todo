@@ -1,7 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import { RedisStore } from 'connect-redis';
@@ -16,10 +15,8 @@ function timestamp(): string {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
-
-  app.set('trust proxy', 1);
 
   // ─── Вывод переменных окружения ───────────────────────────────────────────
   console.log(`${timestamp()} ===== STARTUP DEBUG ENV =====`);
@@ -131,7 +128,7 @@ async function bootstrap() {
     `${timestamp()} [DEBUG] Session config to be used →`,
     sessionConfig
   );
-  app.use(session(sessionConfig)); // сессия идёт после trust proxy
+  app.use(session(sessionConfig));
 
   // ─── Разрешаем CORS ────────────────────────────────────────────────────────
   const allowedOrigin = config.get<string>('ALLOWED_ORIGIN');
