@@ -49,7 +49,6 @@ export class AuthController {
     try {
       const result = await this.authService.register(req, dto);
 
-      // Сохранение сессии после регистрации
       await new Promise<void>((resolve, reject) => {
         req.session.save((err) => {
           if (err) {
@@ -164,23 +163,9 @@ export class AuthController {
         '===================== [OAUTH CALLBACK] <<< REQUEST END =====================\n'
       );
 
-      // Для проблемы с редиректом куки — возвращаем JSON вместо редиректа
-      if (process.env.NODE_ENV === 'production') {
-        const redirectUrl = `${this.configService.getOrThrow<string>('ALLOWED_ORIGIN')}/`;
-        console.log(
-          '[OAUTH CALLBACK] Returning JSON redirect URL instead of res.redirect:',
-          redirectUrl
-        );
-        return res.json({ redirectTo: redirectUrl });
-      } else {
-        console.log(
-          '[OAUTH CALLBACK] Redirecting to:',
-          this.configService.getOrThrow<string>('ALLOWED_ORIGIN') + '/'
-        );
-        return res.redirect(
-          `${this.configService.getOrThrow<string>('ALLOWED_ORIGIN')}/`
-        );
-      }
+      const redirectUrl = `${this.configService.getOrThrow<string>('ALLOWED_ORIGIN')}/`;
+      console.log('[OAUTH CALLBACK] Redirecting to:', redirectUrl);
+      return res.redirect(redirectUrl);
     } catch (error) {
       console.error('!! [OAUTH CALLBACK] Error:', error);
       console.log(
