@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 import { authService } from "@/features/auth/services"
 
@@ -12,6 +13,7 @@ export function useLogoutMutation() {
     mutationKey: ["logout"],
     mutationFn: () => authService.logout(),
     onSuccess() {
+      toast.success("Successfully logged out.")
       router.push("/auth/login")
     },
     onError(error) {
