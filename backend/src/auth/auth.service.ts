@@ -260,17 +260,49 @@ export class AuthService {
           console.trace();
           return reject(new InternalServerErrorException('Failed to logout'));
         }
+
         console.log('<<< [AuthService] Session destroyed successfully');
         console.log('    Session after destroy:', req.session);
-        res.clearCookie(this.configService.getOrThrow<string>('SESSION_NAME'));
-        console.log(
-          '<<< [AuthService] Cleared cookie:',
-          this.configService.getOrThrow<string>('SESSION_NAME')
-        );
+
+        const sessionName =
+          this.configService.getOrThrow<string>('SESSION_NAME');
+        const sessionDomain = this.configService.get<string>('SESSION_DOMAIN');
+        const sessionSecure =
+          this.configService.get<string>('SESSION_SECURE') === 'true';
+        const sessionHttpOnly =
+          this.configService.get<string>('SESSION_HTTP_ONLY') === 'true';
+        const sessionSameSite = this.configService.get<string>(
+          'SESSION_COOKIE_SAME_SITE'
+        ) as 'lax' | 'strict' | 'none';
+
+        const cookieOptions: {
+          path: string;
+          httpOnly: boolean;
+          secure: boolean;
+          sameSite: 'lax' | 'strict' | 'none';
+          domain?: string;
+        } = {
+          path: '/',
+          httpOnly: sessionHttpOnly,
+          secure: sessionSecure,
+          sameSite: sessionSameSite
+        };
+
+        if (sessionDomain) {
+          cookieOptions.domain = sessionDomain;
+        }
+
+        res.clearCookie(sessionName, cookieOptions);
+
+        console.log('<<< [AuthService] Cleared cookie:', {
+          name: sessionName,
+          ...cookieOptions
+        });
         console.log(
           '    Response headers after clearCookie:',
           res.getHeaders()
         );
+
         resolve();
       });
     });
