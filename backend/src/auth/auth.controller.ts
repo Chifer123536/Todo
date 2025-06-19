@@ -16,6 +16,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { Request, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
+import { TwoFactorDto } from './dto/two-factor.dto';
 import { Recaptcha } from '@nestlab/google-recaptcha';
 import { AuthProviderGuard } from './guards/provider.guard';
 import { ConfigService } from '@nestjs/config';
@@ -75,7 +76,6 @@ export class AuthController {
     }
   }
 
-  @Recaptcha()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   public async login(
@@ -91,18 +91,7 @@ export class AuthController {
     console.log('[LOGIN] Session before:', req.session);
 
     try {
-      const result = await this.authService.login(req, dto);
-
-      await new Promise<void>((resolve, reject) => {
-        req.session.save((err) => {
-          if (err) {
-            console.error('!! [LOGIN] Session save error:', err);
-            return reject(err);
-          }
-          console.log('[LOGIN] Session saved successfully');
-          resolve();
-        });
-      });
+      const result = await this.authService.loginStepOne(req, dto);
 
       console.log('[LOGIN] Session after:', req.session);
       console.log('[LOGIN] Result:', result);
@@ -114,6 +103,49 @@ export class AuthController {
       console.error('!! [LOGIN] Error:', error);
       console.log(
         '===================== [LOGIN] <<< REQUEST END =====================\n'
+      );
+      throw error;
+    }
+  }
+
+  @Post('login/2fa')
+  @HttpCode(HttpStatus.OK)
+  public async login2fa(
+    @Req() req: Request,
+    @Body() dto: TwoFactorDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    console.log(
+      '\n===================== [LOGIN/2FA] >>> REQUEST START ====================='
+    );
+    console.log('[LOGIN/2FA] Headers:', req.headers);
+    console.log('[LOGIN/2FA] Body (DTO):', dto);
+    console.log('[LOGIN/2FA] Session before:', req.session);
+
+    try {
+      const result = await this.authService.confirmTwoFactorCode(req, dto);
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) {
+            console.error('!! [LOGIN/2FA] Session save error:', err);
+            return reject(err);
+          }
+          console.log('[LOGIN/2FA] Session saved successfully');
+          resolve();
+        });
+      });
+
+      console.log('[LOGIN/2FA] Session after:', req.session);
+      console.log('[LOGIN/2FA] Result:', result);
+      console.log(
+        '===================== [LOGIN/2FA] <<< REQUEST END =====================\n'
+      );
+      return result;
+    } catch (error) {
+      console.error('!! [LOGIN/2FA] Error:', error);
+      console.log(
+        '===================== [LOGIN/2FA] <<< REQUEST END =====================\n'
       );
       throw error;
     }

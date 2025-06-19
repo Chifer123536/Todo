@@ -24,6 +24,17 @@ class AuthService {
     return response
   }
 
+  public async confirm2fa(code: string) {
+    const response = await api.post<IUser>(
+      "auth/login/2fa",
+      { code },
+      {
+        withCredentials: true
+      }
+    )
+    return response
+  }
+
   public async oauthByProvider(provider: "google" | "yandex") {
     const response = await api.get<{ url: string }>(
       `auth/oauth/connect/${provider}`

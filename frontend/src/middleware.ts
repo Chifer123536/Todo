@@ -1,27 +1,27 @@
+// middleware.ts (Next.js)
+
 import { NextRequest, NextResponse } from "next/server"
 
-export default function middleware(request: NextRequest) {
-  console.log(`[MIDDLEWARE] URL: ${request.url}`)
-  console.log(`[MIDDLEWARE] Cookies:`, JSON.stringify(request.cookies.getAll()))
+export default function middleware(req: NextRequest) {
+  console.log(`[MIDDLEWARE] URL: ${req.url}`)
+  console.log(`[MIDDLEWARE] Cookies:`, JSON.stringify(req.cookies.getAll()))
 
-  const session = request.cookies.get("session")?.value
-  const isAuthPage = request.nextUrl.pathname.startsWith("/auth")
+  const isAuth = req.nextUrl.pathname.startsWith("/auth")
+  const authed = req.cookies.get("authenticated")?.value === "true"
 
-  if (isAuthPage) {
-    if (session) {
-      console.log("[MIDDLEWARE] Redirect to / because user already has session")
-      return NextResponse.redirect(new URL("/", request.url))
+  if (isAuth) {
+    if (authed) {
+      console.log("[MIDDLEWARE] Redirecting to /, already authenticated")
+      return NextResponse.redirect(new URL("/", req.url))
     }
-    console.log("[MIDDLEWARE] Allowing auth page without session")
     return NextResponse.next()
   }
 
-  if (!session) {
-    console.log("[MIDDLEWARE] Redirect to /auth/login because no session")
-    return NextResponse.redirect(new URL("/auth/login", request.url))
+  if (!authed) {
+    console.log("[MIDDLEWARE] Redirecting to /auth/login, not authenticated")
+    return NextResponse.redirect(new URL("/auth/login", req.url))
   }
 
-  console.log("[MIDDLEWARE] Session exists, continue")
   return NextResponse.next()
 }
 

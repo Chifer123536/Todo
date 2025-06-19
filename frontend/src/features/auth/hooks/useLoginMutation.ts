@@ -24,7 +24,7 @@ export function useLoginMutation(
     }) => authService.login(values, recaptcha),
     onSuccess(data: any) {
       if (data.message) {
-        toastMessageHandler(data)
+        toast.success(data.message)
         setIsShowFactor(true)
       } else {
         toast.success("Successful")
@@ -36,5 +36,17 @@ export function useLoginMutation(
     }
   })
 
-  return { login, isLoadingLogin }
+  const { mutate: confirm2fa, isPending: isLoading2fa } = useMutation({
+    mutationKey: ["confirm 2fa"],
+    mutationFn: (code: string) => authService.confirm2fa(code),
+    onSuccess() {
+      toast.success("2FA confirmed")
+      router.push("/")
+    },
+    onError(error) {
+      toastMessageHandler(error)
+    }
+  })
+
+  return { login, confirm2fa, isLoadingLogin, isLoading2fa }
 }

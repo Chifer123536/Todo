@@ -33,17 +33,27 @@ export function LoginForm() {
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: "",
-      password: ""
+      password: "",
+      code: ""
     }
   })
 
-  const { login, isLoadingLogin } = useLoginMutation(setIsShowFactor)
+  const { login, confirm2fa, isLoadingLogin, isLoading2fa } =
+    useLoginMutation(setIsShowFactor)
 
   const onSubmit = (values: TypeLoginSchema) => {
-    if (recaptchaValue) {
-      login({ values, recaptcha: recaptchaValue })
+    if (isShowTwoFactor) {
+      if (!values.code) {
+        toast.error("Enter the verification code")
+        return
+      }
+      confirm2fa(values.code)
     } else {
-      toast.error("Please complete the reCAPTCHA")
+      if (recaptchaValue) {
+        login({ values, recaptcha: recaptchaValue })
+      } else {
+        toast.error("Please complete the reCAPTCHA")
+      }
     }
   }
 
@@ -60,7 +70,7 @@ export function LoginForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="grid gap-2 space-y-2"
         >
-          {isShowTwoFactor && (
+          {isShowTwoFactor ? (
             <FormField
               control={form.control}
               name="code"
@@ -70,7 +80,7 @@ export function LoginForm() {
                   <FormControl>
                     <Input
                       placeholder="123456"
-                      disabled={isLoadingLogin}
+                      disabled={isLoading2fa}
                       {...field}
                     />
                   </FormControl>
@@ -78,8 +88,7 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-          )}
-          {!isShowTwoFactor && (
+          ) : (
             <>
               <FormField
                 control={form.control}
@@ -125,19 +134,19 @@ export function LoginForm() {
                   </FormItem>
                 )}
               />
+              <div className="flex justify-center">
+                <ReCAPTCHA
+                  sitekey={
+                    process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY as string
+                  }
+                  onChange={setRecaptchaValue}
+                  theme={theme === "light" ? "dark" : "light"}
+                />
+              </div>
             </>
           )}
-          <div className="flex justify-center">
-            <ReCAPTCHA
-              sitekey={
-                process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY as string
-              }
-              onChange={setRecaptchaValue}
-              theme={theme === "light" ? "dark" : "light"}
-            />
-          </div>
-          <Button type="submit" disabled={isLoadingLogin}>
-            Sign In
+          <Button type="submit" disabled={isLoadingLogin || isLoading2fa}>
+            {isShowTwoFactor ? "Confirm Code" : "Sign In"}
           </Button>
         </form>
       </Form>

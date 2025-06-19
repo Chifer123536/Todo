@@ -6,12 +6,13 @@ import {
   UnauthorizedException
 } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { TwoFactorDto } from './dto/two-factor.dto';
 import { UserService } from '@/user/user.service';
 import { AuthMethod } from '@/shared/enums';
 import { User, UserDocument } from '@/schemas/user.schema';
 import { Account, AccountDocument } from '@/schemas/account.schema';
 import { Request, Response } from 'express';
-import { LoginDto } from './dto/login.dto';
 import { verify } from 'argon2';
 import { ConfigService } from '@nestjs/config';
 import { ProviderService } from './provider/provider.service';
@@ -22,7 +23,7 @@ import { TwoFactorAuthService } from './two-factor-auth/two-factor-auth.service'
 
 @Injectable()
 export class AuthService {
-  public constructor(
+  constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     @InjectModel(Account.name)
     private readonly accountModel: Model<AccountDocument>,
@@ -88,8 +89,9 @@ export class AuthService {
     };
   }
 
-  public async login(req: Request, dto: LoginDto) {
-    console.log('>>> [AuthService] login() called');
+  // ─── Первый этап логина: email+password + ReCaptcha ────────────────────
+  public async loginStepOne(req: Request, dto: LoginDto) {
+    console.log('>>> [AuthService] loginStepOne() called');
     console.log('    Headers.cookie:', req.headers.cookie);
     console.log('    Request body:', req.body);
     console.log('    Session before login:', req.session);
@@ -130,30 +132,66 @@ export class AuthService {
 
     if (user.isTwoFactorEnabled) {
       console.log('>>> [AuthService] Two-Factor is enabled for:', user.email);
+      console.log('>>> [AuthService] Sending 2FA token to:', user.email);
+      await this.twoFactorAuthService.sendTwoFactorToken(user.email);
 
-      if (!dto.code) {
-        console.log(
-          '>>> [AuthService] No 2FA code provided, sending 2FA token to:',
-          user.email
-        );
-        await this.twoFactorAuthService.sendTwoFactorToken(user.email);
-        return {
-          message: 'Look at your email for the code on two-factor auth.'
-        };
-      }
+      req.session.twoFactorUserId = user.id; // ✅ временно сохраняем ID
+      await req.session.save();
+      console.log('    Session saved for 2FA step:', req.session);
 
-      console.log('>>> [AuthService] Validating 2FA code for:', user.email);
-      await this.twoFactorAuthService.validateTwoFactorToken(
-        user.email,
-        dto.code
-      );
-      console.log('>>> [AuthService] 2FA code is valid for:', user.email);
+      return { message: 'Look at your email for the code on two-factor auth.' };
     }
 
-    const sessionSaveResult = await this.saveSession(req, user);
-    console.log('    Session after login:', req.session);
+    // Если 2FA не включена — сразу сохраняем сессию
+    const result = await this.saveSession(req, user);
+    console.log('    Session after loginStepOne:', req.session);
+    return result;
+  }
 
-    return sessionSaveResult;
+  // ─── Второй этап — подтверждение кода 2FA ───────────────────────────────
+  public async confirmTwoFactorCode(req: Request, dto: TwoFactorDto) {
+    console.log('>>> [AuthService] confirmTwoFactorCode() called');
+    console.log('    DTO:', dto);
+    console.log('    Session before confirm:', req.session);
+
+    const sessionUserId = req.session.twoFactorUserId;
+    if (!sessionUserId) {
+      console.warn('>>> [AuthService] Session expired before 2FA confirmation');
+      throw new UnauthorizedException('Session expired. Please login again.');
+    }
+
+    const user = await this.userService.findById(sessionUserId);
+    if (!user || !user.isTwoFactorEnabled) {
+      console.warn(
+        '>>> [AuthService] Two-factor auth not enabled or user missing'
+      );
+      throw new UnauthorizedException('Two-factor authentication not enabled.');
+    }
+
+    console.log('>>> [AuthService] Validating 2FA code for:', user.email);
+    await this.twoFactorAuthService.validateTwoFactorToken(
+      user.email,
+      dto.code
+    );
+    console.log('>>> [AuthService] 2FA code is valid for:', user.email);
+
+    // ✅ Удаляем временный идентификатор и сохраняем реальный
+    delete req.session.twoFactorUserId;
+    const result = await this.saveSession(req, user);
+
+    req.res?.cookie('authenticated', 'true', {
+      path: '/',
+      httpOnly: false,
+      secure: this.configService.get<string>('SESSION_SECURE') === 'true',
+      sameSite: this.configService.get<string>('SESSION_COOKIE_SAME_SITE') as
+        | 'lax'
+        | 'strict'
+        | 'none',
+      domain: this.configService.get<string>('SESSION_DOMAIN') || undefined,
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+
+    return result;
   }
 
   public async extractProfileFromCode(
@@ -161,12 +199,9 @@ export class AuthService {
     provider: string,
     code: string
   ) {
-    console.log('>>> [AuthService] extractProfileFromCode called with:');
-    console.log('    Headers.cookie:', req.headers.cookie);
-    console.log('    Provider:', provider);
-    console.log('    Code:', code);
-    console.log('    Request body:', req.body);
-    console.log('    Session before extractProfileFromCode:', req.session);
+    console.log('>>> [AuthService] extractProfileFromCode called');
+    console.log('    Provider:', provider, 'Code:', code);
+    console.log('    Session before extract:', req.session);
 
     const providerInstance = this.providerService.findByService(provider);
     const profile = await providerInstance.findUserByCode(code);
@@ -176,37 +211,32 @@ export class AuthService {
       id: profile.id,
       provider: profile.provider
     });
-    console.log(
-      '>>> [AuthService] existing OAuth account query result:',
-      account
-    );
+    console.log('>>> [AuthService] existing OAuth account:', account);
 
-    let user: UserDocument | null = null;
+    let user: UserDocument;
 
     if (account) {
       console.log(
-        '>>> [AuthService] Found existing account, fetching user by ID:',
+        '>>> [AuthService] Linking to existing user ID:',
         account.userId
       );
       user = await this.userModel.findById(account.userId);
       if (!user) {
-        console.warn(
-          '>>> [AuthService] Account exists but user missing for ID:',
+        console.error(
+          '>>> [AuthService] Linked user missing for ID:',
           account.userId
         );
         throw new NotFoundException('User linked to this account not found');
       }
-      console.log('>>> [AuthService] Linked user found:', user.email);
     } else {
       console.log(
-        '>>> [AuthService] No OAuth account found, looking up user by email:',
+        '>>> [AuthService] No OAuth account, looking up user by email:',
         profile.email
       );
       user = await this.userModel.findOne({ email: profile.email });
-
       if (!user) {
         console.log(
-          '>>> [AuthService] No user found with that email, creating new user:',
+          '>>> [AuthService] Creating new OAuth user for email:',
           profile.email
         );
         user = await this.userService.create(
@@ -217,16 +247,9 @@ export class AuthService {
           AuthMethod[profile.provider.toUpperCase()],
           true
         );
-        console.log('>>> [AuthService] New OAuth user created:', user.email);
-      } else {
-        console.log(
-          '>>> [AuthService] Found existing user by email:',
-          user.email
-        );
       }
-
       console.log(
-        '>>> [AuthService] Creating new OAuth account for user:',
+        '>>> [AuthService] Creating OAuth account for user:',
         user.email
       );
       account = await this.accountModel.create({
@@ -237,13 +260,11 @@ export class AuthService {
         refreshToken: profile.refresh_token,
         expiresAt: profile.expires_at
       });
-      console.log('>>> [AuthService] New OAuth account created:', account);
     }
 
-    const sessionSaveResult = await this.saveSession(req, user);
+    const result = await this.saveSession(req, user);
     console.log('    Session after extractProfileFromCode:', req.session);
-
-    return sessionSaveResult;
+    return result;
   }
 
   public async logout(req: Request, res: Response): Promise<void> {
@@ -257,7 +278,6 @@ export class AuthService {
       req.session.destroy((err) => {
         if (err) {
           console.error('<<< [AuthService] Error destroying session:', err);
-          console.trace();
           return reject(new InternalServerErrorException('Failed to logout'));
         }
 
@@ -287,22 +307,13 @@ export class AuthService {
           secure: sessionSecure,
           sameSite: sessionSameSite
         };
-
-        if (sessionDomain) {
-          cookieOptions.domain = sessionDomain;
-        }
+        if (sessionDomain) cookieOptions.domain = sessionDomain;
 
         res.clearCookie(sessionName, cookieOptions);
-
         console.log('<<< [AuthService] Cleared cookie:', {
-          name: sessionName,
-          ...cookieOptions
+          sessionName,
+          cookieOptions
         });
-        console.log(
-          '    Response headers after clearCookie:',
-          res.getHeaders()
-        );
-
         resolve();
       });
     });
@@ -312,14 +323,13 @@ export class AuthService {
     console.log('>>> [AuthService] Saving session for user:', user.email);
     console.log('    Session before saving:', req.session);
 
-    return new Promise((resolve, reject) => {
+    return new Promise<{ user: User }>((resolve, reject) => {
       req.session.userId = user.id;
       console.log('    req.session.userId set to:', req.session.userId);
 
       req.session.save((err) => {
         if (err) {
           console.error('<<< [AuthService] Error saving session:', err);
-          console.trace();
           return reject(
             new InternalServerErrorException('Failed to save session')
           );
