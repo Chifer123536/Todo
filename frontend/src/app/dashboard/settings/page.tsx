@@ -5,11 +5,13 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Settings – Todo App",
   description: "Manage your account settings and preferences.",
-  alternates: { canonical: "https://yourdomain.com/dashboard/settings" },
+  alternates: {
+    canonical: "https://todolist.chifer123536.ru/dashboard/settings"
+  },
   openGraph: {
     images: [
       {
-        url: "/og-settings.png",
+        url: "https://todolist.chifer123536.ru/og-settings.png",
         width: 1200,
         height: 630,
         alt: "Settings Page"

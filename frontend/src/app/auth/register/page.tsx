@@ -5,11 +5,11 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Create Account – Todo App",
   description: "Sign up and start managing your tasks today.",
-  alternates: { canonical: "https://yourdomain.com/auth/register" },
+  alternates: { canonical: "https://todolist.chifer123536.ru/auth/register" },
   openGraph: {
     images: [
       {
-        url: "/og-register.png",
+        url: "https://todolist.chifer123536.ru/og-register.png",
         width: 1200,
         height: 630,
         alt: "Register Page"

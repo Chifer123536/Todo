@@ -6,11 +6,13 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Set New Password – Todo App",
   description: "Choose a new password for your account.",
-  alternates: { canonical: "https://yourdomain.com/auth/new-password" },
+  alternates: {
+    canonical: "https://todolist.chifer123536.ru/auth/new-password"
+  },
   openGraph: {
     images: [
       {
-        url: "/og-new-password.png",
+        url: "https://todolist.chifer123536.ru/og-new-password.png",
         width: 1200,
         height: 630,
         alt: "New Password Page"
