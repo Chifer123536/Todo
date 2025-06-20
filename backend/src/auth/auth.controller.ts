@@ -24,7 +24,7 @@ import { ProviderService } from './provider/provider.service';
 
 @Controller('auth')
 export class AuthController {
-  public constructor(
+  constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
     private readonly providerService: ProviderService
@@ -93,7 +93,21 @@ export class AuthController {
     try {
       const result = await this.authService.loginStepOne(req, dto);
 
+      const state =
+        req.session.authState === 'pending2FA' ? 'pending2FA' : 'authenticated';
+      res.cookie('authState', state, {
+        path: '/',
+        httpOnly: false, // чтобы Next.js middleware мог читать
+        secure: this.configService.get<string>('SESSION_SECURE') === 'true',
+        sameSite: 'lax',
+        maxAge:
+          state === 'pending2FA'
+            ? 10 * 60 * 1000 // короткий таймаут для 2FA
+            : 30 * 24 * 60 * 60 * 1000 // длинный для authenticated
+      });
+
       console.log('[LOGIN] Session after:', req.session);
+      console.log('[LOGIN] authState set to:', state);
       console.log('[LOGIN] Result:', result);
       console.log(
         '===================== [LOGIN] <<< REQUEST END =====================\n'
@@ -125,6 +139,15 @@ export class AuthController {
     try {
       const result = await this.authService.confirmTwoFactorCode(req, dto);
 
+      // обновляем authState=authenticated
+      res.cookie('authState', 'authenticated', {
+        path: '/',
+        httpOnly: false,
+        secure: this.configService.get<string>('SESSION_SECURE') === 'true',
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000
+      });
+
       await new Promise<void>((resolve, reject) => {
         req.session.save((err) => {
           if (err) {
@@ -146,6 +169,46 @@ export class AuthController {
       console.error('!! [LOGIN/2FA] Error:', error);
       console.log(
         '===================== [LOGIN/2FA] <<< REQUEST END =====================\n'
+      );
+      throw error;
+    }
+  }
+
+  @Post('2fa/resend')
+  @HttpCode(HttpStatus.OK)
+  public async resendTwoFactorToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    console.log(
+      '\n===================== [2FA RESEND] >>> REQUEST START ====================='
+    );
+    console.log('[2FA RESEND] Session:', req.session);
+
+    try {
+      const result = await this.authService.resendTwoFactorToken(req);
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) {
+            console.error('!! [2FA RESEND] Session save error:', err);
+            return reject(err);
+          }
+          console.log('[2FA RESEND] Session saved successfully');
+          resolve();
+        });
+      });
+
+      console.log('[2FA RESEND] Session after:', req.session);
+      console.log('[2FA RESEND] Result:', result);
+      console.log(
+        '===================== [2FA RESEND] <<< REQUEST END =====================\n'
+      );
+      return result;
+    } catch (error) {
+      console.error('!! [2FA RESEND] Error:', error);
+      console.log(
+        '===================== [2FA RESEND] <<< REQUEST END =====================\n'
       );
       throw error;
     }
@@ -195,7 +258,9 @@ export class AuthController {
         '===================== [OAUTH CALLBACK] <<< REQUEST END =====================\n'
       );
 
-      const redirectUrl = `${this.configService.getOrThrow<string>('ALLOWED_ORIGIN')}/`;
+      const redirectUrl = `${this.configService.getOrThrow<string>(
+        'ALLOWED_ORIGIN'
+      )}/`;
       console.log('[OAUTH CALLBACK] Redirecting to:', redirectUrl);
       return res.redirect(redirectUrl);
     } catch (error) {

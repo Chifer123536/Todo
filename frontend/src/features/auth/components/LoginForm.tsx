@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTheme } from "next-themes"
 import Link from "next/link"
-import { useState } from "react"
+import React, { memo, useCallback, useEffect, useState } from "react"
 import ReCAPTCHA from "react-google-recaptcha"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -19,15 +19,41 @@ import {
   Input
 } from "@/shared/components/ui"
 
-import { useLoginMutation } from "../hooks"
+import { useLoginMutation } from "../hooks/useLoginMutation"
+import { useResend2faMutation } from "../hooks/useResend2faMutation"
 import { LoginSchema, TypeLoginSchema } from "../schemes"
 
 import { AuthWrapper } from "./AuthWrapper"
+
+interface ResendButtonProps {
+  resendCooldown: number
+  isResending: boolean
+  onClick: () => void
+}
+
+const ResendButton = memo(function ResendButton({
+  resendCooldown,
+  isResending,
+  onClick
+}: ResendButtonProps) {
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      disabled={isResending || resendCooldown > 0}
+      onClick={onClick}
+    >
+      {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
+    </Button>
+  )
+})
 
 export function LoginForm() {
   const { theme } = useTheme()
   const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null)
   const [isShowTwoFactor, setIsShowFactor] = useState(false)
+  const [resendCooldown, setResendCooldown] = useState(0)
 
   const form = useForm<TypeLoginSchema>({
     resolver: zodResolver(LoginSchema),
@@ -40,6 +66,29 @@ export function LoginForm() {
 
   const { login, confirm2fa, isLoadingLogin, isLoading2fa } =
     useLoginMutation(setIsShowFactor)
+
+  const { resend, isResending } = useResend2faMutation()
+
+  useEffect(() => {
+    if (!isShowTwoFactor || resendCooldown === 0) return
+
+    const interval = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [isShowTwoFactor, resendCooldown])
+
+  const handleResendCode = useCallback(() => {
+    resend()
+    setResendCooldown(10)
+  }, [resend])
 
   const onSubmit = (values: TypeLoginSchema) => {
     if (isShowTwoFactor) {
@@ -85,6 +134,13 @@ export function LoginForm() {
                     />
                   </FormControl>
                   <FormMessage />
+                  <div className="mt-2 flex items-center space-x-2">
+                    <ResendButton
+                      resendCooldown={resendCooldown}
+                      isResending={isResending}
+                      onClick={handleResendCode}
+                    />
+                  </div>
                 </FormItem>
               )}
             />

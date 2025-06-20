@@ -89,13 +89,21 @@ export class AuthService {
     };
   }
 
-  // ─── Первый этап логина: email+password + ReCaptcha ────────────────────
   public async loginStepOne(req: Request, dto: LoginDto) {
     console.log('>>> [AuthService] loginStepOne() called');
     console.log('    Headers.cookie:', req.headers.cookie);
     console.log('    Request body:', req.body);
     console.log('    Session before login:', req.session);
     console.log('    DTO:', dto);
+
+    // Очистка старой сессии
+    await new Promise<void>((resolve, reject) => {
+      req.session.regenerate((err) => {
+        if (err) return reject(err);
+        console.log('>>> [AuthService] Session regenerated (cleared)');
+        resolve();
+      });
+    });
 
     const user = await this.userService.findByEmail(dto.email);
     console.log('>>> [AuthService] found user:', user?.email);
@@ -135,7 +143,9 @@ export class AuthService {
       console.log('>>> [AuthService] Sending 2FA token to:', user.email);
       await this.twoFactorAuthService.sendTwoFactorToken(user.email);
 
-      req.session.twoFactorUserId = user.id; // ✅ временно сохраняем ID
+      req.session.twoFactorUserId = user.id;
+      req.session.authState = 'pending2FA';
+
       await req.session.save();
       console.log('    Session saved for 2FA step:', req.session);
 
@@ -148,7 +158,6 @@ export class AuthService {
     return result;
   }
 
-  // ─── Второй этап — подтверждение кода 2FA ───────────────────────────────
   public async confirmTwoFactorCode(req: Request, dto: TwoFactorDto) {
     console.log('>>> [AuthService] confirmTwoFactorCode() called');
     console.log('    DTO:', dto);
@@ -175,22 +184,10 @@ export class AuthService {
     );
     console.log('>>> [AuthService] 2FA code is valid for:', user.email);
 
-    // ✅ Удаляем временный идентификатор и сохраняем реальный
     delete req.session.twoFactorUserId;
+    req.session.authState = 'authenticated';
     const result = await this.saveSession(req, user);
-
-    req.res?.cookie('authenticated', 'true', {
-      path: '/',
-      httpOnly: false,
-      secure: this.configService.get<string>('SESSION_SECURE') === 'true',
-      sameSite: this.configService.get<string>('SESSION_COOKIE_SAME_SITE') as
-        | 'lax'
-        | 'strict'
-        | 'none',
-      domain: this.configService.get<string>('SESSION_DOMAIN') || undefined,
-      maxAge: 30 * 24 * 60 * 60 * 1000
-    });
-
+    console.log('    Session after confirmTwoFactorCode:', req.session);
     return result;
   }
 
@@ -267,6 +264,24 @@ export class AuthService {
     return result;
   }
 
+  public async resendTwoFactorToken(req: Request) {
+    const sessionUserId = req.session.twoFactorUserId;
+    if (!sessionUserId) {
+      throw new UnauthorizedException('Session expired. Please login again.');
+    }
+
+    const user = await this.userService.findById(sessionUserId);
+    if (!user || !user.isTwoFactorEnabled) {
+      throw new UnauthorizedException('Two-factor authentication not enabled.');
+    }
+
+    await this.twoFactorAuthService.sendTwoFactorToken(user.email);
+
+    return {
+      message: 'Verification code has been resent to your email.'
+    };
+  }
+
   public async logout(req: Request, res: Response): Promise<void> {
     console.log(
       '>>> [AuthService] logout() called, session before destroy:',
@@ -323,10 +338,10 @@ export class AuthService {
     console.log('>>> [AuthService] Saving session for user:', user.email);
     console.log('    Session before saving:', req.session);
 
-    return new Promise<{ user: User }>((resolve, reject) => {
-      req.session.userId = user.id;
-      console.log('    req.session.userId set to:', req.session.userId);
+    req.session.userId = user.id;
+    req.session.authState = req.session.authState ?? 'authenticated';
 
+    return new Promise<{ user: User }>((resolve, reject) => {
       req.session.save((err) => {
         if (err) {
           console.error('<<< [AuthService] Error saving session:', err);
