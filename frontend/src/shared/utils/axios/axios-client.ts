@@ -8,36 +8,18 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    console.log("[AXIOS REQUEST]", config.method?.toUpperCase(), config.url)
-    console.log("[AXIOS REQUEST] Headers:", config.headers)
-    console.log("[AXIOS REQUEST] Data:", config.data)
     return config
   },
   (error) => {
-    console.error("[AXIOS REQUEST ERROR]", error)
     return Promise.reject(error)
   }
 )
 
 instance.interceptors.response.use(
   (res) => {
-    console.log(
-      "[AXIOS RESPONSE]",
-      res.config.method?.toUpperCase(),
-      res.config.url,
-      "Status:",
-      res.status
-    )
-    console.log("[AXIOS RESPONSE] Data:", res.data)
     return res
   },
   (error) => {
-    console.error(
-      "[AXIOS RESPONSE ERROR]",
-      error.response?.status,
-      error.response?.data,
-      error.message
-    )
     return Promise.reject(error)
   }
 )

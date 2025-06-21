@@ -3,7 +3,8 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException
+  UnauthorizedException,
+  Logger
 } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -23,6 +24,9 @@ import { TwoFactorAuthService } from './two-factor-auth/two-factor-auth.service'
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+  private readonly isDev: boolean;
+
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     @InjectModel(Account.name)
@@ -33,39 +37,28 @@ export class AuthService {
     private readonly emailConfirmationService: EmailConfirmationService,
     private readonly twoFactorAuthService: TwoFactorAuthService
   ) {
-    console.log('>>> [AuthService] ENV snapshot:');
-    [
-      'SESSION_NAME',
-      'SESSION_DOMAIN',
-      'SESSION_SECURE',
-      'SESSION_HTTP_ONLY',
-      'SESSION_COOKIE_SAME_SITE',
-      'SESSION_MAX_AGE'
-    ].forEach((key) => {
-      console.log(`    ${key} =`, this.configService.get<string>(key));
-    });
+    // Определяем, режим ли разработки. Если NODE_ENV !== 'production', включаем debug-логи.
+    this.isDev = this.configService.get<string>('NODE_ENV') !== 'production';
+    if (this.isDev) {
+      this.logger.debug('AuthService initialized in development mode');
+    }
   }
 
   public async register(req: Request, dto: RegisterDto) {
-    console.log('>>> [AuthService] register() called');
-    console.log('    Headers.cookie:', req.headers.cookie);
-    console.log('    Request body:', req.body);
-    console.log('    Session before register:', req.session);
-    console.log('    DTO:', dto);
+    if (this.isDev) {
+      this.logger.debug('register() called');
+      this.logger.debug(`Request body: ${JSON.stringify(req.body)}`);
+      this.logger.debug(
+        `Session before register: ${JSON.stringify(req.session)}`
+      );
+    }
 
     const isExists = await this.userService.findByEmail(dto.email);
-    console.log(
-      '>>> [AuthService] existing user check for',
-      dto.email,
-      '→',
-      !!isExists
-    );
-
+    if (this.isDev) {
+      this.logger.debug(`existing user check for ${dto.email} → ${!!isExists}`);
+    }
     if (isExists) {
-      console.warn(
-        '>>> [AuthService] Attempt to register existing email:',
-        dto.email
-      );
+      this.logger.warn(`Attempt to register existing email: ${dto.email}`);
       throw new ConflictException('A user with this email already exists');
     }
 
@@ -77,12 +70,17 @@ export class AuthService {
       AuthMethod.CREDENTIALS,
       false
     );
-    console.log('>>> [AuthService] New user created:', newUser.email);
+    if (this.isDev) {
+      this.logger.debug(`New user created: ${newUser.email}`);
+    }
 
     await this.emailConfirmationService.sendVerificationToken(newUser.email);
-    console.log('>>> [AuthService] Sent email confirmation to:', newUser.email);
-
-    console.log('    Session after register:', req.session);
+    if (this.isDev) {
+      this.logger.debug(`Sent email confirmation to: ${newUser.email}`);
+      this.logger.debug(
+        `Session after register: ${JSON.stringify(req.session)}`
+      );
+    }
 
     return {
       message: 'User registered successfully. Please, confirm your email.'
@@ -90,48 +88,49 @@ export class AuthService {
   }
 
   public async loginStepOne(req: Request, dto: LoginDto) {
-    console.log('>>> [AuthService] loginStepOne() called');
-    console.log('    Headers.cookie:', req.headers.cookie);
-    console.log('    Request body:', req.body);
-    console.log('    Session before login:', req.session);
-    console.log('    DTO:', dto);
+    if (this.isDev) {
+      this.logger.debug('loginStepOne() called');
+      this.logger.debug(`Request body: ${JSON.stringify(req.body)}`);
+      this.logger.debug(`Session before login: ${JSON.stringify(req.session)}`);
+    }
 
     // Очистка старой сессии
     await new Promise<void>((resolve, reject) => {
       req.session.regenerate((err) => {
         if (err) return reject(err);
-        console.log('>>> [AuthService] Session regenerated (cleared)');
+        if (this.isDev) {
+          this.logger.debug('Session regenerated (cleared)');
+        }
         resolve();
       });
     });
 
     const user = await this.userService.findByEmail(dto.email);
-    console.log('>>> [AuthService] found user:', user?.email);
-
+    if (this.isDev) {
+      this.logger.debug(`found user: ${user?.email}`);
+    }
     if (!user || !user.password) {
-      console.warn(
-        '>>> [AuthService] user not found or has no password for email:',
-        dto.email
+      this.logger.warn(
+        `user not found or has no password for email: ${dto.email}`
       );
       throw new NotFoundException('User not found');
     }
 
     const isValidPassword = await verify(user.password, dto.password);
-    console.log('>>> [AuthService] isValidPassword:', isValidPassword);
-
+    if (this.isDev) {
+      this.logger.debug(`isValidPassword: ${isValidPassword}`);
+    }
     if (!isValidPassword) {
-      console.warn(
-        '>>> [AuthService] Invalid credentials for email:',
-        dto.email
-      );
+      this.logger.warn(`Invalid credentials for email: ${dto.email}`);
       throw new UnauthorizedException('Invalid credentials');
     }
 
     if (!user.isVerified) {
-      console.log(
-        '>>> [AuthService] User not verified, sending verification token to:',
-        user.email
-      );
+      if (this.isDev) {
+        this.logger.debug(
+          `User not verified, sending verification token to: ${user.email}`
+        );
+      }
       await this.emailConfirmationService.sendVerificationToken(user.email);
       throw new UnauthorizedException(
         'User is not verified. Please, confirm your email.'
@@ -139,55 +138,69 @@ export class AuthService {
     }
 
     if (user.isTwoFactorEnabled) {
-      console.log('>>> [AuthService] Two-Factor is enabled for:', user.email);
-      console.log('>>> [AuthService] Sending 2FA token to:', user.email);
+      if (this.isDev) {
+        this.logger.debug(`Two-Factor is enabled for: ${user.email}`);
+      }
       await this.twoFactorAuthService.sendTwoFactorToken(user.email);
-
       req.session.twoFactorUserId = user.id;
       req.session.authState = 'pending2FA';
-
       await req.session.save();
-      console.log('    Session saved for 2FA step:', req.session);
-
+      if (this.isDev) {
+        this.logger.debug(
+          `Session saved for 2FA step: ${JSON.stringify(req.session)}`
+        );
+      }
       return { message: 'Look at your email for the code on two-factor auth.' };
     }
 
-    // Если 2FA не включена — сразу сохраняем сессию
     const result = await this.saveSession(req, user);
-    console.log('    Session after loginStepOne:', req.session);
+    if (this.isDev) {
+      this.logger.debug(
+        `Session after loginStepOne: ${JSON.stringify(req.session)}`
+      );
+    }
     return result;
   }
 
   public async confirmTwoFactorCode(req: Request, dto: TwoFactorDto) {
-    console.log('>>> [AuthService] confirmTwoFactorCode() called');
-    console.log('    DTO:', dto);
-    console.log('    Session before confirm:', req.session);
+    if (this.isDev) {
+      this.logger.debug('confirmTwoFactorCode() called');
+      this.logger.debug(`DTO: ${JSON.stringify(dto)}`);
+      this.logger.debug(
+        `Session before confirm: ${JSON.stringify(req.session)}`
+      );
+    }
 
     const sessionUserId = req.session.twoFactorUserId;
     if (!sessionUserId) {
-      console.warn('>>> [AuthService] Session expired before 2FA confirmation');
+      this.logger.warn('Session expired before 2FA confirmation');
       throw new UnauthorizedException('Session expired. Please login again.');
     }
-
     const user = await this.userService.findById(sessionUserId);
     if (!user || !user.isTwoFactorEnabled) {
-      console.warn(
-        '>>> [AuthService] Two-factor auth not enabled or user missing'
-      );
+      this.logger.warn('Two-factor auth not enabled or user missing');
       throw new UnauthorizedException('Two-factor authentication not enabled.');
     }
 
-    console.log('>>> [AuthService] Validating 2FA code for:', user.email);
+    if (this.isDev) {
+      this.logger.debug(`Validating 2FA code for: ${user.email}`);
+    }
     await this.twoFactorAuthService.validateTwoFactorToken(
       user.email,
       dto.code
     );
-    console.log('>>> [AuthService] 2FA code is valid for:', user.email);
+    if (this.isDev) {
+      this.logger.debug(`2FA code is valid for: ${user.email}`);
+    }
 
     delete req.session.twoFactorUserId;
     req.session.authState = 'authenticated';
     const result = await this.saveSession(req, user);
-    console.log('    Session after confirmTwoFactorCode:', req.session);
+    if (this.isDev) {
+      this.logger.debug(
+        `Session after confirmTwoFactorCode: ${JSON.stringify(req.session)}`
+      );
+    }
     return result;
   }
 
@@ -196,46 +209,50 @@ export class AuthService {
     provider: string,
     code: string
   ) {
-    console.log('>>> [AuthService] extractProfileFromCode called');
-    console.log('    Provider:', provider, 'Code:', code);
-    console.log('    Session before extract:', req.session);
-
+    if (this.isDev) {
+      this.logger.debug('extractProfileFromCode called');
+      this.logger.debug(`Provider: ${provider}, Code: ${code}`);
+      this.logger.debug(
+        `Session before extract: ${JSON.stringify(req.session)}`
+      );
+    }
     const providerInstance = this.providerService.findByService(provider);
     const profile = await providerInstance.findUserByCode(code);
-    console.log('>>> [AuthService] provider profile:', profile);
-
+    if (this.isDev) {
+      this.logger.debug(`provider profile: ${JSON.stringify(profile)}`);
+    }
     let account = await this.accountModel.findOne({
       id: profile.id,
       provider: profile.provider
     });
-    console.log('>>> [AuthService] existing OAuth account:', account);
-
-    let user: UserDocument;
-
-    if (account) {
-      console.log(
-        '>>> [AuthService] Linking to existing user ID:',
-        account.userId
+    if (this.isDev) {
+      this.logger.debug(
+        `existing OAuth account: ${account ? account.id : 'none'}`
       );
+    }
+    let user: UserDocument;
+    if (account) {
+      if (this.isDev) {
+        this.logger.debug(`Linking to existing user ID: ${account.userId}`);
+      }
       user = await this.userModel.findById(account.userId);
       if (!user) {
-        console.error(
-          '>>> [AuthService] Linked user missing for ID:',
-          account.userId
-        );
+        this.logger.error(`Linked user missing for ID: ${account.userId}`);
         throw new NotFoundException('User linked to this account not found');
       }
     } else {
-      console.log(
-        '>>> [AuthService] No OAuth account, looking up user by email:',
-        profile.email
-      );
+      if (this.isDev) {
+        this.logger.debug(
+          `No OAuth account, looking up user by email: ${profile.email}`
+        );
+      }
       user = await this.userModel.findOne({ email: profile.email });
       if (!user) {
-        console.log(
-          '>>> [AuthService] Creating new OAuth user for email:',
-          profile.email
-        );
+        if (this.isDev) {
+          this.logger.debug(
+            `Creating new OAuth user for email: ${profile.email}`
+          );
+        }
         user = await this.userService.create(
           profile.email,
           '',
@@ -245,10 +262,9 @@ export class AuthService {
           true
         );
       }
-      console.log(
-        '>>> [AuthService] Creating OAuth account for user:',
-        user.email
-      );
+      if (this.isDev) {
+        this.logger.debug(`Creating OAuth account for user: ${user.email}`);
+      }
       account = await this.accountModel.create({
         userId: user.id,
         type: 'oauth',
@@ -258,9 +274,12 @@ export class AuthService {
         expiresAt: profile.expires_at
       });
     }
-
     const result = await this.saveSession(req, user);
-    console.log('    Session after extractProfileFromCode:', req.session);
+    if (this.isDev) {
+      this.logger.debug(
+        `Session after extractProfileFromCode: ${JSON.stringify(req.session)}`
+      );
+    }
     return result;
   }
 
@@ -269,36 +288,35 @@ export class AuthService {
     if (!sessionUserId) {
       throw new UnauthorizedException('Session expired. Please login again.');
     }
-
     const user = await this.userService.findById(sessionUserId);
     if (!user || !user.isTwoFactorEnabled) {
       throw new UnauthorizedException('Two-factor authentication not enabled.');
     }
-
     await this.twoFactorAuthService.sendTwoFactorToken(user.email);
-
     return {
       message: 'Verification code has been resent to your email.'
     };
   }
 
   public async logout(req: Request, res: Response): Promise<void> {
-    console.log(
-      '>>> [AuthService] logout() called, session before destroy:',
-      req.session
-    );
-    console.log('    Headers.cookie before logout:', req.headers.cookie);
-
+    if (this.isDev) {
+      this.logger.debug(
+        `logout() called, session before destroy: ${JSON.stringify(req.session)}`
+      );
+      this.logger.debug(`Headers.cookie before logout: ${req.headers.cookie}`);
+    }
     return new Promise((resolve, reject) => {
       req.session.destroy((err) => {
         if (err) {
-          console.error('<<< [AuthService] Error destroying session:', err);
+          this.logger.error('Error destroying session:', err);
           return reject(new InternalServerErrorException('Failed to logout'));
         }
-
-        console.log('<<< [AuthService] Session destroyed successfully');
-        console.log('    Session after destroy:', req.session);
-
+        if (this.isDev) {
+          this.logger.debug('Session destroyed successfully');
+          this.logger.debug(
+            `Session after destroy: ${JSON.stringify(req.session)}`
+          );
+        }
         const sessionName =
           this.configService.getOrThrow<string>('SESSION_NAME');
         const sessionDomain = this.configService.get<string>('SESSION_DOMAIN');
@@ -309,7 +327,6 @@ export class AuthService {
         const sessionSameSite = this.configService.get<string>(
           'SESSION_COOKIE_SAME_SITE'
         ) as 'lax' | 'strict' | 'none';
-
         const cookieOptions: {
           path: string;
           httpOnly: boolean;
@@ -323,39 +340,59 @@ export class AuthService {
           sameSite: sessionSameSite
         };
         if (sessionDomain) cookieOptions.domain = sessionDomain;
-
         res.clearCookie(sessionName, cookieOptions);
-        console.log('<<< [AuthService] Cleared cookie:', {
-          sessionName,
-          cookieOptions
-        });
+        if (this.isDev) {
+          this.logger.debug(
+            'Cleared cookie',
+            JSON.stringify({ sessionName, cookieOptions })
+          );
+        }
         resolve();
       });
     });
   }
 
   public async saveSession(req: Request, user: User) {
-    console.log('>>> [AuthService] Saving session for user:', user.email);
-    console.log('    Session before saving:', req.session);
-
+    if (this.isDev) {
+      this.logger.debug(`Saving session for user: ${user.email}`);
+      this.logger.debug(
+        `Session before saving: ${JSON.stringify(req.session)}`
+      );
+    }
     req.session.userId = user.id;
     req.session.authState = req.session.authState ?? 'authenticated';
-
     return new Promise<{ user: User }>((resolve, reject) => {
       req.session.save((err) => {
         if (err) {
-          console.error('<<< [AuthService] Error saving session:', err);
+          this.logger.error('Error saving session:', err);
           return reject(
             new InternalServerErrorException('Failed to save session')
           );
         }
-        console.log(
-          '<<< [AuthService] Session saved successfully for user:',
-          user.email
-        );
-        console.log('    Session after saving:', req.session);
+        if (this.isDev) {
+          this.logger.debug(
+            `Session saved successfully for user: ${user.email}`
+          );
+          this.logger.debug(
+            `Session after saving: ${JSON.stringify(req.session)}`
+          );
+        }
         resolve({ user });
       });
     });
   }
 }
+
+/*
+  - AuthService отвечает за регистрацию, вход, двухфакторную аутентификацию, OAuth и логаут.
+  - Использует Mongoose-модели User и Account для операций с БД.
+  - При регистрации: проверяет существование, создаёт пользователя, отправляет письмо подтверждения.
+  - При логине: проверяет пароль, верификацию, при включённой 2FA отправляет код, устанавливает authState='pending2FA'.
+    При подтверждении 2FA сохраняет сессию как 'authenticated'.
+  - Поддерживает OAuth: извлекает профиль, связывает или создаёт пользователя и аккаунт, сохраняет сессию.
+  - logout: уничтожает сессию и очищает cookie по настройкам.
+  - saveSession: сохраняет userId и authState в сессии.
+  - Логирование через Nest Logger:
+      • вызовы this.logger.debug(...) обёрнуты через if(this.isDev), где isDev=true только если NODE_ENV!=='production'.
+      • Таким образом, в production-режиме debug-логи не выполняются.
+*/
