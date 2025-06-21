@@ -1,22 +1,15 @@
-import { render, screen } from "@testing-library/react"
+import React from "react"
+import { render, screen, fireEvent } from "@testing-library/react"
 import { TodoList } from "./TodoList"
 
 jest.mock("@/features/todo/hooks/useTodoListActions", () => ({
   useTodoListActions: jest.fn()
 }))
-
 import { useTodoListActions } from "@/features/todo/hooks/useTodoListActions"
 
 jest.mock("@/widgets/TodoItem", () => ({
   TodoItem: ({ todo }: { todo: any }) => (
     <div data-testid="todo-item">{todo.title}</div>
-  )
-}))
-jest.mock("@/widgets/Pagination", () => ({
-  Pagination: ({ currentPage, todosLength }: any) => (
-    <div data-testid="pagination">
-      Страница: {currentPage}, Всего: {todosLength}
-    </div>
   )
 }))
 jest.mock("@/widgets/TodoLoader", () => ({
@@ -28,6 +21,34 @@ jest.mock("@/widgets/ErrorMessage", () => ({
 jest.mock("../AddTodo", () => ({
   AddTodo: () => <div data-testid="add-todo">Добавить задачу</div>
 }))
+
+// Специальный mock для Pagination, чтобы рендерить кнопки страниц
+jest.mock("@/widgets/Pagination", () => {
+  return {
+    Pagination: ({
+      currentPage,
+      todosLength,
+      setCurrentPage,
+      todosPerPage = 5
+    }: any) => {
+      const totalPages = Math.max(1, Math.ceil(todosLength / todosPerPage))
+      return (
+        <div data-testid="pagination">
+          {Array.from({ length: totalPages }).map((_, idx) => (
+            <button
+              key={idx}
+              data-testid={`page-button-${idx + 1}`}
+              className={currentPage === idx + 1 ? "active" : ""}
+              onClick={() => setCurrentPage(idx + 1)}
+            >
+              {idx + 1}
+            </button>
+          ))}
+        </div>
+      )
+    }
+  }
+})
 
 describe("TodoList", () => {
   beforeEach(() => {
@@ -46,7 +67,6 @@ describe("TodoList", () => {
     })
 
     render(<TodoList />)
-
     expect(screen.getByTestId("loader")).toBeInTheDocument()
   })
 
@@ -62,7 +82,6 @@ describe("TodoList", () => {
     })
 
     render(<TodoList />)
-
     expect(screen.getByTestId("error")).toBeInTheDocument()
   })
 
@@ -78,7 +97,6 @@ describe("TodoList", () => {
     })
 
     render(<TodoList />)
-
     expect(screen.getByText("No tasks available")).toBeInTheDocument()
   })
 
@@ -99,30 +117,108 @@ describe("TodoList", () => {
     })
 
     render(<TodoList />)
-
     expect(screen.getByTestId("add-todo")).toBeInTheDocument()
-    expect(screen.getAllByTestId("todo-item").length).toBe(2)
+    const items = screen.getAllByTestId("todo-item")
+    expect(items.length).toBe(2)
     expect(screen.getByText("Задача 1")).toBeInTheDocument()
     expect(screen.getByText("Задача 2")).toBeInTheDocument()
   })
 
-  it("Рендерит пагинацию, если задач больше todosPerPage", () => {
-    const todosMock = Array(6)
+  it("Рендерит пагинацию с правильным количеством кнопок, если задач больше todosPerPage", () => {
+    const todosMockLength = 12
+    const todosPerPage = 5
+    const currentTodos = Array(todosPerPage)
       .fill(null)
-      .map((_, i) => ({ _id: `${i}`, title: `Задача ${i + 1}` }))
+      .map((_, i) => ({
+        _id: `${i}`,
+        title: `Задача ${i + 1}`
+      }))
+    const currentPage = 1
+    const handlePageChange = jest.fn()
 
     ;(useTodoListActions as jest.Mock).mockReturnValue({
       error: null,
       loading: false,
-      todosLength: todosMock.length,
-      currentTodos: todosMock.slice(0, 5),
-      todosPerPage: 5,
-      currentPage: 1,
-      handlePageChange: jest.fn()
+      todosLength: todosMockLength,
+      currentTodos,
+      todosPerPage,
+      currentPage,
+      handlePageChange
     })
 
     render(<TodoList />)
 
-    expect(screen.getByTestId("pagination")).toBeInTheDocument()
+    // totalPages = ceil(12/5) = 3
+    const pagination = screen.getByTestId("pagination")
+    expect(pagination).toBeInTheDocument()
+
+    // Должно быть 3 кнопки: 1,2,3
+    const btn1 = screen.getByTestId("page-button-1")
+    const btn2 = screen.getByTestId("page-button-2")
+    const btn3 = screen.getByTestId("page-button-3")
+    expect(btn1).toBeInTheDocument()
+    expect(btn2).toBeInTheDocument()
+    expect(btn3).toBeInTheDocument()
+  })
+
+  it("Клик по кнопке пагинации вызывает handlePageChange с правильным номером страницы", () => {
+    const todosMockLength = 12
+    const todosPerPage = 5
+    const currentTodos = Array(todosPerPage)
+      .fill(null)
+      .map((_, i) => ({
+        _id: `${i}`,
+        title: `Задача ${i + 1}`
+      }))
+    const currentPage = 1
+    const handlePageChange = jest.fn()
+
+    ;(useTodoListActions as jest.Mock).mockReturnValue({
+      error: null,
+      loading: false,
+      todosLength: todosMockLength,
+      currentTodos,
+      todosPerPage,
+      currentPage,
+      handlePageChange
+    })
+
+    render(<TodoList />)
+
+    // Нажимаем на кнопку страницы 2
+    const btn2 = screen.getByTestId("page-button-2")
+    fireEvent.click(btn2)
+    expect(handlePageChange).toHaveBeenCalledWith(2)
+
+    // Нажимаем на кнопку страницы 3
+    const btn3 = screen.getByTestId("page-button-3")
+    fireEvent.click(btn3)
+    expect(handlePageChange).toHaveBeenCalledWith(3)
+  })
+
+  it("Не рендерит пагинацию, если задач меньше или равно todosPerPage", () => {
+    const todosMockLength = 5
+    const todosPerPage = 5
+    const currentTodos = Array(todosMockLength)
+      .fill(null)
+      .map((_, i) => ({
+        _id: `${i}`,
+        title: `Задача ${i + 1}`
+      }))
+    const handlePageChange = jest.fn()
+
+    ;(useTodoListActions as jest.Mock).mockReturnValue({
+      error: null,
+      loading: false,
+      todosLength: todosMockLength,
+      currentTodos,
+      todosPerPage,
+      currentPage: 1,
+      handlePageChange
+    })
+
+    render(<TodoList />)
+    // Поскольку todosLength == todosPerPage, пагинация не должна рендериться
+    expect(screen.queryByTestId("pagination")).toBeNull()
   })
 })
