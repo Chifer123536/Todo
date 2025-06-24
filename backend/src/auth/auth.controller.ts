@@ -115,6 +115,7 @@ export class AuthController {
         httpOnly: false,
         secure: this.configService.get<string>('SESSION_SECURE') === 'true',
         sameSite: 'none',
+        domain: '.todolist.chifer123536.ru',
         maxAge:
           state === 'pending2FA' ? 10 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
       });
@@ -160,6 +161,7 @@ export class AuthController {
         httpOnly: false,
         secure: this.configService.get<string>('SESSION_SECURE') === 'true',
         sameSite: 'none',
+        domain: '.todolist.chifer123536.ru',
         maxAge: 30 * 24 * 60 * 60 * 1000
       });
 
