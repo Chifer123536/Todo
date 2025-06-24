@@ -114,7 +114,7 @@ export class AuthController {
         path: '/',
         httpOnly: false,
         secure: this.configService.get<string>('SESSION_SECURE') === 'true',
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge:
           state === 'pending2FA' ? 10 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
       });
@@ -159,7 +159,7 @@ export class AuthController {
         path: '/',
         httpOnly: false,
         secure: this.configService.get<string>('SESSION_SECURE') === 'true',
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge: 30 * 24 * 60 * 60 * 1000
       });
 
