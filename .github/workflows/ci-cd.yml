@@ -1,0 +1,47 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Cache yarn dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Run frontend tests
+        run: yarn workspace frontend test:ci
+
+      - name: Build frontend
+        run: yarn workspace frontend build
+
+  deploy-backend:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy backend to Render
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
