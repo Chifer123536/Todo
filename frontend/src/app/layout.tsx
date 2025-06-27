@@ -8,7 +8,7 @@ import Script from "next/script"
 export const metadata = {
   title: "Todo App – Manage Your Tasks",
   description: "Todo App on React/Next.js.",
-  metadataBase: new URL("https://yourdomain.com"),
+  metadataBase: new URL("https://todolist.chifer123536.ru"),
   alternates: { canonical: "/" },
   icons: { icon: "/favicon.png" },
 
@@ -17,7 +17,7 @@ export const metadata = {
     siteName: "Todo App",
     title: "Todo App – Manage Your Tasks",
     description: "Todo App on React/Next.js.",
-    url: "https://yourdomain.com/",
+    url: "https://todolist.chifer123536.ru",
     images: [
       {
         url: "/og-list.png",
@@ -46,7 +46,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              url: "https://yourdomain.com/",
+              url: "https://todolist.chifer123536.ru",
               name: "Todo List",
               description: "Manage your tasks with Todo List"
             })

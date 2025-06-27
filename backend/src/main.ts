@@ -132,7 +132,7 @@ async function bootstrap() {
     resave: true,
     saveUninitialized: false,
     cookie: {
-      domain: sessionDomain, // должно быть 'todolist.chifer123536.ru'
+      domain: sessionDomain,
       maxAge: sessionMaxAge,
       httpOnly: sessionHttpOnly,
       secure: sessionSecure,

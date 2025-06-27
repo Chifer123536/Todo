@@ -113,9 +113,11 @@ export class AuthController {
       res.cookie('authState', state, {
         path: '/',
         httpOnly: false,
-        secure: this.configService.get<string>('SESSION_SECURE') === 'true',
-        sameSite: 'none',
-        domain: '.todolist.chifer123536.ru',
+        secure: !this.isDev,
+        sameSite: this.isDev ? 'lax' : 'none',
+        domain: this.isDev
+          ? undefined
+          : this.configService.get('SESSION_DOMAIN'),
         maxAge:
           state === 'pending2FA' ? 10 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
       });
@@ -159,9 +161,11 @@ export class AuthController {
       res.cookie('authState', 'authenticated', {
         path: '/',
         httpOnly: false,
-        secure: this.configService.get<string>('SESSION_SECURE') === 'true',
-        sameSite: 'none',
-        domain: '.todolist.chifer123536.ru',
+        secure: !this.isDev, // true в проде, false в dev
+        sameSite: this.isDev ? 'lax' : 'none',
+        domain: this.isDev
+          ? undefined
+          : this.configService.get('SESSION_DOMAIN'),
         maxAge: 30 * 24 * 60 * 60 * 1000
       });
 
