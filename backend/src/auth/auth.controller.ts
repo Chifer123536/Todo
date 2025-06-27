@@ -112,8 +112,8 @@ export class AuthController {
         req.session.authState === 'pending2FA' ? 'pending2FA' : 'authenticated';
       res.cookie('authState', state, {
         path: '/',
-        httpOnly: false,
-        secure: !this.isDev,
+        httpOnly: false, // OK — мы читаем его на клиенте
+        secure: !this.isDev, // false в dev, true в prod
         sameSite: this.isDev ? 'lax' : 'none',
         domain: this.isDev
           ? undefined
@@ -160,9 +160,9 @@ export class AuthController {
 
       res.cookie('authState', 'authenticated', {
         path: '/',
-        httpOnly: false,
-        secure: !this.isDev, // true в проде, false в dev
-        sameSite: this.isDev ? 'lax' : 'none',
+        httpOnly: !this.isDev, // ← true на проде, false на локалке
+        secure: !this.isDev, // false в dev, true в prod
+        sameSite: this.isDev ? 'lax' : 'none', // ← lax в dev, none на проде
         domain: this.isDev
           ? undefined
           : this.configService.get('SESSION_DOMAIN'),
