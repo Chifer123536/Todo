@@ -60,7 +60,7 @@ yarn start
 
 ## Screenshots
 
-![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/main/frontend/public/screenshots/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/master/frontend/public/screenshots/screenshot.png)
 
 ## API Overview
 
