@@ -64,6 +64,7 @@ yarn start
 ![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/main/frontend/public/screenshot.png)
 ```
 
+<<<<<<< HEAD
 ## API Overview
 
 ```
@@ -84,3 +85,10 @@ DELETE  /todos/:id
 ## License
 
 **MIT**.
+=======
+1. Fork репозитория
+2. Создайте ветку: `git checkout -b feature/YourFeature`
+3. Внесите изменения, закоммитьте: `git commit -m "Добавил фичу"`
+4. Push: `git push origin feature/YourFeature`
+5. Откройте Pull Request
+>>>>>>> ff7473ccbc58781fc4b86d25e48f763210d1a0c3
