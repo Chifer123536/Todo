@@ -156,18 +156,3 @@ yarn dev
 3. Внесите изменения, закоммитьте: `git commit -m "Добавил фичу"`
 4. Push: `git push origin feature/YourFeature`
 5. Откройте Pull Request
-
-## 📄 Лицензия
-
-Этот проект лицензирован под MIT License — см. [LICENSE](LICENSE).
-
-## 📬 Контакты
-
-**Автор**: Chifer123536
-
-- GitHub: [https://github.com/Chifer123536](https://github.com/Chifer123536)
-- Email: [your.email@example.com](mailto:your.email@example.com)
-
----
-
-_Сделано с любовью фронтенд-бэкенд энтузиастом_
