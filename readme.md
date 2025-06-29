@@ -105,8 +105,8 @@ Jest and React Testing Library ensure robust unit and integration test coverage,
     │   ├── app       # Next.js app routes and layouts
     │   ├── features  # Domain features (auth, todos, profile)
     │   ├── shared    # Shared UI components, utils
-    │   └── widgets   # Reusable UI blocks (buttons, modals)
-    └── .env.local.example
+    │   └── widgets   # UI widgets, animations, forms
+    └── .env.example
 
 ```
 
