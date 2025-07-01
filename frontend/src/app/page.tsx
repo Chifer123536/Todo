@@ -6,7 +6,7 @@ import { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Your Todo List – Todo App",
   description: "View and manage your tasks in Todo App.",
-  alternates: { canonical: "https://todolist.chifer123536.ru/og-list" },
+  alternates: { canonical: "https://todolist.chifer123536.ru/" },
   openGraph: {
     images: [
       {

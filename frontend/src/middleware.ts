@@ -7,6 +7,11 @@ export default function middleware(request: NextRequest) {
   const isAuthPage = path.startsWith("/auth")
   const loginPage = path === "/auth/login"
 
+  const userAgent = request.headers.get("user-agent") || ""
+  const isBot = /bot|crawl|slack|discord|facebookexternalhit|google|bing/i.test(
+    userAgent.toLowerCase()
+  )
+
   if (isAuthPage) {
     if (session && authState === "authenticated") {
       return NextResponse.redirect(new URL("/", request.url))
@@ -18,9 +23,17 @@ export default function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Остальные маршруты: если нет session или authState !== 'authenticated' — редиректим
-  if (!session || authState !== "authenticated") {
-    return NextResponse.redirect(new URL("/auth/login", request.url))
+  if (path === "/") {
+    if (!session || authState !== "authenticated") {
+      if (isBot) {
+        return NextResponse.next()
+      }
+      return NextResponse.redirect(new URL("/auth/login", request.url))
+    }
+  } else {
+    if (!session || authState !== "authenticated") {
+      return NextResponse.redirect(new URL("/auth/login", request.url))
+    }
   }
 
   return NextResponse.next()
