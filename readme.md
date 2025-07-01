@@ -112,7 +112,18 @@ Jest and React Testing Library ensure robust unit and integration test coverage,
 
 ## Screenshots
 
-![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/master/frontend/public/screenshots/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/master/frontend/public/screenshots/Screenshot.png)
+
+## Lighthouse
+
+The production build was audited using Chrome DevTools Lighthouse.
+
+![lighthouse](https://raw.githubusercontent.com/Chifer123536/Todo/master/frontend/public/screenshots/Lighthouse_screenshot.png)
+
+- **Performance**: 91
+- **Accessibility**: 88
+- **Best Practices**: 100
+- **SEO**: 100
 
 ## API Overview
 
