@@ -13,6 +13,7 @@ export function UserBadge() {
   return (
     <div className="absolute top-[0vh] right-0 z-50 h-10 w-10">
       <div
+        data-testid="userbadge-container"
         className={`transition-opacity duration-300 ${
           ready ? "opacity-100" : "opacity-0"
         }`}

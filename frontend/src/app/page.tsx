@@ -1,7 +1,7 @@
-import { TodoList } from "@/widgets/TodoList"
-import { UserBadge } from "@/widgets/UserBadges"
-import { PageWrapper } from "@/shared/components/ui/PageWrapper"
 import { Metadata } from "next"
+import { PageWrapper } from "@/shared/components/ui/PageWrapper"
+import { UserBadge } from "@/widgets/UserBadge"
+import { TodoList } from "@/widgets/TodoList"
 
 export const metadata: Metadata = {
   title: "Your Todo List – Todo App",

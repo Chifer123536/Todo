@@ -9,7 +9,11 @@ import { ErrorMessage } from "@/widgets/ErrorMessage"
 import styles from "./TodoList.module.scss"
 import { AddTodo } from "../AddTodo"
 
-export const TodoList: React.FC = () => {
+interface TodoListProps {
+  onReady?: () => void
+}
+
+export const TodoList: React.FC<TodoListProps> = ({ onReady }) => {
   const {
     error,
     loading,
@@ -35,6 +39,12 @@ export const TodoList: React.FC = () => {
     }, 5000)
     return () => clearTimeout(timeout)
   }, [loading])
+
+  useEffect(() => {
+    if (!initialLoading && !loading && !error) {
+      onReady?.()
+    }
+  }, [initialLoading, loading, error, onReady])
 
   if (tooLongLoading) return <ErrorMessage />
   if (initialLoading || loading) return <Loader isLoading={true} />
