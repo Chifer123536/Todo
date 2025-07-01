@@ -24,7 +24,7 @@ export default function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  if (path === "/") {
+  if (path === "/" || path === "/sitemap.xml" || path === "/robots.txt") {
     if (!session || authState !== "authenticated") {
       if (isBot) {
         return NextResponse.next()
