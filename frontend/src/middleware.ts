@@ -8,9 +8,10 @@ export default function middleware(request: NextRequest) {
   const loginPage = path === "/auth/login"
 
   const userAgent = request.headers.get("user-agent") || ""
-  const isBot = /bot|crawl|slack|discord|facebookexternalhit|google|bing/i.test(
-    userAgent.toLowerCase()
-  )
+  const isBot =
+    /bot|crawl|slack|discordbot|discord|facebookexternalhit|google|bing/i.test(
+      userAgent.toLowerCase()
+    )
 
   if (isAuthPage) {
     if (session && authState === "authenticated") {
