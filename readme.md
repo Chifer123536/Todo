@@ -116,11 +116,11 @@ Jest and React Testing Library ensure robust unit and integration test coverage,
 
 #### Home
 
-![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/master/frontend/public/screenshots/Screenshot.png)
+![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/master/frontend/public/screenshots/Todo_screenshot.png)
 
 #### Auth
 
-![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/master/frontend/public/screenshots/Screenshot.png)
+![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/master/frontend/public/screenshots/Login_screenshot.png)
 
 ## Lighthouse
 
