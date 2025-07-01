@@ -9,6 +9,8 @@ Full-stack task manager built with **Next.js**, **NestJS**, **TypeScript**, **Mo
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
+- [Screenshots](#screenshots)
+- [Lighthouse](#lighthouse)
 - [API Overview](#api-overview)
 - [License](#license)
 
@@ -111,6 +113,12 @@ Jest and React Testing Library ensure robust unit and integration test coverage,
 ```
 
 ## Screenshots
+
+#### Home
+
+![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/master/frontend/public/screenshots/Screenshot.png)
+
+#### Auth
 
 ![screenshot](https://raw.githubusercontent.com/Chifer123536/Todo/master/frontend/public/screenshots/Screenshot.png)
 
