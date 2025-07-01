@@ -6,28 +6,8 @@ import { ToggleThemeWrapper } from "@/shared/components/ui/ToggleThemeWrapper"
 import Script from "next/script"
 
 export const metadata = {
-  title: "Todo App – Manage Your Tasks",
-  description: "Todo App on React/Next.js.",
   metadataBase: new URL("https://todolist.chifer123536.ru"),
-  alternates: { canonical: "/" },
-  icons: { icon: "/favicon.png" },
-
-  openGraph: {
-    type: "website",
-    siteName: "Todo App",
-    title: "Todo App – Manage Your Tasks",
-    description: "Todo App on React/Next.js.",
-    url: "https://todolist.chifer123536.ru",
-    images: [
-      {
-        url: "/og-list.png",
-        width: 1200,
-        height: 630,
-        alt: "Todo App Screenshot"
-      }
-    ],
-    locale: "en_US"
-  }
+  icons: { icon: "/favicon.png" }
 }
 
 export default function RootLayout({
