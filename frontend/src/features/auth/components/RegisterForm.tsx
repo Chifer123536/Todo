@@ -22,6 +22,7 @@ import { useRegisterMutation } from "../hooks"
 import { RegisterSchema, TypeRegisterSchema } from "../schemes"
 
 import { AuthWrapper } from "./AuthWrapper"
+import { PasswordField } from "@/shared/components/ui/PasswordField"
 
 export function RegisterForm() {
   const { theme } = useTheme()
@@ -120,10 +121,9 @@ export function RegisterForm() {
               <FormItem>
                 <FormLabel>Repeat Password</FormLabel>
                 <FormControl>
-                  <Input
+                  <PasswordField
                     placeholder="******"
                     disabled={isLoadingRegister}
-                    type="password"
                     {...field}
                   />
                 </FormControl>

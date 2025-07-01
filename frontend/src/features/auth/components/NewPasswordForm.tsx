@@ -14,13 +14,13 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-  Input
+  FormMessage
 } from "@/shared/components/ui"
 
 import { useNewPasswordMutation } from "../hooks"
 import { NewPasswordSchema, TypeNewPasswordSchema } from "../schemes"
 import { AuthWrapper } from "./AuthWrapper"
+import { PasswordField } from "@/shared/components/ui/PasswordField"
 
 const ReCAPTCHA = dynamic(() => import("react-google-recaptcha"), {
   ssr: false
@@ -66,10 +66,9 @@ export function NewPasswordForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
+                  <PasswordField
                     placeholder="******"
                     disabled={isLoadingNew}
-                    type="password"
                     {...field}
                   />
                 </FormControl>

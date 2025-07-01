@@ -28,6 +28,7 @@ import { useUpdateProfileMutation } from "../hooks/useUpdateProfileMutation"
 import { SettingsSchema, TypeSettingsSchema } from "../schemes"
 
 import { UserButton } from "./UserButton"
+import { PasswordField } from "@/shared/components/ui/PasswordField"
 
 export function SettingsForm() {
   const { data: user, isLoading } = useProfile()
@@ -99,10 +100,9 @@ export function SettingsForm() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input
+                        <PasswordField
                           placeholder="******"
                           disabled={isLoadingUpdate}
-                          type="password"
                           {...field}
                         />
                       </FormControl>

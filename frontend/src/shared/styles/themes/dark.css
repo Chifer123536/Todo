@@ -20,6 +20,9 @@
   --border: 0 0% 14.9%;
   --input: 0 0% 14.9%;
   --ring: 0 0% 83.1%;
+  --eye-color: hsl(0 0% 98%);
+  --eye-color-muted: hsl(0 0% 63.9%);
+  --eye-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
 
   /* === Loader === */
   --loader-dot-color: #ffffff;

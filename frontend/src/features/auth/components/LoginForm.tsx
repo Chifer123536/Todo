@@ -24,6 +24,7 @@ import { useResend2faMutation } from "../hooks/useResend2faMutation"
 import { LoginSchema, TypeLoginSchema } from "../schemes"
 
 import { AuthWrapper } from "./AuthWrapper"
+import { PasswordField } from "@/shared/components/ui/PasswordField"
 
 interface ResendButtonProps {
   resendCooldown: number
@@ -179,10 +180,9 @@ export function LoginForm() {
                       </Link>
                     </div>
                     <FormControl>
-                      <Input
+                      <PasswordField
                         placeholder="******"
                         disabled={isLoadingLogin}
-                        type="password"
                         {...field}
                       />
                     </FormControl>
