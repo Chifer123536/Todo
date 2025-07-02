@@ -103,10 +103,9 @@ export function RegisterForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
+                  <PasswordField
                     placeholder="******"
                     disabled={isLoadingRegister}
-                    type="password"
                     {...field}
                   />
                 </FormControl>
