@@ -41,7 +41,6 @@ async function bootstrap() {
   console.log(`${timestamp()} COOKIES_SECRET =`, config.get('COOKIES_SECRET'));
   console.log(`${timestamp()} SESSION_SECRET =`, config.get('SESSION_SECRET'));
   console.log(`${timestamp()} SESSION_NAME =`, config.get('SESSION_NAME'));
-  console.log(`${timestamp()} SESSION_DOMAIN =`, config.get('SESSION_DOMAIN'));
   console.log(
     `${timestamp()} SESSION_MAX_AGE =`,
     config.get('SESSION_MAX_AGE')
@@ -66,7 +65,6 @@ async function bootstrap() {
   // ─── Сбор параметров сессии ────────────────────────────────────────────────
   const sessionSecret = config.getOrThrow<string>('SESSION_SECRET');
   const sessionName = config.getOrThrow<string>('SESSION_NAME');
-  const sessionDomain = config.getOrThrow<string>('SESSION_DOMAIN');
   const sessionMaxAge = ms(config.getOrThrow<StringValue>('SESSION_MAX_AGE'));
   const sessionHttpOnly = parseBoolean(
     config.getOrThrow<string>('SESSION_HTTP_ONLY')
@@ -82,7 +80,6 @@ async function bootstrap() {
   console.log(`${timestamp()} [DEBUG] Session config values →`, {
     sessionSecret,
     sessionName,
-    sessionDomain,
     sessionMaxAge,
     sessionHttpOnly,
     sessionSecure,
@@ -129,10 +126,9 @@ async function bootstrap() {
   const sessionConfig = {
     secret: sessionSecret,
     name: sessionName,
-    resave: true,
+    resave: false,
     saveUninitialized: false,
     cookie: {
-      domain: sessionDomain,
       maxAge: sessionMaxAge,
       httpOnly: sessionHttpOnly,
       secure: sessionSecure,

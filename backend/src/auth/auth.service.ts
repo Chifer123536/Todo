@@ -319,7 +319,6 @@ export class AuthService {
         }
         const sessionName =
           this.configService.getOrThrow<string>('SESSION_NAME');
-        const sessionDomain = this.configService.get<string>('SESSION_DOMAIN');
         const sessionSecure =
           this.configService.get<string>('SESSION_SECURE') === 'true';
         const sessionHttpOnly =
@@ -339,7 +338,6 @@ export class AuthService {
           secure: sessionSecure,
           sameSite: sessionSameSite
         };
-        if (sessionDomain) cookieOptions.domain = sessionDomain;
         res.clearCookie(sessionName, cookieOptions);
         if (this.isDev) {
           this.logger.debug(

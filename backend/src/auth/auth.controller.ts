@@ -115,9 +115,6 @@ export class AuthController {
         httpOnly: false, // OK — мы читаем его на клиенте
         secure: !this.isDev, // false в dev, true в prod
         sameSite: this.isDev ? 'lax' : 'none',
-        domain: this.isDev
-          ? undefined
-          : this.configService.get('SESSION_DOMAIN'),
         maxAge:
           state === 'pending2FA' ? 10 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
       });
@@ -163,9 +160,6 @@ export class AuthController {
         httpOnly: !this.isDev, // ← true на проде, false на локалке
         secure: !this.isDev, // false в dev, true в prod
         sameSite: this.isDev ? 'lax' : 'none', // ← lax в dev, none на проде
-        domain: this.isDev
-          ? undefined
-          : this.configService.get('SESSION_DOMAIN'),
         maxAge: 30 * 24 * 60 * 60 * 1000
       });
 
