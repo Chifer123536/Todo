@@ -301,17 +301,32 @@ export class AuthController {
 
   @UseGuards(AuthProviderGuard)
   @Get('/oauth/connect/:provider')
-  public async connect(@Param('provider') provider: string) {
+  public async connect(
+    @Param('provider') provider: string,
+    @Req() req: Request
+  ) {
+    if (req.session?.userId || req.session?.authState === 'authenticated') {
+      this.logger.warn(
+        `[OAUTH CONNECT] Found existing session: ${JSON.stringify(req.session)}. Regenerating.`
+      );
+      await new Promise((resolve, reject) =>
+        req.session.regenerate((err) => (err ? reject(err) : resolve(null)))
+      );
+    }
+
     if (this.isDev) {
       this.logger.debug('=== [OAUTH CONNECT] REQUEST START ===');
       this.logger.debug(`[OAUTH CONNECT] Provider: ${provider}`);
     }
+
     const providerInstance = this.providerService.findByService(provider);
     const authUrl = providerInstance.getAuthUrl();
+
     if (this.isDev) {
       this.logger.debug(`[OAUTH CONNECT] Auth URL: ${authUrl}`);
       this.logger.debug('=== [OAUTH CONNECT] REQUEST END ===');
     }
+
     return { url: authUrl };
   }
 
