@@ -93,7 +93,7 @@ export class BaseOAuthService {
   }
 
   public getRedirectUrl() {
-    return `${this.BASE_URL}/auth/oauth/callback/${this.options.name}`;
+    return `${this.BASE_URL}/api/auth/oauth/callback/${this.options.name}`;
   }
 
   set baseUrl(value: string) {
