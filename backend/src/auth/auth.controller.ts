@@ -281,6 +281,16 @@ export class AuthController {
         });
       });
 
+      const isProd =
+        this.configService.get<string>('NODE_ENV') === 'production';
+      res.cookie('authState', 'authenticated', {
+        path: '/',
+        httpOnly: false,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 дней
+      });
+
       const redirectUrl = `${this.configService.getOrThrow<string>('ALLOWED_ORIGIN')}/`;
       if (this.isDev) {
         this.logger.debug(

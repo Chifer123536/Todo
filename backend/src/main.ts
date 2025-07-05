@@ -2,7 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
-import session from 'express-session';
+import session, { SessionOptions } from 'express-session';
 import { RedisStore } from 'connect-redis';
 
 import { AppModule } from './app.module';
@@ -18,11 +18,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
 
-  // ─── Получаем Express-инстанс и ставим trust proxy ─────────────────────────────────────
+  const isProd = config.get<string>('NODE_ENV') === 'production';
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.set('trust proxy', 1);
 
-  // ─── Middleware для проверки protocol/secure ───────────────────────────────────────────────
+  // Middleware для проверки protocol/secure
   app.use((req, res, next) => {
     console.log(
       `${timestamp()} [SECURE CHECK] protocol:`,
@@ -35,7 +35,7 @@ async function bootstrap() {
     next();
   });
 
-  // ─── Вывод переменных окружения ───────────────────────────────────────────
+  // Вывод переменных окружения
   console.log(`${timestamp()} ===== STARTUP DEBUG ENV =====`);
   console.log(`${timestamp()} NODE_ENV =`, process.env.NODE_ENV);
   console.log(`${timestamp()} COOKIES_SECRET =`, config.get('COOKIES_SECRET'));
@@ -49,27 +49,28 @@ async function bootstrap() {
     `${timestamp()} SESSION_HTTP_ONLY =`,
     config.get('SESSION_HTTP_ONLY')
   );
+  console.log(`${timestamp()} SESSION_SECURE =`, config.get('SESSION_SECURE'));
+  console.log(
+    `${timestamp()} SESSION_COOKIE_SAME_SITE =`,
+    config.get('SESSION_COOKIE_SAME_SITE')
+  );
   console.log(`${timestamp()} SESSION_FOLDER =`, config.get('SESSION_FOLDER'));
   console.log(`${timestamp()} ALLOWED_ORIGIN =`, config.get('ALLOWED_ORIGIN'));
   console.log(`${timestamp()} ==============================`);
 
-  // ─── Cookie secret ─────────────────────────────────────────────────────────
   const cookieSecret = config.getOrThrow<string>('COOKIES_SECRET');
   console.log(`${timestamp()} [DEBUG] cookieSecret:`, cookieSecret);
 
-  // ─── Сбор параметров сессии ────────────────────────────────────────────────
   const sessionSecret = config.getOrThrow<string>('SESSION_SECRET');
   const sessionName = config.getOrThrow<string>('SESSION_NAME');
   const sessionMaxAge = ms(config.getOrThrow<StringValue>('SESSION_MAX_AGE'));
   const sessionHttpOnly = parseBoolean(
     config.getOrThrow<string>('SESSION_HTTP_ONLY')
   );
-  const sessionSecure = parseBoolean(
-    config.getOrThrow<string>('SESSION_SECURE')
-  );
-  const sessionSameSite = config.getOrThrow<string>(
-    'SESSION_COOKIE_SAME_SITE'
-  ) as 'lax' | 'strict' | 'none';
+  // В проде включаем secure, иначе false
+  const sessionSecure = isProd;
+  // sameSite: в проде 'none', в деве 'lax'
+  const sessionSameSite = (isProd ? 'none' : 'lax') as 'lax' | 'none';
   const sessionFolder = config.getOrThrow<string>('SESSION_FOLDER');
 
   console.log(`${timestamp()} [DEBUG] Session config values →`, {
@@ -89,11 +90,10 @@ async function bootstrap() {
   console.log(`${timestamp()} sessionHttpOnly type =`, typeof sessionHttpOnly);
   console.log(`${timestamp()} sessionSecret type =`, typeof sessionSecret);
 
-  // ─── Миддлвары ──────────────────────────────────────────────────────────────
   app.use(cookieParser(cookieSecret));
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
-  // ─── Логгер запросов и ответов ─────────────────────────────────────────────
+  // Логгер запросов и ответов
   app.use((req, res, next) => {
     const start = Date.now();
 
@@ -117,8 +117,7 @@ async function bootstrap() {
     next();
   });
 
-  // ─── Настройка сессии ──────────────────────────────────────────────────────
-  const sessionConfig = {
+  const sessionConfig: SessionOptions = {
     secret: sessionSecret,
     name: sessionName,
     resave: false,
@@ -129,7 +128,10 @@ async function bootstrap() {
       secure: sessionSecure,
       sameSite: sessionSameSite
     },
-    store: new RedisStore({ client: redisClient, prefix: sessionFolder })
+    store: new RedisStore({
+      client: redisClient,
+      prefix: sessionFolder
+    })
   };
 
   console.log(
@@ -138,7 +140,6 @@ async function bootstrap() {
   );
   app.use(session(sessionConfig));
 
-  // ─── Разрешаем CORS ────────────────────────────────────────────────────────
   const allowedOrigin = config.get<string>('ALLOWED_ORIGIN');
   console.log(`${timestamp()} [DEBUG] Resolved ALLOWED_ORIGIN:`, allowedOrigin);
 
@@ -160,7 +161,6 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  // ─── Запуск ────────────────────────────────────────────────────────────────
   await app.listen(config.getOrThrow<number>('APPLICATION_PORT'));
 }
 
