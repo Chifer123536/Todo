@@ -8,18 +8,33 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
+    console.log(
+      `[API Request] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`
+    )
     return config
   },
   (error) => {
+    console.error("[API Request Error]", error)
     return Promise.reject(error)
   }
 )
 
 instance.interceptors.response.use(
   (res) => {
+    console.log(
+      `[API Response] ${res.config.method?.toUpperCase()} ${res.config.baseURL}${res.config.url} - ${res.status}`
+    )
     return res
   },
   (error) => {
+    if (error.response) {
+      console.error(
+        `[API Response Error] ${error.config.method?.toUpperCase()} ${error.config.baseURL}${error.config.url} - ${error.response.status}`,
+        error.response.data
+      )
+    } else {
+      console.error("[API Response Error] No response received", error.message)
+    }
     return Promise.reject(error)
   }
 )

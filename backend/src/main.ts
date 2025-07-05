@@ -163,6 +163,8 @@ async function bootstrap() {
     credentials: true
   });
 
+  app.setGlobalPrefix('api');
+
   // ─── Запуск ────────────────────────────────────────────────────────────────
   await app.listen(config.getOrThrow<number>('APPLICATION_PORT'));
 }

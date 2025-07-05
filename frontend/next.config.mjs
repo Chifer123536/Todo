@@ -23,13 +23,13 @@ const nextConfig = {
       ? [
           {
             source: '/api/:path*',
-            destination: 'https://api.todolist.chifer123536.ru/:path*'
+            destination: 'https://api.todolist.chifer123536.ru/api/:path*'
           }
         ]
       : [
           {
             source: '/api/:path*',
-            destination: 'http://localhost:4444/:path*'
+            destination: 'http://localhost:4444/api/:path*'
           }
         ];
   }
