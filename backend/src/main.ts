@@ -24,14 +24,14 @@ async function bootstrap() {
   const sessionConfig: SessionOptions = {
     secret: config.getOrThrow<string>('SESSION_SECRET'),
     name: config.getOrThrow<string>('SESSION_NAME'),
-    resave: true,
+    resave: false,
     saveUninitialized: false,
     cookie: {
       maxAge: ms(config.getOrThrow<StringValue>('SESSION_MAX_AGE')),
       httpOnly: parseBoolean(config.getOrThrow<string>('SESSION_HTTP_ONLY')),
       secure: isProd,
-      // Явно приводим литерал к ожидаемому union‑типу
-      sameSite: (isProd ? 'lax' : 'none') as 'lax' | 'none'
+      // sameSite: в проде 'none', в деве 'lax'
+      sameSite: (isProd ? 'none' : 'lax') as 'lax' | 'none'
     },
     store: new RedisStore({
       client: redisClient,
