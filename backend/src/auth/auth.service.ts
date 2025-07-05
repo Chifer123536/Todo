@@ -177,21 +177,23 @@ export class AuthService {
         if (err) {
           return reject(new InternalServerErrorException('Failed to logout'));
         }
+
         const sessionName =
           this.configService.getOrThrow<string>('SESSION_NAME');
         const sessionDomain = this.configService.get<string>('SESSION_DOMAIN');
-        const sessionSecure =
-          this.configService.get<string>('SESSION_SECURE') === 'true';
         const sessionHttpOnly =
           this.configService.get<string>('SESSION_HTTP_ONLY') === 'true';
-        const sessionSameSite = this.configService.get<string>(
-          'SESSION_COOKIE_SAME_SITE'
-        ) as 'lax' | 'strict' | 'none';
+
+        const isProd =
+          this.configService.get<string>('NODE_ENV') === 'production';
+        const sessionSecure = isProd;
+        const sessionSameSite: 'lax' | 'none' = isProd ? 'none' : 'lax';
+
         const cookieOptions: {
           path: string;
           httpOnly: boolean;
           secure: boolean;
-          sameSite: 'lax' | 'strict' | 'none';
+          sameSite: 'lax' | 'none';
           domain?: string;
         } = {
           path: '/',
@@ -199,6 +201,7 @@ export class AuthService {
           secure: sessionSecure,
           sameSite: sessionSameSite
         };
+
         if (sessionDomain) cookieOptions.domain = sessionDomain;
         res.clearCookie(sessionName, cookieOptions);
         resolve();
