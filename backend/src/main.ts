@@ -49,11 +49,6 @@ async function bootstrap() {
     `${timestamp()} SESSION_HTTP_ONLY =`,
     config.get('SESSION_HTTP_ONLY')
   );
-  console.log(`${timestamp()} SESSION_SECURE =`, config.get('SESSION_SECURE'));
-  console.log(
-    `${timestamp()} SESSION_COOKIE_SAME_SITE =`,
-    config.get('SESSION_COOKIE_SAME_SITE')
-  );
   console.log(`${timestamp()} SESSION_FOLDER =`, config.get('SESSION_FOLDER'));
   console.log(`${timestamp()} ALLOWED_ORIGIN =`, config.get('ALLOWED_ORIGIN'));
   console.log(`${timestamp()} ==============================`);

@@ -305,32 +305,37 @@ export class AuthService {
       );
       this.logger.debug(`Headers.cookie before logout: ${req.headers.cookie}`);
     }
+
     return new Promise((resolve, reject) => {
       req.session.destroy((err) => {
         if (err) {
           this.logger.error('Error destroying session:', err);
           return reject(new InternalServerErrorException('Failed to logout'));
         }
+
         if (this.isDev) {
           this.logger.debug('Session destroyed successfully');
           this.logger.debug(
             `Session after destroy: ${JSON.stringify(req.session)}`
           );
         }
+
         const sessionName =
           this.configService.getOrThrow<string>('SESSION_NAME');
-        const sessionSecure =
-          this.configService.get<string>('SESSION_SECURE') === 'true';
         const sessionHttpOnly =
           this.configService.get<string>('SESSION_HTTP_ONLY') === 'true';
-        const sessionSameSite = this.configService.get<string>(
-          'SESSION_COOKIE_SAME_SITE'
-        ) as 'lax' | 'strict' | 'none';
+        const sessionDomain = this.configService.get<string>('SESSION_DOMAIN');
+
+        const isProd =
+          this.configService.get<string>('NODE_ENV') === 'production';
+        const sessionSecure = isProd;
+        const sessionSameSite: 'lax' | 'none' = isProd ? 'none' : 'lax';
+
         const cookieOptions: {
           path: string;
           httpOnly: boolean;
           secure: boolean;
-          sameSite: 'lax' | 'strict' | 'none';
+          sameSite: 'lax' | 'none';
           domain?: string;
         } = {
           path: '/',
@@ -338,13 +343,20 @@ export class AuthService {
           secure: sessionSecure,
           sameSite: sessionSameSite
         };
+
+        if (sessionDomain) {
+          cookieOptions.domain = sessionDomain;
+        }
+
         res.clearCookie(sessionName, cookieOptions);
+
         if (this.isDev) {
           this.logger.debug(
             'Cleared cookie',
             JSON.stringify({ sessionName, cookieOptions })
           );
         }
+
         resolve();
       });
     });
