@@ -55,20 +55,16 @@ export class AuthController {
   ) {
     const result = await this.authService.loginStepOne(req, dto);
 
+    const isProd = this.configService.get<string>('NODE_ENV') === 'production';
     const state =
       req.session.authState === 'pending2FA' ? 'pending2FA' : 'authenticated';
+
     res.cookie('authState', state, {
       path: '/',
       httpOnly: false,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite:
-        this.configService.get<string>('NODE_ENV') === 'production'
-          ? 'none'
-          : 'lax',
-      domain:
-        this.configService.get<string>('NODE_ENV') === 'production'
-          ? this.configService.get('SESSION_DOMAIN')
-          : undefined,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      domain: isProd ? this.configService.get('SESSION_DOMAIN') : undefined,
       maxAge: state === 'pending2FA' ? 10 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
     });
 
@@ -83,19 +79,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ) {
     const result = await this.authService.confirmTwoFactorCode(req, dto);
+    const isProd = this.configService.get<string>('NODE_ENV') === 'production';
 
     res.cookie('authState', 'authenticated', {
       path: '/',
-      httpOnly: this.configService.get<string>('NODE_ENV') === 'production',
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite:
-        this.configService.get<string>('NODE_ENV') === 'production'
-          ? 'none'
-          : 'lax',
-      domain:
-        this.configService.get<string>('NODE_ENV') === 'production'
-          ? this.configService.get('SESSION_DOMAIN')
-          : undefined,
+      httpOnly: false,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      domain: isProd ? this.configService.get('SESSION_DOMAIN') : undefined,
       maxAge: 30 * 24 * 60 * 60 * 1000
     });
 
@@ -144,6 +135,17 @@ export class AuthController {
         if (err) return reject(err);
         resolve();
       });
+    });
+
+    // Устанавливаем authState, чтобы middleware знал о входе
+    const isProd = this.configService.get<string>('NODE_ENV') === 'production';
+    res.cookie('authState', 'authenticated', {
+      path: '/',
+      httpOnly: false,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      domain: isProd ? this.configService.get('SESSION_DOMAIN') : undefined,
+      maxAge: 30 * 24 * 60 * 60 * 1000
     });
 
     const redirectUrl = `${this.configService.getOrThrow<string>(
