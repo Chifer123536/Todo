@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document, Schema as MongooseSchema } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Account extends Document {
@@ -18,7 +18,7 @@ export class Account extends Document {
   @Prop({ required: true })
   expiresAt!: number;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: "User" })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
   userId!: MongooseSchema.Types.ObjectId;
 }
 

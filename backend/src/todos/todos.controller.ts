@@ -6,13 +6,13 @@ import {
   Param,
   Put,
   Delete,
-  Req,
-} from "@nestjs/common";
-import { Request } from "express";
-import { TodosService } from "./todos.service";
-import { CreateTodoDto, UpdateTodoDto } from "./dto/todo.dto";
+  Req
+} from '@nestjs/common';
+import { Request } from 'express';
+import { TodosService } from './todos.service';
+import { CreateTodoDto, UpdateTodoDto } from './dto/todo.dto';
 
-@Controller("todos")
+@Controller('todos')
 export class TodosController {
   constructor(private readonly todosService: TodosService) {}
 
@@ -26,13 +26,13 @@ export class TodosController {
     return this.todosService.createTodo(dto, req.session.userId);
   }
 
-  @Put(":id")
-  async updateTodo(@Param("id") id: string, @Body() dto: UpdateTodoDto) {
+  @Put(':id')
+  async updateTodo(@Param('id') id: string, @Body() dto: UpdateTodoDto) {
     return this.todosService.updateTodo(id, dto);
   }
 
-  @Delete(":id")
-  async deleteTodo(@Param("id") id: string) {
+  @Delete(':id')
+  async deleteTodo(@Param('id') id: string) {
     return this.todosService.deleteTodo(id);
   }
 }

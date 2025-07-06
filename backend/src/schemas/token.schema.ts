@@ -1,6 +1,6 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
-import { TokenType } from "./../shared/enums";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+import { TokenType } from './../shared/enums';
 
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })
 export class Token extends Document {

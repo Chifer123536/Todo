@@ -1,6 +1,6 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document, Schema as MongooseSchema } from "mongoose";
-import { UserRole, AuthMethod } from "./../shared/enums";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
+import { UserRole, AuthMethod } from './../shared/enums';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -10,7 +10,7 @@ export class User extends Document {
   @Prop({
     required: function (this: User) {
       return this.method === AuthMethod.CREDENTIALS; // CREDENTIALS == password login
-    },
+    }
   })
   password?: string;
 
@@ -32,7 +32,7 @@ export class User extends Document {
   @Prop({ type: String, enum: AuthMethod, required: true })
   method!: AuthMethod;
 
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: "Account" }] })
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Account' }] })
   accounts!: string[];
 }
 

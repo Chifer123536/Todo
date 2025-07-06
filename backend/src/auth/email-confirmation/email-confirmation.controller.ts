@@ -4,13 +4,13 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
-} from "@nestjs/common";
-import { EmailConfirmationService } from "./email-confirmation.service";
-import { Request } from "express";
-import { ConfirmationDto } from "./dto/confirmation.dto";
+  Req
+} from '@nestjs/common';
+import { EmailConfirmationService } from './email-confirmation.service';
+import { Request } from 'express';
+import { ConfirmationDto } from './dto/confirmation.dto';
 
-@Controller("auth/email-confirmation")
+@Controller('auth/email-confirmation')
 export class EmailConfirmationController {
   constructor(
     private readonly emailConfirmationService: EmailConfirmationService

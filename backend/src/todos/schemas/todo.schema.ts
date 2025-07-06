@@ -1,6 +1,6 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document, Schema as MongooseSchema } from "mongoose";
-import { User } from "@/schemas/user.schema";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
+import { User } from '@/schemas/user.schema';
 
 @Schema({ timestamps: true })
 export class Todo extends Document {

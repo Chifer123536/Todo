@@ -1,11 +1,11 @@
-import { DynamicModule, Module } from "@nestjs/common";
+import { DynamicModule, Module } from '@nestjs/common';
 
 import {
   ProviderOptionsSymbol,
   TypeAsyncOptions,
-  TypeOptions,
-} from "./provider.constants";
-import { ProviderService } from "./provider.service";
+  TypeOptions
+} from './provider.constants';
+import { ProviderService } from './provider.service';
 
 @Module({})
 export class ProviderModule {
@@ -15,11 +15,11 @@ export class ProviderModule {
       providers: [
         {
           useValue: options.services,
-          provide: ProviderOptionsSymbol,
+          provide: ProviderOptionsSymbol
         },
-        ProviderService,
+        ProviderService
       ],
-      exports: [ProviderService],
+      exports: [ProviderService]
     };
   }
 
@@ -31,11 +31,11 @@ export class ProviderModule {
         {
           useFactory: options.useFactory,
           provide: ProviderOptionsSymbol,
-          inject: options.inject,
+          inject: options.inject
         },
-        ProviderService,
+        ProviderService
       ],
-      exports: [ProviderService],
+      exports: [ProviderService]
     };
   }
 }

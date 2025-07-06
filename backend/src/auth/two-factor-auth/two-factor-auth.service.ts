@@ -1,14 +1,14 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
-} from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+  NotFoundException
+} from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
-import { Token, TokenDocument } from "@/schemas/token.schema";
-import { MailService } from "@/libs/mail/mail.service";
-import { TokenType } from "../../shared/enums";
+import { Token, TokenDocument } from '@/schemas/token.schema';
+import { MailService } from '@/libs/mail/mail.service';
+import { TokenType } from '../../shared/enums';
 
 @Injectable()
 export class TwoFactorAuthService {
@@ -20,24 +20,24 @@ export class TwoFactorAuthService {
   public async validateTwoFactorToken(email: string, code: string) {
     const existingToken = await this.tokenModel.findOne({
       email,
-      type: TokenType.TWO_FACTOR,
+      type: TokenType.TWO_FACTOR
     });
 
     if (!existingToken) {
       throw new NotFoundException(
-        "Two-factor authentication token not found. Please ensure that you requested the token for this email address."
+        'Two-factor authentication token not found. Please ensure that you requested the token for this email address.'
       );
     }
 
     if (existingToken.token !== code) {
       throw new BadRequestException(
-        "Invalid two-factor authentication code. Please check the code you entered and try again."
+        'Invalid two-factor authentication code. Please check the code you entered and try again.'
       );
     }
 
     if (new Date(existingToken.expiresIn) < new Date()) {
       throw new BadRequestException(
-        "Your two-factor authentication token has expired. Please request a new token."
+        'Your two-factor authentication token has expired. Please request a new token.'
       );
     }
 
@@ -69,7 +69,7 @@ export class TwoFactorAuthService {
       email,
       token,
       expiresIn,
-      type: TokenType.TWO_FACTOR,
+      type: TokenType.TWO_FACTOR
     });
 
     return twoFactorToken;

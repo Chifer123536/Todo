@@ -1,6 +1,6 @@
-import { Body, Heading, Link, Tailwind, Text } from "@react-email/components";
-import { Html } from "@react-email/html";
-import * as React from "react";
+import { Body, Heading, Link, Tailwind, Text } from '@react-email/components';
+import { Html } from '@react-email/html';
+import * as React from 'react';
 
 interface ResetPasswordTemplateProps {
   domain: string;
@@ -9,7 +9,7 @@ interface ResetPasswordTemplateProps {
 
 export function ResetPasswordTemplate({
   domain,
-  token,
+  token
 }: ResetPasswordTemplateProps) {
   const resetLink = `${domain}/auth/new-password?token=${token}`;
 

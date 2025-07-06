@@ -3,22 +3,22 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  NotFoundException,
-} from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
-import { Request } from "express";
+  NotFoundException
+} from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
+import { Request } from 'express';
 
-import { Token, TokenDocument } from "@/schemas/token.schema";
-import { User, UserDocument } from "@/schemas/user.schema";
-import { TokenType } from "../../shared/enums";
+import { Token, TokenDocument } from '@/schemas/token.schema';
+import { User, UserDocument } from '@/schemas/user.schema';
+import { TokenType } from '../../shared/enums';
 
-import { MailService } from "@/libs/mail/mail.service";
-import { UserService } from "@/user/user.service";
-import { AuthService } from "../auth.service";
+import { MailService } from '@/libs/mail/mail.service';
+import { UserService } from '@/user/user.service';
+import { AuthService } from '../auth.service';
 
-import { ConfirmationDto } from "./dto/confirmation.dto";
+import { ConfirmationDto } from './dto/confirmation.dto';
 
 @Injectable()
 export class EmailConfirmationService {
@@ -34,28 +34,28 @@ export class EmailConfirmationService {
   public async newVerification(req: Request, dto: ConfirmationDto) {
     const existingToken = await this.tokenModel.findOne({
       token: dto.token,
-      type: TokenType.VERIFICATION,
+      type: TokenType.VERIFICATION
     });
 
     if (!existingToken) {
       throw new NotFoundException(
-        "Verification token not found. Please ensure you have entered the correct token."
+        'Verification token not found. Please ensure you have entered the correct token.'
       );
     }
 
     if (new Date(existingToken.expiresIn) < new Date()) {
       throw new BadRequestException(
-        "Verification token has expired. Please request a new verification token."
+        'Verification token has expired. Please request a new verification token.'
       );
     }
 
     const existingUser = await this.userModel.findOne({
-      email: existingToken.email,
+      email: existingToken.email
     });
 
     if (!existingUser) {
       throw new NotFoundException(
-        "User not found. Please check the entered email address and try again."
+        'User not found. Please check the entered email address and try again.'
       );
     }
 
@@ -66,7 +66,7 @@ export class EmailConfirmationService {
 
     await this.tokenModel.deleteOne({
       _id: existingToken._id,
-      type: TokenType.VERIFICATION,
+      type: TokenType.VERIFICATION
     });
 
     return this.authService.saveSession(req, existingUser);
@@ -93,7 +93,7 @@ export class EmailConfirmationService {
       email,
       token,
       expiresIn,
-      type: TokenType.VERIFICATION,
+      type: TokenType.VERIFICATION
     });
 
     return verificationToken;

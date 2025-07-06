@@ -47,7 +47,7 @@
       background-color: var(--checkbox-checked-background);
 
       &::before {
-        content: "✓";
+        content: '✓';
         position: absolute;
         font-size: 1rem;
         color: var(--checkbox-color);

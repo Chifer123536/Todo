@@ -1,5 +1,5 @@
-import { User } from "@/schemas/user.schema";
-import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+import { User } from '@/schemas/user.schema';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 export const AuthoRized = createParamDecorator(
   (data: keyof User, ctx: ExecutionContext) => {

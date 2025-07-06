@@ -1,7 +1,7 @@
-import { Global, Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { DatabaseService } from "./database.service";
+import { Global, Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DatabaseService } from './database.service';
 
 @Global()
 @Module({
@@ -9,12 +9,12 @@ import { DatabaseService } from "./database.service";
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>("MONGO_URI"),
+        uri: configService.get<string>('MONGO_URI')
       }),
-      inject: [ConfigService],
-    }),
+      inject: [ConfigService]
+    })
   ],
   providers: [DatabaseService],
-  exports: [MongooseModule, DatabaseService],
+  exports: [MongooseModule, DatabaseService]
 })
 export class DatabaseModule {}
