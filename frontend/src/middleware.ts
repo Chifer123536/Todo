@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 
 export default function middleware(request: NextRequest) {
-  const session = request.cookies.get("session")?.value
   const authState = request.cookies.get("authState")?.value
   const path = request.nextUrl.pathname
   const isAuthPage = path.startsWith("/auth")
@@ -14,10 +13,10 @@ export default function middleware(request: NextRequest) {
     )
 
   if (isAuthPage) {
-    if (session && authState === "authenticated") {
+    if (authState === "authenticated") {
       return NextResponse.redirect(new URL("/", request.url))
     }
-    if (session && authState === "pending2FA") {
+    if (authState === "pending2FA") {
       if (loginPage) return NextResponse.next()
       return NextResponse.redirect(new URL("/auth/login", request.url))
     }
@@ -25,14 +24,12 @@ export default function middleware(request: NextRequest) {
   }
 
   if (path === "/" || path === "/sitemap.xml" || path === "/robots.txt") {
-    if (!session || authState !== "authenticated") {
-      if (isBot) {
-        return NextResponse.next()
-      }
+    if (authState !== "authenticated") {
+      if (isBot) return NextResponse.next()
       return NextResponse.redirect(new URL("/auth/login", request.url))
     }
   } else {
-    if (!session || authState !== "authenticated") {
+    if (authState !== "authenticated") {
       return NextResponse.redirect(new URL("/auth/login", request.url))
     }
   }

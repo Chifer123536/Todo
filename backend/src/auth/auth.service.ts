@@ -331,30 +331,36 @@ export class AuthService {
         const sessionSecure = isProd;
         const sessionSameSite: 'lax' | 'none' = isProd ? 'none' : 'lax';
 
-        const cookieOptions: {
-          path: string;
-          httpOnly: boolean;
-          secure: boolean;
-          sameSite: 'lax' | 'none';
-          domain?: string;
-        } = {
+        const cookieOptions = {
           path: '/',
           httpOnly: sessionHttpOnly,
           secure: sessionSecure,
-          sameSite: sessionSameSite
+          sameSite: sessionSameSite,
+          ...(sessionDomain ? { domain: sessionDomain } : {})
         };
-
-        if (sessionDomain) {
-          cookieOptions.domain = sessionDomain;
-        }
 
         res.clearCookie(sessionName, cookieOptions);
 
+        res.clearCookie('authState', {
+          path: '/',
+          secure: sessionSecure,
+          sameSite: sessionSameSite,
+          ...(sessionDomain ? { domain: sessionDomain } : {})
+        });
+
         if (this.isDev) {
-          this.logger.debug(
-            'Cleared cookie',
-            JSON.stringify({ sessionName, cookieOptions })
-          );
+          this.logger.debug('Cleared cookies:', {
+            session: { name: sessionName, options: cookieOptions },
+            authState: {
+              name: 'authState',
+              options: {
+                path: '/',
+                secure: sessionSecure,
+                sameSite: sessionSameSite,
+                ...(sessionDomain ? { domain: sessionDomain } : {})
+              }
+            }
+          });
         }
 
         resolve();
