@@ -18,6 +18,20 @@ async function bootstrap() {
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.set('trust proxy', 1);
 
+  // Сначала CORS, чтобы он не зарезал куки/сессию
+  const allowedOrigin = config.get<string>('ALLOWED_ORIGIN');
+  app.enableCors({
+    origin: (origin, callback) => {
+      // разрешаем origin === undefined (при OAuth редиректе)
+      if (!origin || origin === allowedOrigin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true
+  });
+
   app.use(cookieParser(config.getOrThrow<string>('COOKIES_SECRET')));
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
@@ -30,7 +44,6 @@ async function bootstrap() {
       maxAge: ms(config.getOrThrow<StringValue>('SESSION_MAX_AGE')),
       httpOnly: parseBoolean(config.getOrThrow<string>('SESSION_HTTP_ONLY')),
       secure: isProd,
-      // sameSite: в проде 'none', в деве 'lax'
       sameSite: (isProd ? 'none' : 'lax') as 'lax' | 'none'
     },
     store: new RedisStore({
@@ -40,19 +53,6 @@ async function bootstrap() {
   };
 
   app.use(session(sessionConfig));
-
-  const allowedOrigin = config.get<string>('ALLOWED_ORIGIN');
-  app.enableCors({
-    origin: (origin, callback) => {
-      if (!origin || origin === allowedOrigin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true
-  });
-
   app.setGlobalPrefix('api');
 
   await app.listen(config.getOrThrow<number>('APPLICATION_PORT'));
