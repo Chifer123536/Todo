@@ -183,27 +183,27 @@ export class AuthService {
         const sessionDomain = this.configService.get<string>('SESSION_DOMAIN');
         const sessionHttpOnly =
           this.configService.get<string>('SESSION_HTTP_ONLY') === 'true';
-
         const isProd =
           this.configService.get<string>('NODE_ENV') === 'production';
         const sessionSecure = isProd;
         const sessionSameSite: 'lax' | 'none' = isProd ? 'none' : 'lax';
 
-        const cookieOptions: {
-          path: string;
-          httpOnly: boolean;
-          secure: boolean;
-          sameSite: 'lax' | 'none';
-          domain?: string;
-        } = {
+        const cookieOptions = {
           path: '/',
           httpOnly: sessionHttpOnly,
           secure: sessionSecure,
-          sameSite: sessionSameSite
+          sameSite: sessionSameSite,
+          ...(sessionDomain ? { domain: sessionDomain } : {})
         };
 
-        if (sessionDomain) cookieOptions.domain = sessionDomain;
         res.clearCookie(sessionName, cookieOptions);
+        res.clearCookie('authState', {
+          path: '/',
+          secure: sessionSecure,
+          sameSite: sessionSameSite,
+          ...(sessionDomain ? { domain: sessionDomain } : {})
+        });
+
         resolve();
       });
     });
