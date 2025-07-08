@@ -143,7 +143,8 @@ async function bootstrap() {
       maxAge: sessionMaxAge,
       httpOnly: sessionHttpOnly,
       secure: sessionSecure,
-      sameSite: sessionSameSite
+      sameSite: sessionSameSite,
+      domain: config.get<string>('SESSION_DOMAIN')
     },
     store: new RedisStore({
       client: redisClient,
