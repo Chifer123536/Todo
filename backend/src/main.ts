@@ -22,6 +22,27 @@ async function bootstrap() {
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.set('trust proxy', 1);
 
+  // ===== CORS должен идти СРАЗУ ПОСЛЕ trust proxy =====
+  const allowedOrigin = config.get<string>('ALLOWED_ORIGIN');
+  console.log(`${timestamp()} [DEBUG] Resolved ALLOWED_ORIGIN:`, allowedOrigin);
+
+  app.enableCors({
+    origin: (origin, callback) => {
+      console.log(`${timestamp()} [CORS CHECK] Request origin:`, origin);
+      if (!origin || origin === allowedOrigin) {
+        callback(null, true);
+      } else {
+        console.warn(
+          `${timestamp()} [CORS BLOCKED] Origin not allowed:`,
+          origin
+        );
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true
+  });
+  // ====================================================
+
   // Middleware для проверки protocol/secure
   app.use((req, res, next) => {
     console.log(
@@ -55,7 +76,6 @@ async function bootstrap() {
     config.get('SESSION_COOKIE_SAME_SITE')
   );
   console.log(`${timestamp()} SESSION_FOLDER =`, config.get('SESSION_FOLDER'));
-  console.log(`${timestamp()} ALLOWED_ORIGIN =`, config.get('ALLOWED_ORIGIN'));
   console.log(`${timestamp()} ==============================`);
 
   const cookieSecret = config.getOrThrow<string>('COOKIES_SECRET');
@@ -67,9 +87,7 @@ async function bootstrap() {
   const sessionHttpOnly = parseBoolean(
     config.getOrThrow<string>('SESSION_HTTP_ONLY')
   );
-  // В проде включаем secure, иначе false
   const sessionSecure = isProd;
-  // sameSite: в проде 'none', в деве 'lax'
   const sessionSameSite = (isProd ? 'none' : 'lax') as 'lax' | 'none';
   const sessionFolder = config.getOrThrow<string>('SESSION_FOLDER');
 
@@ -96,7 +114,6 @@ async function bootstrap() {
   // Логгер запросов и ответов
   app.use((req, res, next) => {
     const start = Date.now();
-
     console.log(`${timestamp()} [REQUEST] ${req.method} ${req.originalUrl}`);
     console.log(`${timestamp()} Request headers:`, req.headers);
 
@@ -139,25 +156,6 @@ async function bootstrap() {
     sessionConfig
   );
   app.use(session(sessionConfig));
-
-  const allowedOrigin = config.get<string>('ALLOWED_ORIGIN');
-  console.log(`${timestamp()} [DEBUG] Resolved ALLOWED_ORIGIN:`, allowedOrigin);
-
-  app.enableCors({
-    origin: (origin, callback) => {
-      console.log(`${timestamp()} [CORS CHECK] Request origin:`, origin);
-      if (!origin || origin === allowedOrigin) {
-        callback(null, true);
-      } else {
-        console.warn(
-          `${timestamp()} [CORS BLOCKED] Origin not allowed:`,
-          origin
-        );
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true
-  });
 
   app.setGlobalPrefix('api');
 
