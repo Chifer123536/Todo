@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
@@ -13,16 +13,17 @@ import { redisClient } from './shared/redis/redis.client';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
+  const logger = new Logger('Bootstrap');
 
   const isProd = config.get<string>('NODE_ENV') === 'production';
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.set('trust proxy', 1);
 
-  // Сначала CORS, чтобы он не зарезал куки/сессию
+  // Enable CORS
   const allowedOrigin = config.get<string>('ALLOWED_ORIGIN');
+  logger.debug(`Resolved ALLOWED_ORIGIN: ${allowedOrigin}`);
   app.enableCors({
     origin: (origin, callback) => {
-      // разрешаем origin === undefined (при OAuth редиректе)
       if (!origin || origin === allowedOrigin) {
         callback(null, true);
       } else {
@@ -53,10 +54,34 @@ async function bootstrap() {
     })
   };
 
+  logger.debug('===== STARTUP DEBUG ENV =====');
+  logger.debug(`NODE_ENV = ${config.get('NODE_ENV')}`);
+  logger.debug(`COOKIES_SECRET = ${config.get('COOKIES_SECRET')}`);
+  logger.debug(`SESSION_SECRET = ${sessionConfig.secret}`);
+  logger.debug(`SESSION_NAME = ${sessionConfig.name}`);
+  logger.debug(`SESSION_MAX_AGE = ${sessionConfig.cookie.maxAge}`);
+  logger.debug(`SESSION_HTTP_ONLY = ${sessionConfig.cookie.httpOnly}`);
+  logger.debug(`SESSION_SECURE = ${sessionConfig.cookie.secure}`);
+  logger.debug(`SESSION_COOKIE_SAME_SITE = ${sessionConfig.cookie.sameSite}`);
+  logger.debug(`SESSION_FOLDER = ${config.get('SESSION_FOLDER')}`);
+  logger.debug('==============================');
+
   app.use(session(sessionConfig));
+
+  // Middleware: log every request — в любом окружении
+  app.use((req, res, next) => {
+    logger.debug(`[REQUEST] ${req.method} ${req.originalUrl}`);
+    logger.debug(`Cookies: ${JSON.stringify(req.cookies)}`);
+    logger.debug(`Session: ${JSON.stringify(req.session, null, 2)}`);
+    next();
+  });
+
   app.setGlobalPrefix('api');
 
-  await app.listen(config.getOrThrow<number>('APPLICATION_PORT'));
+  const port = config.getOrThrow<number>('APPLICATION_PORT');
+  await app.listen(port);
+
+  logger.log(`Application is running on port ${port}`);
 }
 
 bootstrap();
