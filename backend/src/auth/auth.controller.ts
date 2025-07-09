@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Logger,
   Param,
   Post,
   Query,
@@ -25,8 +24,6 @@ import { ProviderService } from './provider/provider.service';
 
 @Controller('auth')
 export class AuthController {
-  private readonly logger = new Logger(AuthController.name);
-
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
@@ -37,12 +34,15 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.OK)
   public async register(@Req() req: Request, @Body() dto: RegisterDto) {
-    this.logger.debug('POST /auth/register → start');
     const result = await this.authService.register(req, dto);
+
     await new Promise<void>((resolve, reject) => {
-      req.session.save((err) => (err ? reject(err) : resolve()));
+      req.session.save((err) => {
+        if (err) return reject(err);
+        resolve();
+      });
     });
-    this.logger.debug('POST /auth/register → success');
+
     return result;
   }
 
@@ -53,14 +53,11 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response
   ) {
-    this.logger.debug('POST /auth/login → start');
     const result = await this.authService.loginStepOne(req, dto);
 
     const isProd = this.configService.get<string>('NODE_ENV') === 'production';
     const state =
       req.session.authState === 'pending2FA' ? 'pending2FA' : 'authenticated';
-
-    this.logger.debug(`POST /auth/login → authState: ${state}`);
 
     res.cookie('authState', state, {
       path: '/',
@@ -71,7 +68,6 @@ export class AuthController {
       maxAge: state === 'pending2FA' ? 10 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
     });
 
-    this.logger.debug('POST /auth/login → cookie set');
     return result;
   }
 
@@ -82,7 +78,6 @@ export class AuthController {
     @Body() dto: TwoFactorDto,
     @Res({ passthrough: true }) res: Response
   ) {
-    this.logger.debug('POST /auth/login/2fa → start');
     const result = await this.authService.confirmTwoFactorCode(req, dto);
     const isProd = this.configService.get<string>('NODE_ENV') === 'production';
 
@@ -96,10 +91,12 @@ export class AuthController {
     });
 
     await new Promise<void>((resolve, reject) => {
-      req.session.save((err) => (err ? reject(err) : resolve()));
+      req.session.save((err) => {
+        if (err) return reject(err);
+        resolve();
+      });
     });
 
-    this.logger.debug('POST /auth/login/2fa → success');
     return result;
   }
 
@@ -109,12 +106,15 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
-    this.logger.debug('POST /auth/2fa/resend → start');
     const result = await this.authService.resendTwoFactorToken(req);
+
     await new Promise<void>((resolve, reject) => {
-      req.session.save((err) => (err ? reject(err) : resolve()));
+      req.session.save((err) => {
+        if (err) return reject(err);
+        resolve();
+      });
     });
-    this.logger.debug('POST /auth/2fa/resend → success');
+
     return result;
   }
 
@@ -126,20 +126,18 @@ export class AuthController {
     @Query('code') code: string,
     @Param('provider') provider: string
   ) {
-    this.logger.debug(
-      `GET /auth/oauth/callback/${provider} → start with code: ${code}`
-    );
-
-    if (!code) {
-      this.logger.error('GET /auth/oauth/callback → missing code');
-      throw new BadRequestException('Code is required');
-    }
+    if (!code) throw new BadRequestException('Code is required');
 
     await this.authService.extractProfileFromCode(req, provider, code);
+
     await new Promise<void>((resolve, reject) => {
-      req.session.save((err) => (err ? reject(err) : resolve()));
+      req.session.save((err) => {
+        if (err) return reject(err);
+        resolve();
+      });
     });
 
+    // Устанавливаем authState, чтобы middleware знал о входе
     const isProd = this.configService.get<string>('NODE_ENV') === 'production';
     res.cookie('authState', 'authenticated', {
       path: '/',
@@ -154,21 +152,14 @@ export class AuthController {
       'ALLOWED_ORIGIN'
     )}/`;
 
-    this.logger.debug(
-      `GET /auth/oauth/callback/${provider} → redirecting to: ${redirectUrl}`
-    );
     return res.redirect(redirectUrl);
   }
 
   @UseGuards(AuthProviderGuard)
   @Get('/oauth/connect/:provider')
   public async connect(@Param('provider') provider: string) {
-    this.logger.debug(`GET /auth/oauth/connect/${provider} → start`);
     const providerInstance = this.providerService.findByService(provider);
     const authUrl = providerInstance.getAuthUrl();
-    this.logger.debug(
-      `GET /auth/oauth/connect/${provider} → authUrl: ${authUrl}`
-    );
     return { url: authUrl };
   }
 
@@ -178,10 +169,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
-    this.logger.debug('POST /auth/logout → start');
-    const result = await this.authService.logout(req, res);
-    this.logger.debug('POST /auth/logout → success');
-    return result;
+    return this.authService.logout(req, res);
   }
 }
 
