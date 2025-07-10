@@ -14,12 +14,12 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
-import { Request, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { TwoFactorDto } from './dto/two-factor.dto';
 import { Recaptcha } from '@nestlab/google-recaptcha';
-import { AuthProviderGuard } from './guards/provider.guard';
+import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { AuthProviderGuard } from './guards/provider.guard';
 import { ProviderService } from './provider/provider.service';
 
 @Controller('auth')
@@ -56,6 +56,9 @@ export class AuthController {
     const result = await this.authService.loginStepOne(req, dto);
 
     const isProd = this.configService.get<string>('NODE_ENV') === 'production';
+    const domain = isProd
+      ? this.configService.get<string>('SESSION_DOMAIN')
+      : undefined;
     const state =
       req.session.authState === 'pending2FA' ? 'pending2FA' : 'authenticated';
 
@@ -64,7 +67,7 @@ export class AuthController {
       httpOnly: false,
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
-      domain: isProd ? this.configService.get('SESSION_DOMAIN') : undefined,
+      domain,
       maxAge: state === 'pending2FA' ? 10 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
     });
 
@@ -79,14 +82,18 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ) {
     const result = await this.authService.confirmTwoFactorCode(req, dto);
+
     const isProd = this.configService.get<string>('NODE_ENV') === 'production';
+    const domain = isProd
+      ? this.configService.get<string>('SESSION_DOMAIN')
+      : undefined;
 
     res.cookie('authState', 'authenticated', {
       path: '/',
       httpOnly: false,
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
-      domain: isProd ? this.configService.get('SESSION_DOMAIN') : undefined,
+      domain,
       maxAge: 30 * 24 * 60 * 60 * 1000
     });
 
@@ -102,10 +109,7 @@ export class AuthController {
 
   @Post('2fa/resend')
   @HttpCode(HttpStatus.OK)
-  public async resendTwoFactorToken(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response
-  ) {
+  public async resendTwoFactorToken(@Req() req: Request) {
     const result = await this.authService.resendTwoFactorToken(req);
 
     await new Promise<void>((resolve, reject) => {
@@ -126,7 +130,9 @@ export class AuthController {
     @Query('code') code: string,
     @Param('provider') provider: string
   ) {
-    if (!code) throw new BadRequestException('Code is required');
+    if (!code) {
+      throw new BadRequestException('Code is required');
+    }
 
     await this.authService.extractProfileFromCode(req, provider, code);
 
@@ -137,14 +143,17 @@ export class AuthController {
       });
     });
 
-    // Устанавливаем authState, чтобы middleware знал о входе
     const isProd = this.configService.get<string>('NODE_ENV') === 'production';
+    const domain = isProd
+      ? this.configService.get<string>('SESSION_DOMAIN')
+      : undefined;
+
     res.cookie('authState', 'authenticated', {
       path: '/',
       httpOnly: false,
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
-      domain: isProd ? this.configService.get('SESSION_DOMAIN') : undefined,
+      domain,
       maxAge: 30 * 24 * 60 * 60 * 1000
     });
 
@@ -157,9 +166,19 @@ export class AuthController {
 
   @UseGuards(AuthProviderGuard)
   @Get('/oauth/connect/:provider')
-  public async connect(@Param('provider') provider: string) {
+  public async connect(
+    @Param('provider') provider: string,
+    @Req() req: Request
+  ) {
+    if (req.session?.userId || req.session?.authState === 'authenticated') {
+      await new Promise((resolve, reject) =>
+        req.session.regenerate((err) => (err ? reject(err) : resolve(null)))
+      );
+    }
+
     const providerInstance = this.providerService.findByService(provider);
     const authUrl = providerInstance.getAuthUrl();
+
     return { url: authUrl };
   }
 
