@@ -15,76 +15,59 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
-import { Request, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { TwoFactorDto } from './dto/two-factor.dto';
 import { Recaptcha } from '@nestlab/google-recaptcha';
-import { AuthProviderGuard } from './guards/provider.guard';
+import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { AuthProviderGuard } from './guards/provider.guard';
 import { ProviderService } from './provider/provider.service';
 
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
-  private readonly isDev: boolean;
 
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
     private readonly providerService: ProviderService
-  ) {
-    // Флаг режима: debug-логи только когда NODE_ENV !== 'production'.
-    this.isDev = this.configService.get<string>('NODE_ENV') !== 'production';
-    if (this.isDev) {
-      this.logger.debug('AuthController initialized in development mode');
-      const allowed = this.configService.get<string>('ALLOWED_ORIGIN');
-      this.logger.debug(`ALLOWED_ORIGIN = ${allowed}`);
-    }
-  }
+  ) {}
 
   @Recaptcha()
   @Post('register')
   @HttpCode(HttpStatus.OK)
   public async register(@Req() req: Request, @Body() dto: RegisterDto) {
-    if (this.isDev) {
-      this.logger.debug('=== [REGISTER] REQUEST START ===');
-      this.logger.debug(`[REGISTER] Headers: ${JSON.stringify(req.headers)}`);
-      this.logger.debug(`[REGISTER] Body (DTO): ${JSON.stringify(dto)}`);
-      this.logger.debug(
-        `[REGISTER] Session before: ${JSON.stringify(req.session)}`
-      );
-    }
+    this.logger.debug('=== [REGISTER] REQUEST START ===');
+    this.logger.debug(`[REGISTER] Headers: ${JSON.stringify(req.headers)}`);
+    this.logger.debug(`[REGISTER] Body (DTO): ${JSON.stringify(dto)}`);
+    this.logger.debug(
+      `[REGISTER] Session before: ${JSON.stringify(req.session)}`
+    );
 
     try {
       const result = await this.authService.register(req, dto);
 
-      // Сохраняем сессию
       await new Promise<void>((resolve, reject) => {
         req.session.save((err) => {
           if (err) {
             this.logger.error('[REGISTER] Session save error:', err);
             return reject(err);
           }
-          if (this.isDev) {
-            this.logger.debug('[REGISTER] Session saved successfully');
-          }
+          this.logger.debug('[REGISTER] Session saved successfully');
           resolve();
         });
       });
 
-      if (this.isDev) {
-        this.logger.debug(
-          `[REGISTER] Session after: ${JSON.stringify(req.session)}`
-        );
-        this.logger.debug(`[REGISTER] Result: ${JSON.stringify(result)}`);
-        this.logger.debug('=== [REGISTER] REQUEST END ===');
-      }
+      this.logger.debug(
+        `[REGISTER] Session after: ${JSON.stringify(req.session)}`
+      );
+      this.logger.debug(`[REGISTER] Result: ${JSON.stringify(result)}`);
+      this.logger.debug('=== [REGISTER] REQUEST END ===');
+
       return result;
     } catch (error) {
       this.logger.error('[REGISTER] Error:', error);
-      if (this.isDev) {
-        this.logger.debug('=== [REGISTER] REQUEST END with Error ===');
-      }
+      this.logger.debug('=== [REGISTER] REQUEST END with Error ===');
       throw error;
     }
   }
@@ -96,43 +79,43 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response
   ) {
-    if (this.isDev) {
-      this.logger.debug('=== [LOGIN] REQUEST START ===');
-      this.logger.debug(`[LOGIN] Headers: ${JSON.stringify(req.headers)}`);
-      this.logger.debug(`[LOGIN] Body (DTO): ${JSON.stringify(dto)}`);
-      this.logger.debug(
-        `[LOGIN] Session before: ${JSON.stringify(req.session)}`
-      );
-    }
+    this.logger.debug('=== [LOGIN] REQUEST START ===');
+    this.logger.debug(`[LOGIN] Headers: ${JSON.stringify(req.headers)}`);
+    this.logger.debug(`[LOGIN] Body (DTO): ${JSON.stringify(dto)}`);
+    this.logger.debug(`[LOGIN] Session before: ${JSON.stringify(req.session)}`);
 
     try {
       const result = await this.authService.loginStepOne(req, dto);
 
+      const isProd =
+        this.configService.get<string>('NODE_ENV') === 'production';
+      const domain = isProd
+        ? this.configService.get<string>('SESSION_DOMAIN')
+        : undefined;
       const state =
         req.session.authState === 'pending2FA' ? 'pending2FA' : 'authenticated';
+
       res.cookie('authState', state, {
         path: '/',
-        httpOnly: false, // OK — мы читаем его на клиенте
-        secure: !this.isDev, // false в dev, true в prod
-        sameSite: this.isDev ? 'lax' : 'none',
+        httpOnly: false,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+        domain,
         maxAge:
           state === 'pending2FA' ? 10 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
       });
 
-      if (this.isDev) {
-        this.logger.debug(
-          `[LOGIN] Session after: ${JSON.stringify(req.session)}`
-        );
-        this.logger.debug(`[LOGIN] authState set to: ${state}`);
-        this.logger.debug(`[LOGIN] Result: ${JSON.stringify(result)}`);
-        this.logger.debug('=== [LOGIN] REQUEST END ===');
-      }
+      this.logger.debug(
+        `[LOGIN] Session after: ${JSON.stringify(req.session)}`
+      );
+      this.logger.debug(`[LOGIN] authState set to: ${state}`);
+      this.logger.debug(`[LOGIN] Result: ${JSON.stringify(result)}`);
+      this.logger.debug('=== [LOGIN] REQUEST END ===');
+
       return result;
     } catch (error) {
       this.logger.error('[LOGIN] Error:', error);
-      if (this.isDev) {
-        this.logger.debug('=== [LOGIN] REQUEST END with Error ===');
-      }
+      this.logger.debug('=== [LOGIN] REQUEST END with Error ===');
       throw error;
     }
   }
@@ -144,22 +127,27 @@ export class AuthController {
     @Body() dto: TwoFactorDto,
     @Res({ passthrough: true }) res: Response
   ) {
-    if (this.isDev) {
-      this.logger.debug('=== [LOGIN/2FA] REQUEST START ===');
-      this.logger.debug(`[LOGIN/2FA] Body (DTO): ${JSON.stringify(dto)}`);
-      this.logger.debug(
-        `[LOGIN/2FA] Session before: ${JSON.stringify(req.session)}`
-      );
-    }
+    this.logger.debug('=== [LOGIN/2FA] REQUEST START ===');
+    this.logger.debug(`[LOGIN/2FA] Body (DTO): ${JSON.stringify(dto)}`);
+    this.logger.debug(
+      `[LOGIN/2FA] Session before: ${JSON.stringify(req.session)}`
+    );
 
     try {
       const result = await this.authService.confirmTwoFactorCode(req, dto);
 
+      const isProd =
+        this.configService.get<string>('NODE_ENV') === 'production';
+      const domain = isProd
+        ? this.configService.get<string>('SESSION_DOMAIN')
+        : undefined;
+
       res.cookie('authState', 'authenticated', {
         path: '/',
-        httpOnly: !this.isDev, // ← true на проде, false на локалке
-        secure: !this.isDev, // false в dev, true в prod
-        sameSite: this.isDev ? 'lax' : 'none', // ← lax в dev, none на проде
+        httpOnly: false,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+        domain,
         maxAge: 30 * 24 * 60 * 60 * 1000
       });
 
@@ -169,42 +157,32 @@ export class AuthController {
             this.logger.error('[LOGIN/2FA] Session save error:', err);
             return reject(err);
           }
-          if (this.isDev) {
-            this.logger.debug('[LOGIN/2FA] Session saved successfully');
-          }
+          this.logger.debug('[LOGIN/2FA] Session saved successfully');
           resolve();
         });
       });
 
-      if (this.isDev) {
-        this.logger.debug(
-          `[LOGIN/2FA] Session after: ${JSON.stringify(req.session)}`
-        );
-        this.logger.debug(`[LOGIN/2FA] Result: ${JSON.stringify(result)}`);
-        this.logger.debug('=== [LOGIN/2FA] REQUEST END ===');
-      }
+      this.logger.debug(
+        `[LOGIN/2FA] Session after: ${JSON.stringify(req.session)}`
+      );
+      this.logger.debug(`[LOGIN/2FA] Result: ${JSON.stringify(result)}`);
+      this.logger.debug('=== [LOGIN/2FA] REQUEST END ===');
+
       return result;
     } catch (error) {
       this.logger.error('[LOGIN/2FA] Error:', error);
-      if (this.isDev) {
-        this.logger.debug('=== [LOGIN/2FA] REQUEST END with Error ===');
-      }
+      this.logger.debug('=== [LOGIN/2FA] REQUEST END with Error ===');
       throw error;
     }
   }
 
   @Post('2fa/resend')
   @HttpCode(HttpStatus.OK)
-  public async resendTwoFactorToken(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response
-  ) {
-    if (this.isDev) {
-      this.logger.debug('=== [2FA RESEND] REQUEST START ===');
-      this.logger.debug(
-        `[2FA RESEND] Session before: ${JSON.stringify(req.session)}`
-      );
-    }
+  public async resendTwoFactorToken(@Req() req: Request) {
+    this.logger.debug('=== [2FA RESEND] REQUEST START ===');
+    this.logger.debug(
+      `[2FA RESEND] Session before: ${JSON.stringify(req.session)}`
+    );
 
     try {
       const result = await this.authService.resendTwoFactorToken(req);
@@ -215,26 +193,21 @@ export class AuthController {
             this.logger.error('[2FA RESEND] Session save error:', err);
             return reject(err);
           }
-          if (this.isDev) {
-            this.logger.debug('[2FA RESEND] Session saved successfully');
-          }
+          this.logger.debug('[2FA RESEND] Session saved successfully');
           resolve();
         });
       });
 
-      if (this.isDev) {
-        this.logger.debug(
-          `[2FA RESEND] Session after: ${JSON.stringify(req.session)}`
-        );
-        this.logger.debug(`[2FA RESEND] Result: ${JSON.stringify(result)}`);
-        this.logger.debug('=== [2FA RESEND] REQUEST END ===');
-      }
+      this.logger.debug(
+        `[2FA RESEND] Session after: ${JSON.stringify(req.session)}`
+      );
+      this.logger.debug(`[2FA RESEND] Result: ${JSON.stringify(result)}`);
+      this.logger.debug('=== [2FA RESEND] REQUEST END ===');
+
       return result;
     } catch (error) {
       this.logger.error('[2FA RESEND] Error:', error);
-      if (this.isDev) {
-        this.logger.debug('=== [2FA RESEND] REQUEST END with Error ===');
-      }
+      this.logger.debug('=== [2FA RESEND] REQUEST END with Error ===');
       throw error;
     }
   }
@@ -247,21 +220,15 @@ export class AuthController {
     @Query('code') code: string,
     @Param('provider') provider: string
   ) {
-    if (this.isDev) {
-      this.logger.debug('=== [OAUTH CALLBACK] REQUEST START ===');
-      this.logger.debug(
-        `[OAUTH CALLBACK] Provider: ${provider}, Code: ${code}`
-      );
-      this.logger.debug(
-        `[OAUTH CALLBACK] Session before: ${JSON.stringify(req.session)}`
-      );
-    }
+    this.logger.debug('=== [OAUTH CALLBACK] REQUEST START ===');
+    this.logger.debug(`[OAUTH CALLBACK] Provider: ${provider}, Code: ${code}`);
+    this.logger.debug(
+      `[OAUTH CALLBACK] Session before: ${JSON.stringify(req.session)}`
+    );
 
     if (!code) {
       this.logger.warn('[OAUTH CALLBACK] No code provided');
-      if (this.isDev) {
-        this.logger.debug('=== [OAUTH CALLBACK] REQUEST END with Error ===');
-      }
+      this.logger.debug('=== [OAUTH CALLBACK] REQUEST END with Error ===');
       throw new BadRequestException('Code is required');
     }
 
@@ -274,37 +241,38 @@ export class AuthController {
             this.logger.error('[OAUTH CALLBACK] Session save error:', err);
             return reject(err);
           }
-          if (this.isDev) {
-            this.logger.debug('[OAUTH CALLBACK] Session saved successfully');
-          }
+          this.logger.debug('[OAUTH CALLBACK] Session saved successfully');
           resolve();
         });
       });
 
       const isProd =
         this.configService.get<string>('NODE_ENV') === 'production';
+      const domain = isProd
+        ? this.configService.get<string>('SESSION_DOMAIN')
+        : undefined;
+
       res.cookie('authState', 'authenticated', {
         path: '/',
         httpOnly: false,
         secure: isProd,
         sameSite: isProd ? 'none' : 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 дней
+        domain,
+        maxAge: 30 * 24 * 60 * 60 * 1000
       });
 
       const redirectUrl = `${this.configService.getOrThrow<string>('ALLOWED_ORIGIN')}/`;
-      if (this.isDev) {
-        this.logger.debug(
-          `[OAUTH CALLBACK] Session after: ${JSON.stringify(req.session)}`
-        );
-        this.logger.debug(`[OAUTH CALLBACK] Redirecting to: ${redirectUrl}`);
-        this.logger.debug('=== [OAUTH CALLBACK] REQUEST END ===');
-      }
+
+      this.logger.debug(
+        `[OAUTH CALLBACK] Session after: ${JSON.stringify(req.session)}`
+      );
+      this.logger.debug(`[OAUTH CALLBACK] Redirecting to: ${redirectUrl}`);
+      this.logger.debug('=== [OAUTH CALLBACK] REQUEST END ===');
+
       return res.redirect(redirectUrl);
     } catch (error) {
       this.logger.error('[OAUTH CALLBACK] Error:', error);
-      if (this.isDev) {
-        this.logger.debug('=== [OAUTH CALLBACK] REQUEST END with Error ===');
-      }
+      this.logger.debug('=== [OAUTH CALLBACK] REQUEST END with Error ===');
       throw error;
     }
   }
@@ -315,6 +283,9 @@ export class AuthController {
     @Param('provider') provider: string,
     @Req() req: Request
   ) {
+    this.logger.debug('=== [OAUTH CONNECT] REQUEST START ===');
+    this.logger.debug(`[OAUTH CONNECT] Provider: ${provider}`);
+
     if (req.session?.userId || req.session?.authState === 'authenticated') {
       this.logger.warn(
         `[OAUTH CONNECT] Found existing session: ${JSON.stringify(req.session)}. Regenerating.`
@@ -324,18 +295,11 @@ export class AuthController {
       );
     }
 
-    if (this.isDev) {
-      this.logger.debug('=== [OAUTH CONNECT] REQUEST START ===');
-      this.logger.debug(`[OAUTH CONNECT] Provider: ${provider}`);
-    }
-
     const providerInstance = this.providerService.findByService(provider);
     const authUrl = providerInstance.getAuthUrl();
 
-    if (this.isDev) {
-      this.logger.debug(`[OAUTH CONNECT] Auth URL: ${authUrl}`);
-      this.logger.debug('=== [OAUTH CONNECT] REQUEST END ===');
-    }
+    this.logger.debug(`[OAUTH CONNECT] Auth URL: ${authUrl}`);
+    this.logger.debug('=== [OAUTH CONNECT] REQUEST END ===');
 
     return { url: authUrl };
   }
@@ -346,26 +310,24 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
-    if (this.isDev) {
-      this.logger.debug('=== [LOGOUT] REQUEST START ===');
-      this.logger.debug(
-        `[LOGOUT] Session before logout: ${JSON.stringify(req.session)}`
-      );
-    }
+    this.logger.debug('=== [LOGOUT] REQUEST START ===');
+    this.logger.debug(
+      `[LOGOUT] Session before: ${JSON.stringify(req.session)}`
+    );
+
     try {
       const result = await this.authService.logout(req, res);
-      if (this.isDev) {
-        this.logger.debug(
-          `[LOGOUT] Session after logout: ${JSON.stringify(req.session)}`
-        );
-        this.logger.debug('=== [LOGOUT] REQUEST END ===');
-      }
+
+      this.logger.debug(
+        `[LOGOUT] Session after: ${JSON.stringify(req.session)}`
+      );
+      this.logger.debug(`[LOGOUT] Result: ${JSON.stringify(result)}`);
+      this.logger.debug('=== [LOGOUT] REQUEST END ===');
+
       return result;
     } catch (error) {
       this.logger.error('[LOGOUT] Error:', error);
-      if (this.isDev) {
-        this.logger.debug('=== [LOGOUT] REQUEST END with Error ===');
-      }
+      this.logger.debug('=== [LOGOUT] REQUEST END with Error ===');
       throw error;
     }
   }
@@ -380,6 +342,5 @@ export class AuthController {
     • GET /auth/oauth/connect/:provider — получение URL для OAuth-провайдера.
     • GET /auth/oauth/callback/:provider — обработка callback OAuth, связывание/создание аккаунта, сохранение сессии, редирект.
     • POST /auth/logout — уничтожение сессии и очистка cookie.
-  - Использует NestJS Logger вместо console.log; debug-логи (`logger.debug`) обёрнуты через флаг isDev, который true если NODE_ENV !== 'production'.
-  - В продакшене (NODE_ENV='production') debug-логи не выполняются, но можно при необходимости включить их, поменяв ENV и перезапустив.
+  - Использует NestJS Logger вместо console.log; debug-логи (`logger.debug`)
 */
