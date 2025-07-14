@@ -164,17 +164,16 @@ export class AuthController {
     return res.redirect(redirectUrl);
   }
 
-  @UseGuards(AuthProviderGuard)
   @Get('/oauth/connect/:provider')
+  @UseGuards(AuthProviderGuard)
   public async connect(
     @Param('provider') provider: string,
     @Req() req: Request
   ) {
-    if (req.session?.userId || req.session?.authState === 'authenticated') {
-      await new Promise((resolve, reject) =>
-        req.session.regenerate((err) => (err ? reject(err) : resolve(null)))
-      );
-    }
+    // Очищаем старую сессию
+    await new Promise((resolve, reject) =>
+      req.session.regenerate((err) => (err ? reject(err) : resolve(null)))
+    );
 
     const providerInstance = this.providerService.findByService(provider);
     const authUrl = providerInstance.getAuthUrl();

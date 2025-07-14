@@ -57,13 +57,6 @@ export class AuthService {
   }
 
   public async loginStepOne(req: Request, dto: LoginDto) {
-    await new Promise<void>((resolve, reject) => {
-      req.session.regenerate((err) => {
-        if (err) return reject(err);
-        resolve();
-      });
-    });
-
     const user = await this.userService.findByEmail(dto.email);
     if (!user || !user.password) {
       throw new NotFoundException('User not found');
