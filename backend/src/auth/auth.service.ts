@@ -93,24 +93,6 @@ export class AuthService {
       this.logger.debug(`Request body: ${JSON.stringify(req.body)}`);
       this.logger.debug(`Session before login: ${JSON.stringify(req.session)}`);
     }
-
-    // Очистка старой сессии
-    await new Promise<void>((resolve, reject) => {
-      req.session.destroy((err) => {
-        if (err) return reject(err);
-        resolve();
-      });
-    });
-    await new Promise<void>((resolve, reject) => {
-      req.session.regenerate((err) => {
-        if (err) return reject(err);
-        if (this.isDev) {
-          this.logger.debug('Session regenerated (cleared)');
-        }
-        resolve();
-      });
-    });
-
     const user = await this.userService.findByEmail(dto.email);
     if (this.isDev) {
       this.logger.debug(`found user: ${user?.email}`);
