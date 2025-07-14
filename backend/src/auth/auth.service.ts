@@ -58,12 +58,6 @@ export class AuthService {
 
   public async loginStepOne(req: Request, dto: LoginDto) {
     await new Promise<void>((resolve, reject) => {
-      req.session.destroy((err) => {
-        if (err) return reject(err);
-        resolve();
-      });
-    });
-    await new Promise<void>((resolve, reject) => {
       req.session.regenerate((err) => {
         if (err) return reject(err);
         resolve();
