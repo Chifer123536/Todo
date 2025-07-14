@@ -36,7 +36,6 @@ backend/dist-ssr/
 **/next/**
 frontend/.next/
 
-# Recoil / Zustand / TanStack, если кэшишь
 .cache/
 *.pack.gz
 
