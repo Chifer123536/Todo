@@ -134,16 +134,12 @@ export class AuthController {
 
       const isProd =
         this.configService.get<string>('NODE_ENV') === 'production';
-      const domain = isProd
-        ? this.configService.get<string>('SESSION_DOMAIN')
-        : undefined;
 
       res.cookie('authState', 'authenticated', {
         path: '/',
         httpOnly: false,
         secure: isProd,
         sameSite: isProd ? 'none' : 'lax',
-        domain,
         maxAge: 30 * 24 * 60 * 60 * 1000
       });
 
@@ -244,16 +240,12 @@ export class AuthController {
 
       const isProd =
         this.configService.get<string>('NODE_ENV') === 'production';
-      const domain = isProd
-        ? this.configService.get<string>('SESSION_DOMAIN')
-        : undefined;
 
       res.cookie('authState', 'authenticated', {
         path: '/',
         httpOnly: false,
         secure: isProd,
         sameSite: isProd ? 'none' : 'lax',
-        domain,
         maxAge: 30 * 24 * 60 * 60 * 1000
       });
 
