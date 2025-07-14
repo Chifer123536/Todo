@@ -89,18 +89,22 @@ export class AuthService {
 
   public async loginStepOne(req: Request, dto: LoginDto) {
     if (this.isDev) {
-      this.logger.debug('loginStepOne() called');
-      this.logger.debug(`Request body: ${JSON.stringify(req.body)}`);
       this.logger.debug(`Session before login: ${JSON.stringify(req.session)}`);
     }
 
-    // Очистка старой сессии
+    // Удаляем старую сессию
+    await new Promise<void>((resolve, reject) => {
+      req.session.destroy((err) => {
+        if (err) return reject(err);
+        if (this.isDev) this.logger.debug('Old session destroyed');
+        resolve();
+      });
+    });
+
     await new Promise<void>((resolve, reject) => {
       req.session.regenerate((err) => {
         if (err) return reject(err);
-        if (this.isDev) {
-          this.logger.debug('Session regenerated (cleared)');
-        }
+        if (this.isDev) this.logger.debug('New session regenerated');
         resolve();
       });
     });
