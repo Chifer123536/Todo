@@ -85,10 +85,6 @@ export class AuthController {
     this.logger.debug(`[LOGIN] Session before: ${JSON.stringify(req.session)}`);
 
     try {
-      await new Promise((resolve, reject) =>
-        req.session.regenerate((err) => (err ? reject(err) : resolve(null)))
-      );
-
       const result = await this.authService.loginStepOne(req, dto);
 
       const isProd =
@@ -109,10 +105,22 @@ export class AuthController {
           state === 'pending2FA' ? 10 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
       });
 
+      this.logger.debug(`[LOGIN] authState cookie set to: ${state}`);
       this.logger.debug(
-        `[LOGIN] Session after: ${JSON.stringify(req.session)}`
+        `[LOGIN] Session after set-cookie: ${JSON.stringify(req.session)}`
       );
-      this.logger.debug(`[LOGIN] authState set to: ${state}`);
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) {
+            this.logger.error('[LOGIN] Session save failed:', err);
+            return reject(err);
+          }
+          this.logger.debug('[LOGIN] Session saved successfully');
+          resolve();
+        });
+      });
+
       this.logger.debug(`[LOGIN] Result: ${JSON.stringify(result)}`);
       this.logger.debug('=== [LOGIN] REQUEST END ===');
 
