@@ -85,6 +85,10 @@ export class AuthController {
     this.logger.debug(`[LOGIN] Session before: ${JSON.stringify(req.session)}`);
 
     try {
+      await new Promise((resolve, reject) =>
+        req.session.regenerate((err) => (err ? reject(err) : resolve(null)))
+      );
+
       const result = await this.authService.loginStepOne(req, dto);
 
       const isProd =
