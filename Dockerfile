@@ -3,7 +3,7 @@
 FROM node:20-slim AS base 
 
 # Устанавливаем Yarn глобально (вместо npm)
-RUN npm install -g yarn
+RUN corepack enable && corepack prepare yarn@stable --activate
 
 # Создаём рабочую директорию внутри контейнера
 WORKDIR /app
