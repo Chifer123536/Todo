@@ -31,7 +31,7 @@ RUN yarn build
 FROM node:20-slim
 
 # Устанавливаем Yarn снова (этот слой "чистый", без dev-инструментов)
-RUN npm install -g yarn
+RUN corepack enable && corepack prepare yarn@stable --activate
 
 # Создаём рабочую директорию
 WORKDIR /app
