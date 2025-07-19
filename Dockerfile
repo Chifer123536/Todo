@@ -1,18 +1,18 @@
 FROM node:20
 
+# Устанавливаем Yarn глобально (надежно для CMD)
+RUN npm install -g yarn
+
 # Создаём рабочую директорию в контейнере
 WORKDIR /app
 
 # Копируем monorepo package.json и yarn.lock
 COPY package.json yarn.lock ./
 
-# Включаем Yarn
-RUN corepack enable && corepack prepare yarn@stable --activate
-
-# Устанавливаем зависимости 
+# Устанавливаем зависимости из monorepo
 RUN yarn install --frozen-lockfile
 
-# Копируем весь проект
+# Копируем весь проект (включая backend)
 COPY . .
 
 # Переходим в backend и билдим
