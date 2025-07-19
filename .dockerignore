@@ -1,0 +1,6 @@
+node_modules
+.next
+frontend/.next
+frontend/out
+**/*.log
+dist
