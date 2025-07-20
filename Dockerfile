@@ -6,37 +6,29 @@ RUN corepack enable && corepack prepare yarn@stable --activate
 
 WORKDIR /app
 
-# 2) Копируем монорепо-манифесты и исходники backend
-COPY package.json yarn.lock ./
-COPY backend/package.json ./backend/
-COPY backend ./backend
+# 2) Копируем весь репозиторий (и frontend, и backend, и lockfile)
+COPY . .
 
-# 3) Устанавливаем ВСЕ зависимости (dev+prod) для корректного билда
-RUN yarn workspaces focus backend --all
-
-# 4) Собираем NestJS
-WORKDIR /app/backend
-RUN yarn build
+# 3) Устанавливаем все зависимости (dev + prod) и собираем backend
+RUN yarn install --frozen-lockfile
+RUN yarn workspace backend build
 
 
 # --------- STAGE 2: Production image ---------
 FROM node:20-slim
 
-# Corepack + Yarn (чтобы yarn start работал)
-RUN corepack enable && corepack prepare yarn@stable --activate
-
 WORKDIR /app
 
-# 1) Копируем собранную папку dist
+# 1) Копируем готовый бэкенд
 COPY --from=builder /app/backend/dist ./dist
 
-# 2) Копируем всю node_modules из build-стейджа
-COPY --from=builder /app/node_modules ./node_modules
+# 2) Берём только манифест бэкенда и lockfile для npm-install
+COPY backend/package.json ./package.json
 
-# 3) Копируем package.json чтобы yarn start мог найти main
-COPY --from=builder /app/backend/package.json ./
+# 3) Устанавливаем продакшн‑зависимости **только бэкенда** через npm
+RUN npm install --production
 
 EXPOSE 8080
 
-# 4) Запускаем напрямую
+# 4) Запускаем собранный сервер
 CMD ["node", "dist/main.js"]
