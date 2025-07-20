@@ -1,20 +1,20 @@
 # --------- STAGE 1: Build backend ---------
 FROM node:20-slim AS builder
 
-# 1. Corepack + Yarn
+# 1) Corepack + Yarn
 RUN corepack enable && corepack prepare yarn@stable --activate
 
 WORKDIR /app
 
-# 2. Копируем монорепо-манифесты и исходники backend
+# 2) Копируем монорепо-манифесты и исходники backend
 COPY package.json yarn.lock ./
 COPY backend/package.json ./backend/
 COPY backend ./backend
 
-# 3. Устанавливаем все зависимости (dev+prod) для корректного билда
+# 3) Устанавливаем ВСЕ зависимости (dev+prod) для корректного билда
 RUN yarn workspaces focus backend --all
 
-# 4. Собираем NestJS в dist/
+# 4) Собираем NestJS
 WORKDIR /app/backend
 RUN yarn build
 
@@ -22,27 +22,21 @@ RUN yarn build
 # --------- STAGE 2: Production image ---------
 FROM node:20-slim
 
-# 1. Corepack + Yarn (чистый слой)
+# Corepack + Yarn (чтобы yarn start работал)
 RUN corepack enable && corepack prepare yarn@stable --activate
 
 WORKDIR /app
 
-# 2. Копируем собранную dist-папку
+# 1) Копируем собранную папку dist
 COPY --from=builder /app/backend/dist ./dist
 
-# 3. Копируем манифесты для установки прод-зависимостей
-COPY package.json yarn.lock ./
-COPY backend/package.json ./backend/
+# 2) Копируем всю node_modules из build-стейджа
+COPY --from=builder /app/node_modules ./node_modules
 
-# 4. Устанавливаем ТОЛЬКО production-зависимости backend
-RUN yarn workspaces focus backend --production
+# 3) Копируем package.json чтобы yarn start мог найти main
+COPY --from=builder /app/backend/package.json ./
 
-# 5. Переносим node_modules в dist (чтобы среди root лежали только dist и ничего лишнего)
-RUN mv node_modules dist/
-
-# 6. Устанавливаем рабочую директорию в dist и открываем порт
-WORKDIR /app/dist
 EXPOSE 8080
 
-# 7. Запуск
-CMD ["node", "main.js"]
+# 4) Запускаем напрямую
+CMD ["node", "dist/main.js"]
