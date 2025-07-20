@@ -15,7 +15,7 @@ COPY package.json yarn.lock ./
 COPY backend/package.json ./backend/
 
 # Устанавливаем только необходимые зависимости backend-а через workspaces
-RUN yarn workspaces focus backend --production
+RUN yarn workspaces focus backend 
 
 # Копируем весь исходный код backend-а (src, tsconfig и т.д.)
 COPY backend ./backend
