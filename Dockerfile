@@ -39,7 +39,7 @@ WORKDIR /app
 # Копируем собранный backend из предыдущего слоя
 COPY --from=base /app/backend/dist ./dist
 COPY --from=base /app/backend/package.json ./
-COPY --from=base /app/backend/node_modules ./node_modules
+COPY --from=base /app/node_modules ./node_modules  
 
 # Открываем порт 8080 для внешнего доступа к серверу
 EXPOSE 8080
