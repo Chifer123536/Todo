@@ -1,19 +1,32 @@
-FROM node:18
+FROM node:20-slim AS builder
+
+RUN corepack enable && corepack prepare yarn@stable --activate
 
 WORKDIR /app
 
-# Копируем package.json и yarn.lock корня и бэкенда
 COPY package.json yarn.lock ./
-COPY backend/package.json ./backend/package.json
+COPY backend/package.json ./backend/
+COPY backend ./backend
 
-# Устанавливаем зависимости (с учетом workspaces)
-RUN yarn install --frozen-lockfile
+RUN yarn install --immutable
 
-# Копируем весь исходный код
-COPY . .
+WORKDIR /app/backend
+RUN yarn build
 
-# Собираем backend
-RUN yarn workspace backend build
+FROM node:20-slim
 
-# Запускаем backend
-CMD ["yarn", "workspace", "backend", "start"]
+RUN corepack enable && corepack prepare yarn@stable --activate
+
+WORKDIR /app
+
+COPY --from=builder /app/backend/dist ./dist
+
+COPY package.json yarn.lock ./
+COPY backend/package.json ./backend/
+
+RUN yarn workspaces focus backend --production
+
+WORKDIR /app/dist
+EXPOSE 8080
+
+CMD ["node", "main.js"]
