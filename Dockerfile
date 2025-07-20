@@ -1,6 +1,6 @@
 FROM node:20-slim AS builder
 
-RUN corepack enable && corepack prepare yarn@stable --activate
+RUN rm -f /usr/local/bin/yarn && npm install -g yarn@1.22.22
 
 WORKDIR /app
 
@@ -8,25 +8,20 @@ COPY package.json yarn.lock ./
 COPY backend/package.json ./backend/
 COPY backend ./backend
 
-RUN yarn install --immutable
+RUN yarn install --frozen-lockfile
 
 WORKDIR /app/backend
 RUN yarn build
 
-FROM node:20-slim
 
-RUN corepack enable && corepack prepare yarn@stable --activate
+FROM node:20-slim
 
 WORKDIR /app
 
 COPY --from=builder /app/backend/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/backend/package.json ./package.json
 
-COPY package.json yarn.lock ./
-COPY backend/package.json ./backend/
-
-RUN yarn workspaces focus backend --production
-
-WORKDIR /app/dist
 EXPOSE 8080
 
-CMD ["node", "main.js"]
+CMD ["node", "dist/main.js"]
