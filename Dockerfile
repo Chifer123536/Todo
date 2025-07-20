@@ -1,48 +1,38 @@
 # --------- STAGE 1: Build backend ---------
+FROM node:20-slim AS base
 
-FROM node:20-slim AS base 
-
-# Устанавливаем Yarn глобально (вместо npm)
+# 1) Включаем Corepack/Yarn
 RUN corepack enable && corepack prepare yarn@stable --activate
 
-# Создаём рабочую директорию внутри контейнера
 WORKDIR /app
 
-# Копируем корневые файлы монорепозитория (для Yarn Workspaces)
+# 2) Копируем корневые package.json, yarn.lock и весь код backend
 COPY package.json yarn.lock ./
-
-# Копируем package.json backend'а для корректной установки зависимостей
 COPY backend/package.json ./backend/
-
-# Устанавливаем только необходимые зависимости backend-а через workspaces
-RUN yarn workspaces focus backend --all
-
-# Копируем весь исходный код backend-а (src, tsconfig и т.д.)
 COPY backend ./backend
 
-# Переходим в директорию backend
-WORKDIR /app/backend
+# 3) Устанавливаем ВСЕ зависимости backend (dev + prod)
+RUN yarn workspaces focus backend --all
 
-# Собираем backend (NestJS → dist/)
+# 4) Собираем NestJS
+WORKDIR /app/backend
 RUN yarn build
 
 
 # --------- STAGE 2: Production image ---------
 FROM node:20-slim
 
-# Устанавливаем Yarn снова (этот слой "чистый", без dev-инструментов)
+# 1) Corepack/Yarn снова
 RUN corepack enable && corepack prepare yarn@stable --activate
 
-# Создаём рабочую директорию
 WORKDIR /app
 
-# Копируем собранный backend из предыдущего слоя
+# 2) Копируем сборку + зависимости
 COPY --from=base /app/backend/dist ./dist
 COPY --from=base /app/backend/package.json ./
-COPY --from=base /app/node_modules ./node_modules  
+COPY --from=base /app/node_modules ./node_modules
 
-# Открываем порт 8080 для внешнего доступа к серверу
 EXPOSE 8080
 
-# Запускаем backend
+# 3) Запускаем
 CMD ["yarn", "start"]
