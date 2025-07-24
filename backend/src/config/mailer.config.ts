@@ -7,7 +7,8 @@ export const getMailerConfig = async (
   transport: {
     host: configService.getOrThrow<string>('MAIL_HOST'),
     port: configService.getOrThrow<number>('MAIL_PORT'),
-    secure: false,
+    secure: configService.getOrThrow<number>('MAIL_PORT') === 465,
+    name: configService.getOrThrow<string>('APPLICATION_URL'),
     auth: {
       user: configService.getOrThrow<string>('MAIL_LOGIN'),
       pass: configService.getOrThrow<string>('MAIL_PASSWORD')
