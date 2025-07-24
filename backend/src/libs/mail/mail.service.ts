@@ -1,5 +1,9 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { render } from '@react-email/components';
 
@@ -9,7 +13,9 @@ import { TwoFactorAuthTemplate } from './templates/two-factor-auth.template';
 
 @Injectable()
 export class MailService {
-  public constructor(
+  private readonly logger = new Logger(MailService.name); // 👈 Привязываем логгер к классу
+
+  constructor(
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService
   ) {}
@@ -35,13 +41,25 @@ export class MailService {
   }
 
   private async sendMail(email: string, subject: string, html: string) {
+    this.logger.log(`📨 Sending email to ${email}`);
+    this.logger.debug(`Subject: ${subject}`);
+    this.logger.debug(`HTML size: ${html.length} chars`);
+
     try {
-      return await this.mailerService.sendMail({
+      const result = await this.mailerService.sendMail({
         to: email,
         subject,
         html
       });
-    } catch {
+
+      this.logger.log(`✅ Email sent successfully to ${email}`);
+      this.logger.verbose(`Mailer result: ${JSON.stringify(result)}`);
+      return result;
+    } catch (error) {
+      this.logger.error(
+        `❌ Failed to send email to ${email}: ${error.message}`,
+        error.stack
+      );
       throw new InternalServerErrorException('Email sending failed');
     }
   }
