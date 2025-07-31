@@ -25,7 +25,7 @@ Live demo available at:
 - 2FA and OAuth (Google & Yandex)
 - CRUD for todos with pagination
 - User profile & theme settings (light/dark)
-- Email notifications via SMTP
+- Email notifications via Resend API
 - Custom animations and error messaging
 
 ## Tech Stack
@@ -37,7 +37,7 @@ Live demo available at:
 | Database   | MongoDB + Mongoose              | Flexible schema, ODM                          |
 | Cache      | Redis                           | Session storage, caching for performance      |
 | Auth       | Sessions, 2FA, OAuth, ReCAPTCHA | Multi-layer secure auth                       |
-| Email      | Nodemailer (SMTP)               | Reliable email notifications                  |
+| Email      | Resend API                      | Reliable email notifications via Resend API   |
 | Styles     | Tailwind CSS, SCSS Modules      | Utility-first + modular CSS                   |
 | Forms      | React Hook Form + Zod           | Declarative forms with strong validation      |
 | State      | React Query                     | Efficient data fetching & caching             |
@@ -139,7 +139,7 @@ The production build was audited using Chrome DevTools Lighthouse.
 POST    /auth/register         — User registration
 POST    /auth/login            — Login with password + 2FA (if enabled)
 POST    /auth/login/2fa        — 2FA verification step
-GET     /auth/verify?token=   — Email verification link
+GET     /auth/verify?token=   —  Email notifications via Resend API
 POST    /auth/forgot-password  — Request password reset
 POST    /auth/reset-password   — Set new password
 
