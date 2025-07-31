@@ -41,7 +41,6 @@ export class MailService {
   }
 
   private async sendMail(email: string, subject: string, html: string) {
-    this.logger.log(`📨 Sending email to ${email}`);
     this.logger.debug(`Subject: ${subject}`);
     this.logger.debug(`HTML size: ${html.length} chars`);
 
@@ -53,8 +52,6 @@ export class MailService {
         html
       });
 
-      this.logger.log(`✅ Email sent successfully to ${email}`);
-      this.logger.verbose(`Resend result: ${JSON.stringify(result)}`);
       return result;
     } catch (error) {
       this.logger.error(
