@@ -1,10 +1,10 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import {
   Injectable,
   InternalServerErrorException,
   Logger
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Resend } from 'resend';
 import { render } from '@react-email/components';
 
 import { ConfirmationTemplate } from './templates/confirmation.template';
@@ -13,30 +13,30 @@ import { TwoFactorAuthTemplate } from './templates/two-factor-auth.template';
 
 @Injectable()
 export class MailService {
-  private readonly logger = new Logger(MailService.name); // 👈 Привязываем логгер к классу
+  private readonly logger = new Logger(MailService.name);
+  private readonly resend: Resend;
+  private readonly sender: string;
 
-  constructor(
-    private readonly mailerService: MailerService,
-    private readonly configService: ConfigService
-  ) {}
+  constructor(private readonly configService: ConfigService) {
+    const apiKey = this.configService.getOrThrow<string>('RESEND_API_KEY');
+    this.sender = this.configService.getOrThrow<string>('RESEND_SENDER_EMAIL');
+    this.resend = new Resend(apiKey);
+  }
 
   public async sendConfirmationEmail(email: string, token: string) {
     const domain = this.configService.getOrThrow<string>('ALLOWED_ORIGIN');
     const html = await render(ConfirmationTemplate({ domain, token }));
-
     return this.sendMail(email, 'Confirm your email', html);
   }
 
   public async sendPasswordResetEmail(email: string, token: string) {
     const domain = this.configService.getOrThrow<string>('ALLOWED_ORIGIN');
     const html = await render(ResetPasswordTemplate({ domain, token }));
-
     return this.sendMail(email, 'Password reset', html);
   }
 
   public async sendTwoFactorTokenEmail(email: string, token: string) {
     const html = await render(TwoFactorAuthTemplate({ token }));
-
     return this.sendMail(email, 'Two-factor authentication', html);
   }
 
@@ -46,14 +46,15 @@ export class MailService {
     this.logger.debug(`HTML size: ${html.length} chars`);
 
     try {
-      const result = await this.mailerService.sendMail({
+      const result = await this.resend.emails.send({
+        from: this.sender,
         to: email,
         subject,
         html
       });
 
       this.logger.log(`✅ Email sent successfully to ${email}`);
-      this.logger.verbose(`Mailer result: ${JSON.stringify(result)}`);
+      this.logger.verbose(`Resend result: ${JSON.stringify(result)}`);
       return result;
     } catch (error) {
       this.logger.error(
