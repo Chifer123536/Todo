@@ -22,7 +22,7 @@ export function AuthSocial() {
       toast.error(error.message || "OAuth error. Please register.", {
         duration: 3000
       })
-      router.push("/auth/register")
+      router.push("/auth/login")
     }
   })
 
